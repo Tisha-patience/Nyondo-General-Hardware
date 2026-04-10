@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stock Registration</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <link rel="stylesheet" href="../static/stock-reg.css" />
+  </head>
+  <body class="shiny-background">
+    <div class="container-fluid">
+        <div style="margin-left: 500px;">
+          <img src="../static/Images/Logo.png" style="height: 100px; width: 200px; justify-content: center" />
+        </div>
+
+     <h5>Welcome to Nyondo Stock Hardware</h5>
+    <div class="container" style="width: 500px">
+      <div class="card shadow mt-3 mb-3">
+        <div class="card-body">
+      
+          <h1 class="card-title text-center">Register New Stock</h1>
+          <hr />
+          <form>
+            <!-- Items -->
+             <div class="row">
+            <div class="col mb-3">
+              <label for="item-Name" class="form-label">Supplier Name</label>
+              <input
+                style="
+                  background-color: #fdfdfd;
+                  border: 2px solid #a67c8a;
+                  color: #333;
+                  border-radius: 6px;
+                  box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                "
+                type="text"
+                class="form-control burgundy-form"
+                placeholder="Enter supplier name"
+                aria-label="Enter supplier name"
+              />
+            </div>
+            <div class="col">
+                <label
+                  for="supplierContact"
+                  class="form-label"
+                  >Supplier Contact</label
+                >
+                <input
+                  style="
+                    background-color: #fdfdfd;
+                    border: 2px solid #a67c8a;
+                    color: #333;
+                    border-radius: 6px;
+                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                  "
+                  type="number"
+                  class="form-control"
+                  id="supplierContact"
+                  placeholder="Enter phone number"
+                />
+              </div>
+              
+            </div>
+ <!-- Product -->
+            <div class="row">
+              <div class="col mt-3">
+                <label for="productName" class="form-label"
+                  >Product Name</label
+                >
+                <input
+                  style="
+                    background-color: #fdfdfd;
+                    border: 2px solid #a67c8a;
+                    color: #333;
+                    border-radius: 6px;
+                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                  "
+                  type="number"
+                  class="form-control"
+                  id="productName"
+                  placeholder="e.g. Cement CEM iiN"
+                />
+              </div>
+
+              <!-- Price -->
+              <div class="col mt-3">
+                <label
+                  for="salePrice"
+                  class="form-label"
+                  >Unit Cost</label
+                >
+                <input
+                  style="
+                    background-color: #fdfdfd;
+                    border: 2px solid #a67c8a;
+                    color: #333;
+                    border-radius: 6px;
+                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                  "
+                  type="number"
+                  class="form-control"
+                  id="salePrice"
+                  placeholder="Enter cost"
+                />
+              </div>
+            </div>
+
+            
+        
+
+           
+
+            <!-- Quantity and transport-->
+             <div class="row">
+            <div class="col mt-3">
+              <label for="quantity" class="form-label">Quantity</label>
+              <input
+                style="
+                  background-color: #fdfdfd;
+                  border: 2px solid #a67c8a;
+                  color: #333;
+                  border-radius: 6px;
+                  box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                "
+                type="number"
+                class="form-control"
+                id="quantity"
+                placeholder="Enter quantity"
+              />
+            </div>
+             <div class="col mt-3">
+              <label for="quantity" class="form-label">Transport Charge</label>
+              <input
+                style="
+                  background-color: #fdfdfd;
+                  border: 2px solid #a67c8a;
+                  color: #333;
+                  border-radius: 6px;
+                  box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                "
+                type="number"
+                class="form-control"
+                id="quantity"
+                placeholder="Enter quantity"
+              />
+            </div>
+            </div>
+            <hr />
+
+            
+            
+
+           
+            <!-- Date of Entry -->
+            <div class="row">
+              <div class="col">
+                <label for="dateEntry" class="form-label">Date of Entry</label>
+                <input
+                  style="
+                    background-color: #fdfdfd;
+                    border: 2px solid #a67c8a;
+                    color: #333;
+                    border-radius: 6px;
+                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                  "
+                  type="date"
+                  class="form-control"
+                  id="dateEntry"
+                  required
+                />
+              </div>
+
+              
+            </div>
+            <hr />
+
+            <!-- Submit Button -->
+             <div class="row">
+            <div class="col ">
+              <button type="submit" class="btn">Add Stock</button>
+              </div>
+              <div class="col text-end">
+              <a href="stock.html" class="btn ms-2 "><i class="bi bi-arrow-left me-1"></i>Back</a>
+              </div>
+            
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
