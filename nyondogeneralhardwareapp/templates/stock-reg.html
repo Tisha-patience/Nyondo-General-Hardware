@@ -21,7 +21,7 @@
         </div>
 
      <h5>Welcome to Nyondo Stock Hardware</h5>
-    <div class="container" style="width: 500px">
+    <div class="container" style="width: 700px">
       <div class="card shadow mt-3 mb-3">
         <div class="card-body">
       
@@ -66,76 +66,7 @@
                   placeholder="Enter phone number"
                 />
               </div>
-              
-            </div>
- <!-- Product -->
-            <div class="row">
-              <div class="col mt-3">
-                <label for="productName" class="form-label"
-                  >Product Name</label
-                >
-                <input
-                  style="
-                    background-color: #fdfdfd;
-                    border: 2px solid #a67c8a;
-                    color: #333;
-                    border-radius: 6px;
-                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
-                  "
-                  type="number"
-                  class="form-control"
-                  id="productName"
-                  placeholder="e.g. Cement CEM iiN"
-                />
-              </div>
-
-              <!-- Price -->
-              <div class="col mt-3">
-                <label
-                  for="salePrice"
-                  class="form-label"
-                  >Unit Cost</label
-                >
-                <input
-                  style="
-                    background-color: #fdfdfd;
-                    border: 2px solid #a67c8a;
-                    color: #333;
-                    border-radius: 6px;
-                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
-                  "
-                  type="number"
-                  class="form-control"
-                  id="salePrice"
-                  placeholder="Enter cost"
-                />
-              </div>
-            </div>
-
-            
-        
-
-           
-
-            <!-- Quantity and transport-->
-             <div class="row">
-            <div class="col mt-3">
-              <label for="quantity" class="form-label">Quantity</label>
-              <input
-                style="
-                  background-color: #fdfdfd;
-                  border: 2px solid #a67c8a;
-                  color: #333;
-                  border-radius: 6px;
-                  box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
-                "
-                type="number"
-                class="form-control"
-                id="quantity"
-                placeholder="Enter quantity"
-              />
-            </div>
-             <div class="col mt-3">
+               <div class="col mt">
               <label for="quantity" class="form-label">Transport Charge</label>
               <input
                 style="
@@ -148,11 +79,119 @@
                 type="number"
                 class="form-control"
                 id="quantity"
+                placeholder="Enter charge"
+              />
+            </div>
+            
+            <hr />
+            </div>
+ <!-- Product -->
+            <div class="row">
+              <div class="col mt-3">
+                <label for="productName" class="form-label" 
+                  >Product Name</label
+                >
+                <select
+                  class="form-select product"
+                  onchange="updateOptions(this)"
+                
+                style="
+                    background-color: #fdfdfd;
+                    border: 2px solid #a67c8a;
+                    color: #333;
+                    border-radius: 6px;
+                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                    width: 170px;
+                  "  >
+                  <option selected disabled>Choose product</option>
+                  <option value="cement">Cement(cem iiN)</option>
+                  <option value="cement">Cement(cem iiiN)</option>
+                  <option value="ironbars">Iron Bars(10 mm)</option>
+                  <option value="ironbars">Iron Bars(12 mm)</option>
+                  <option value="ironbars">Iron Bars(16 mm)</option>
+                  <option value="nails">Nails(1 inch)</option>
+                  <option value="nails">Nails(3 inches)</option>
+                  <option value="nails">Nails(4 inches)</option>
+                  <option value="nails">Nails(5 inches)</option>
+                  <option value="roofingnails">Roofing Nails</option>
+                  <option value="wheelbarrows">Wheelbarrows</option>
+                  <option value="wiremesh">Wire Mesh</option>
+                  <option value="barbedwire">Barbed Wire(high tensile)</option>
+                  <option value="barbedwire">Barbed Wire(low tensile)</option>
+                  <option value="ironsheets">Iron Sheets(gauge 30 red)</option>
+                  <option value="ironsheets">
+                    Iron Sheets(gauge 28 silver)
+                  </option>
+                </select>
+              </div>
+
+              <!-- Price -->
+              <div class="col mt-3">
+                <label
+                  for="salePrice"
+                  class="form-label" style="width: 170px;"
+                  >Unit Price</label
+                >
+                <input
+                  style="
+                    background-color: #fdfdfd;
+                    border: 2px solid #a67c8a;
+                    color: #333;
+                    border-radius: 6px;
+                    box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                  "
+                  type="number"
+                  class="form-control"
+                  id="supplierPrice"
+                  placeholder="Enter supplier unit price" required
+                />
+              </div>
+
+               <div class="col mt-3">
+              <label for="quantity" class="form-label" style="width: 180px;">Quantity</label>
+              <input
+                style="
+                  background-color: #fdfdfd;
+                  border: 2px solid #a67c8a;
+                  color: #333;
+                  border-radius: 6px;
+                  box-shadow: 0 0 6px rgba(166, 124, 138, 0.4);
+                "
+                type="number"
+                class="form-control"
+                id="quantity"
                 placeholder="Enter quantity"
               />
             </div>
+             <div class="col text-end">
+                <button
+                  type="button"
+                  class="btn btn-sm"
+                  onclick="deleteRow(this)"
+                  style="margin-top: 50px"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
             </div>
-            <hr />
+ <div>
+              <button
+                type="button"
+                class="btn btn-secondary mt-4 mb-3"
+                onclick="addRow()"
+              >
+                <i class="bi bi-plus-circle me-1"></i> Add Item
+              </button>
+            </div>
+            
+        
+
+           
+
+           
+             
+           
+            
 
             
             
@@ -161,7 +200,7 @@
             <!-- Date of Entry -->
             <div class="row">
               <div class="col">
-                <label for="dateEntry" class="form-label">Date of Entry</label>
+                <label for="dateEntry" class="form-label">Date Received</label>
                 <input
                   style="
                     background-color: #fdfdfd;
@@ -184,7 +223,7 @@
             <!-- Submit Button -->
              <div class="row">
             <div class="col ">
-              <button type="submit" class="btn">Add Stock</button>
+              <button type="submit" class="btn">Save Stock</button>
               </div>
               <div class="col text-end">
               <a href="stock.html" class="btn ms-2 "><i class="bi bi-arrow-left me-1"></i>Back</a>

@@ -31,9 +31,6 @@ input::placeholder{
   margin-left: 2px;    /* tiny gap from text */
 }
 .card-body {
-  /* background: #e6e2d3;
-     border-radius: 50px;
-      box-shadow: 10px 10px 25px 10px #563f46; */
   background: linear-gradient(135deg, #563f46, #6d4c55, #3c2f3d);
   border-radius: 12px;
   padding: 20px;
@@ -113,4 +110,11 @@ img{
 }
 .bnt{
   margin-right: 100px;
+}
+.dropdown-menu{
+  background: #e6e2d3;
+}
+.dropdown-item:hover{
+  background-color: #563f46;
+   color: #fff;
 }

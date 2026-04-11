@@ -19,51 +19,82 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark"
-     style="background: linear-gradient(135deg, #563f46, #6d4c55, #3c2f3d)">
-  <div class="container-fluid">
-    <!-- Logo -->
-    <a class="navbar-brand d-flex align-items-center" href="./dashboard.html">
-      <img src="../static/Images/Logo.png" alt="Logo" style="height: 60px; width: 120px;" />
-    </a>
-
-    <!-- Search -->
-    <form class="d-flex mx-5" role="search">
-      <div class="position-relative">
-        <input class="form-control ps-5"
-               type="search"
-               placeholder="Search..."
-               aria-label="Search"
-               style="background: #3c2f3d; border: 2px solid #a67c8a; color: #d6d4e0;">
-        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white"></i>
-      </div>
-    </form>
-
-    <!-- Navbar Links -->
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
-          <i class="bi bi-person-circle me-1"></i> Admin
+    <nav
+      class="navbar navbar-expand-lg navbar-dark"
+      style="background: linear-gradient(135deg, #563f46, #6d4c55, #3c2f3d)"
+    >
+      <div class="container-fluid">
+        <!-- Logo -->
+        <a
+          class="navbar-brand d-flex align-items-center"
+          href="./dashboard.html"
+        >
+          <img
+            src="../static/Images/Logo.png"
+            alt="Logo"
+            style="height: 60px; width: 200px"
+          />
         </a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
-          <li><a class="dropdown-item" href="./profile.html">Profile</a></li>
-          <li><a class="dropdown-item" href="./settings.html">Settings</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="./logout.html"><i class="bi bi-box-arrow-right me-1"></i> Logout</a></li>
-        </ul>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#"><i class="bi bi-bell" style="font-size: 20px;"></i></a>
-      </li>
-    </ul>
-  </div>
-</nav>
-<!-- Side bar links -->
+
+        <!-- Search -->
+        <form class="d-flex mx-5" role="search">
+          <div class="position-relative">
+            <input
+              class="form-control ps-5"
+              type="search"
+              placeholder="Search..."
+              aria-label="Search"
+              style="
+                background: #3c2f3d;
+                border: 2px solid #a67c8a;
+                color: #d6d4e0;
+              "
+            />
+            <i
+              class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white"
+            ></i>
+          </div>
+        </form>
+
+        <!-- Navbar Links -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="profileDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+            <i class="bi bi-person-circle me-1"></i> Admin
+          </a>
+          <ul
+            class="dropdown-menu dropdown-menu-end"
+            aria-labelledby="profileDropdown"
+          >
+            <li><a class="dropdown-item" href="./profile.html">Profile</a></li>
+            <li>
+              <a class="dropdown-item" href="./settings.html">Settings</a>
+            </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+              <a class="dropdown-item" href="./logout.html"
+                ><i class="bi bi-box-arrow-right me-1"></i> Logout</a
+              >
+            </li>
+          </ul>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#"
+            ><i class="bi bi-bell" style="font-size: 20px"></i
+          ></a>
+        </li>
+      </div>
+    </nav>
+    <!-- Side bar links -->
     <div class="container-fluid flex-grow-1">
       <div class="row h-100">
-        <div
-          class="col-sm-2 py-2 px-5 sidebar-gradient d-flex flex-column"
-        
-        >
+        <div class="col-sm-2 py-2 px-5 sidebar-gradient d-flex flex-column">
           <h6 class="text-white mt-3 fw-bold">Menu</h6>
           <hr />
 
@@ -94,7 +125,6 @@
                 <i class="bi bi-truck me-2"></i>
                 <span>Suppliers</span>
               </a>
-             
             </div>
           </div>
           <br />
@@ -105,11 +135,16 @@
             >
           </div>
           <br />
-<div>
-            <a class="nav-link" href="{% url 'transport' %}"><i class="bi bi-truck-front me-1"></i> Transport</a>
-          </div><br>
           <div>
-            <a class="nav-link" href="{% url 'reports' %}"><i class="bi bi-bar-chart me-1"></i> Reports</a>
+            <a class="nav-link" href="{% url 'transport' %}"
+              ><i class="bi bi-truck-front me-1"></i> Transport</a
+            >
+          </div>
+          <br />
+          <div>
+            <a class="nav-link" href="{% url 'reports' %}"
+              ><i class="bi bi-bar-chart me-1"></i> Reports</a
+            >
           </div>
         </div>
 
@@ -167,35 +202,51 @@
                     <td>120 items in inventory</td>
                     <td>Stable</td>
                     <td>25 Mar 2026</td>
-                    <td><a href="./stock.html" class="btn  btn-hover-arrow  w-100">View Details</a></td>
+                    <td>
+                      <a href="./stock.html" class="btn btn-hover-arrow w-100"
+                        >View Details</a
+                      >
+                    </td>
                   </tr>
                   <tr>
                     <th scope="row">Sales</th>
                     <td>45 transactions today</td>
                     <td>Active</td>
                     <td>25 Mar 2026</td>
-                    <td><a href="./sales/sales.html" class="btn  btn-hover-arrow  w-100">View Details
-
-                    </a> </td>
+                    <td>
+                      <a
+                        href="./sales/sales.html"
+                        class="btn btn-hover-arrow w-100"
+                        >View Details
+                      </a>
+                    </td>
                   </tr>
                   <tr>
                     <th scope="row">Suppliers</th>
                     <td>2 active suppliers</td>
                     <td>Pending Orders</td>
                     <td>24 Mar 2026</td>
-                     <td> 
-                      <a href="./supplier.html" class="btn btn-hover-arrow w-100">View Details</a></td>
+                    <td>
+                      <a
+                        href="./supplier.html"
+                        class="btn btn-hover-arrow w-100"
+                        >View Details</a
+                      >
+                    </td>
                   </tr>
                   <tr>
                     <th scope="row">Supplier Credit</th>
                     <td>Total owed: UGX1M</td>
                     <td>Critical</td>
                     <td>25 Mar 2026</td>
-                     <td >
-                      <a href="./supplier-credit.html" class="btn  btn-hover-arrow w-100" >View Details
-                      </td>
+                    <td>
+                      <a
+                        href="./supplier-credit.html"
+                        class="btn btn-hover-arrow w-100"
+                      ></a
+                      >View Details
+                    </td>
                   </tr>
-              
                 </tbody>
               </table>
             </div>
@@ -208,7 +259,7 @@
               <a href="./supplierReg.html" class="btn me-5">
                 <i class="bi bi-person-plus me-2"></i> Register Supplier
               </a>
-              <a href="./stock-reg.html" class="btn  me-5">
+              <a href="./stock-reg.html" class="btn me-5">
                 <i class="bi bi-box-seam me-2"></i> Update Stock
               </a>
               <a href="./reports.html" class="btn me-5">
@@ -222,7 +273,7 @@
 
     <div class="container-fluid">
       <footer class="text-center border-top text-muted">
-        © 2026 Nyondo Stock Hardware. All rights reserved. | Designed by Tisha
+        © 2026 Nyondo General Hardware. All rights reserved. | Designed by Tisha
       </footer>
     </div>
 

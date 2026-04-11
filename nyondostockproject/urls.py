@@ -24,5 +24,11 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),
     path('sales/', views.sales, name='sales'),
+    path('supplier/', views.supplier, name='supplier'),
+    path('stock/', views.stock, name='stock'),
+    path('reports/', views.reports, name='reports'),
+    path('deposits/', views.deposits, name='deposits'),
+    path('transport/', views.transport, name='transport'),
+    
     
 ]
