@@ -27,8 +27,9 @@ urlpatterns = [
     path('supplier/', views.supplier, name='supplier'),
     path('stock/', views.stock, name='stock'),
     path('reports/', views.reports, name='reports'),
-    path('deposits/', views.deposits, name='deposits'),
-    path('transport/', views.transport, name='transport'),
-    
+    path('customer-deposit/', views.customer_deposit, name='customer-deposit'),
+    path('supplierReg/', views.supplier_reg, name='supplierReg'),
+    path('back/', views.index, name='back'),
+   
     
 ]

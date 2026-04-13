@@ -22,11 +22,14 @@ def stock(request):
 def reports(request):
     return render(request, 'reports.html')
 
-def deposits(request):
-    return render(request, 'deposits.html')
 
-def transport(request):
-    return render(request, 'transport.html')
+def customer_deposit(request):
+    return render(request, 'customer-deposit.html')
 
+def supplier_reg(request):
+    return render(request, 'supplierReg.html')
+
+def back(request):
+    return render(request, 'index.html')
 
 

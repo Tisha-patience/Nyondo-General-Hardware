@@ -103,8 +103,8 @@
           <!-- Side bar links -->
           <div>
             <a
-              class="nav-link nav-list text-white active d-flex align-items-center"
-              href="./dashboard.html"
+              class="nav-link nav-list text-white  d-flex align-items-center"
+              href="{% url 'dashboard' %}"
             >
               <i class="bi bi-grid me-1"></i>
               <span>Dashboard</span>
@@ -138,8 +138,15 @@
           </div>
           <br />
           <div>
-            <a class="nav-link" href="{% url 'transport' %}"
-              ><i class="bi bi-truck-front me-1"></i> Transport</a
+            <a class="nav-link" href="{% url 'customer-depost' %}"
+              ><i class="bi-cash-stack me-1"></i> Deposit Scheme</a
+            >
+          </div>
+          <br />
+          <div>
+            <a class="nav-link text-white active" href="{% url 'receipt' %}">
+              <i class="bi-receipt me-2"></i>
+              Receipts</a
             >
           </div>
           <br />
@@ -266,6 +273,24 @@ show active → makes one pane visible by default. -->
               </div>
             </div>
           </div>
+          <div class="dropdown">
+  <button class="btn dropdown-toggle" type="button" id="generateReceiptDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-receipt-cutoff me-2"></i> Generate Receipt
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="generateReceiptDropdown">
+    <li>
+      <a class="dropdown-item" href="../templates/receiptForm.html">
+        <i class="bi bi-receipt me-2"></i> Sales Receipt
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="../templates/depositForm.html">
+        <i class="bi bi-piggy-bank me-2"></i> Deposit Scheme Receipt
+      </a>
+    </li>
+  </ul>
+</div>
+
         </div>
       </div>
     </div>

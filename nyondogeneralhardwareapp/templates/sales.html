@@ -70,8 +70,8 @@
           <!-- Side bar links -->
           <div>
             <a
-              class="nav-link nav-list text-white active d-flex align-items-center"
-              href="./dashboard.html"
+              class="nav-link nav-list text-white  d-flex align-items-center"
+              href="{% url 'dashboard' %}"
             >
               <i class="bi bi-grid me-1"></i>
               <span>Dashboard</span>
@@ -79,7 +79,7 @@
           </div>
           <br />
           <div>
-            <a class="nav-link text-white" href="{% url 'sales' %}">
+            <a class="nav-link text-white active" href="{% url 'sales' %}">
               <i class="bi bi-cart3 me-2"></i>
               Sales</a
             >
@@ -106,7 +106,7 @@
           </div>
           <br />
 <div>
-            <a class="nav-link" href="{% url 'transport' %}"><i class="bi bi-truck-front me-1"></i> Transport</a>
+            <a class="nav-link" href="{% url 'customer-deposit' %}"><i class="bi bi-truck-front me-1"></i> Deposit Scheme</a>
           </div><br>
           <div>
             <a class="nav-link" href="{% url 'reports' %}"><i class="bi bi-bar-chart me-1"></i> Reports</a>
@@ -119,13 +119,13 @@
 
     <!-- Button to go to Sales Form -->
      <div class="text-end">
-    <a href="../sales-reg.html" class="btn  mb-3">
+    <a href="../templates/sales-reg.html" class="btn  mb-3">
       <i class="bi bi-plus-circle me-1"></i> Record New Sale
     </a>
 </div>
     <!-- Sales Table -->
     <table class="table table-striped">
-      <thead class="table-dark">
+      <thead class="custom-header">
         <tr>
           <th>Date</th>
           <th>Customer</th>

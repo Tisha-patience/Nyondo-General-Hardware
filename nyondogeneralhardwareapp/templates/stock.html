@@ -70,8 +70,8 @@
           <!-- Side bar links -->
           <div>
             <a
-              class="nav-link nav-list text-white active d-flex align-items-center"
-              href="./dashboard.html"
+              class="nav-link nav-list text-white d-flex align-items-center"
+              href="{% url 'dashboard' %}"
             >
               <i class="bi bi-grid me-1"></i>
               <span>Dashboard</span>
@@ -99,14 +99,14 @@
           </div>
           <br />
           <div>
-            <a class="nav-link text-white" href="{% url 'stock' %}">
+            <a class="nav-link text-white active" href="{% url 'stock' %}">
               <i class="bi bi-box-fill me-2"></i>
               Stock</a
             >
           </div>
           <br />
 <div>
-            <a class="nav-link" href="{% url 'transport' %}"><i class="bi bi-truck-front me-1"></i> Transport</a>
+            <a class="nav-link" href="{% url 'customer-deposit' %}"><i class="bi bi-truck-front me-1"></i> Deposit Scheme</a>
           </div><br>
           <div>
             <a class="nav-link" href="{% url 'reports' %}"><i class="bi bi-bar-chart me-1"></i> Reports</a>

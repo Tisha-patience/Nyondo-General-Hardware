@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nyondo Scheme Receipt</title>
+    <title>Admin Dashboard</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -116,82 +116,89 @@
             >
           </div>
           <br />
-          <div>
-            <div class="dropdown d-flex align-items-center">
-              <a
-                class="nav-link text-white me-1 d-flex align-items-center"
-                href="{% url 'supplier' %}"
-              >
-                <i class="bi bi-truck me-2"></i>
-                <span>Suppliers</span>
-              </a>
-            </div>
-          </div>
-          <br />
-          <div>
-            <a class="nav-link text-white" href="{% url 'stock' %}">
-              <i class="bi bi-box-fill me-2"></i>
-              Stock</a
-            >
-          </div>
-          <br />
-          <div>
-            <a class="nav-link" href="{% url 'customer' %}"
-              ><i class="bi-cash-stack me-1"></i> Customer Deposit</a
-            >
-          </div>
-          <br />
-          <div>
-            <a class="nav-link" href="{% url 'reports' %}"
-              ><i class="bi bi-bar-chart me-1"></i> Reports</a
-            >
-          </div>
+         
+          
+          
+          
+          
         </div>
-        <div class="col">
-          <!-- NYONDO Scheme Receipt Example -->
-          <div class="card mt-5">
-            <div class="card-body">
-              <h3 class="text-center">Temporary Receipt</h3>
-              <hr />
-              <p><strong>Receipt No:</strong> NYONDO-2026-001</p>
-              <p><strong>Date:</strong> 11 Apr 2026</p>
-              <p><strong>Customer:</strong> John Okello (NIN: CF12345678)</p>
-              <p><strong>Deposit Amount:</strong> 150,000 UGX</p>
-              <p><strong>Cumulative Deposits:</strong> 450,000 UGX</p>
-              <p>
-                <strong>Eligible Goods:</strong> 15 bags of Cement (based on
-                balance)
-              </p>
-              <hr />
-              <p class="text-muted">
-                This is a temporary receipt. Final goods allocation will be
-                confirmed at pickup.
-              </p>
-              <button class="btn"><i class="bi bi-printer"></i> Print</button>
-              <button class="btn">
-                <i class="bi bi-download"></i> Download PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="container-fluid">
-        <footer class="text-center border-top text-muted">
-          © 2026 Nyondo General Hardware LTD. All rights reserved. | Designed by
-          Tisha
-        </footer>
-      </div>
+<div class="col">
+<div class="container mt-4">
+  <h2 class="text-center mb-4">Sales Attendant Dashboard</h2>
 
-      <script
-        src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"
-      ></script>
-      <script
-        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"
-        integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
-        crossorigin="anonymous"
-      ></script>
+  <!-- Overview Cards -->
+  <div class="row mb-4">
+    <div class="col-md-4"><div class="card shadow text-center"><div class="card-body"><h6>Deposits Today</h6><p class="fs-4">UGX 1,200,000</p></div></div></div>
+    <div class="col-md-4"><div class="card shadow text-center"><div class="card-body"><h6>Receipts Issued</h6><p class="fs-4">25</p></div></div></div>
+    <div class="col-md-4"><div class="card shadow text-center"><div class="card-body"><h6>Sales Completed</h6><p class="fs-4">15</p></div></div></div>
+  </div>
+   <!-- Quick Actions -->
+  <div class="class  mb-5">
+      <a href="" class="btn">Record New Deposit</a>
+      <button class="btn">Generate Receipt</button>
+      <button class="btn">Record Sale</button>
     </div>
-  </body>
+ <!-- Sales Transactions Table -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <h4>Sales Transactions (Today)</h4>
+              <table class="table table-striped">
+                <thead><tr><th>Date</th><th>Participant</th><th>Product</th><th>Quantity</th><th>Total Value</th><th>Receipt</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>12 Apr 2026</td><td>John Doe</td><td>Cement</td><td>10 Bags</td><td>UGX 280,000</td><td>RCT-2026-010</td>
+                    <td><a href="./edit-sale.html?id=RCT-2026-010" class="btn btn-sm btn-warning">Edit</a></td>
+                  </tr>
+                  <tr>
+                    <td>12 Apr 2026</td><td>Jane Smith</td><td>Iron Sheets</td><td>5 Sheets</td><td>UGX 150,000</td><td>RCT-2026-011</td>
+                    <td><a href="./edit-sale.html?id=RCT-2026-011" class="btn btn-sm btn-warning">Edit</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Stock Listing Table -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <h4>Available Stock (Today)</h4>
+              <table class="table table-striped">
+                <thead><tr><th>Product</th><th>Available Quantity</th><th>Unit Price</th><th>Supplier</th><th>Action</th></tr></thead>
+                <tbody>
+                  <tr>
+                    <td>Cement</td><td>500 Bags</td><td>UGX 28,000</td><td>XYZ Traders</td>
+                    <td><a href="./edit-stock.html?id=cement" class="btn btn-sm btn-warning">Edit</a></td>
+                  </tr>
+                  <tr>
+                    <td>Iron Sheets</td><td>200 Sheets</td><td>UGX 30,000</td><td>ABC Supplies</td>
+                    <td><a href="./edit-stock.html?id=iron-sheets" class="btn btn-sm btn-warning">Edit</a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+ 
+
+  <!-- Recent Deposits Table -->
+  <div class="card shadow mb-4">
+    <div class="card-body">
+      <h4>Recent Deposits</h4>
+      <table class="table table-striped table-bordered">
+        <thead><tr><th>Date</th><th>Participant</th><th>NIN</th><th>Amount</th><th>Receipt</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>11 Apr 2026</td><td>John Doe</td><td>CF123456789</td><td>150,000</td><td>RCT-2026-001</td>
+            <td><a href="?id=RCT-2026-001" class="btn btn-sm btn-warning">Edit</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

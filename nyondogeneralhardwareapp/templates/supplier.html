@@ -71,8 +71,8 @@
           <!-- Side bar links -->
           <div>
             <a
-              class="nav-link nav-list text-white active d-flex align-items-center"
-              href="./dashboard.html"
+              class="nav-link nav-list text-white  d-flex align-items-center"
+              href="{% url 'dashboard' %}"
             >
               <i class="bi bi-grid me-1"></i>
               <span>Dashboard</span>
@@ -89,7 +89,7 @@
           <div>
             <div class="dropdown d-flex align-items-center">
               <a
-                class="nav-link text-white me-1 d-flex align-items-center"
+                class="nav-link text-white me-1  active d-flex align-items-center"
                 href="{% url 'supplier' %}"
               >
                 <i class="bi bi-truck me-2"></i>
@@ -107,7 +107,7 @@
           </div>
           <br />
 <div>
-            <a class="nav-link" href="{% url 'transport' %}"><i class="bi bi-truck-front me-1"></i> Transport</a>
+            <a class="nav-link" href="{% url 'customer-deposit' %}"><i class="bi bi-truck-front me-1"></i> Deposit Scheme</a>
           </div><br>
           <div>
             <a class="nav-link" href="{% url 'reports' %}"><i class="bi bi-bar-chart me-1"></i> Reports</a>
@@ -165,7 +165,7 @@
             <td>10 Apr 2026</td>
             <td>
               
-              <button class="btn btn-sm"><i class="bi bi-pencil"></i> Edit</button>
+              <a href="../templates/supplier-edit.html" class="btn btn-sm"><i class="bi bi-pencil"></i> Edit</a>
             </td>
           </tr>
         </tbody>
@@ -173,7 +173,7 @@
 
       <!-- Register Supplier Button -->
       <div class="text-end mt-3">
-        <a href="supplierReg.html" class="btn">
+        <a href="{% url 'supplierReg' %}" class="btn">
           <i class="bi bi-plus-circle me-1"></i> Register New Supplier
         </a>
       </div>
