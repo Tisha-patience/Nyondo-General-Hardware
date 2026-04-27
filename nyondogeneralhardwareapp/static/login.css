@@ -1,25 +1,66 @@
-body{
-      background: linear-gradient(135deg, #563f46, #6d4c55, #3c2f3d);
-  border-radius: 12px;
-  padding: 20px;
+body {
+  background: linear-gradient(135deg, #344955 0%, #2a3640 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  overflow: hidden;
+}
+
+/* Decorative background shapes */
+body::before {
+  content: "";
+  position: absolute;
+  top: -50px;
+  left: -50px;
+  width: 200px;
+  height: 200px;
+  background: rgba(152, 202, 50, 0.1);
+  border-radius: 50%;
+}
+
+body::after {
+  content: "";
+  position: absolute;
+  bottom: -80px;
+  right: -80px;
+  width: 250px;
+  height: 250px;
+  background: rgba(152, 202, 50, 0.1);
+  border-radius: 50%;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.card-title {
+  color: #344955;
+  font-weight: bold;
+}
+
+.form-control {
+  border: 1px solid #344955;
+  border-radius: 6px;
+}
+
+.form-control::placeholder {
+  color: #777;
+  opacity: 1;
+}
+
+.btn {
+  background-color: #98CA32;
   color: #fff;
-  box-shadow: 0 0 20px rgba(86, 63, 70, 0.6);
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background 0.3s ease;
 }
 
-.card-body{
-    background-color: #e6e2d3;
-     border-radius: 12px;
-  padding: 20px;
-  color:black;
-  box-shadow: 0 0 20px rgba(86, 63, 70, 0.6);
+.btn:hover {
+  background-color: #7aa628;
+}
 
-}
-.btn{
-     background-color: #625750;
-      background:  #563f46;
-  color: #d6d4e0;
-}
-.btn:hover{
-   background-color: #563f46;
-   color: #fff;
-}

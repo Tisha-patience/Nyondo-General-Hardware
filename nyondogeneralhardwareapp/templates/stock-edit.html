@@ -10,56 +10,95 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    />
 
-    <link rel="stylesheet" href="../static/stock-reg.css" />
+    <link rel="stylesheet" href="../static/sales-reg.css" />
   </head>
   <body class="shiny-background">
     <div class="container-fluid">
-        <div style="margin-left: 500px;">
-          <img src="../static/Images/Logo.png" style="height: 100px; width: 200px; justify-content: center" />
-        </div>
-        <div class="container mt-4">
-  <div class="card shadow mx-auto" style="max-width: 600px;">
-    <div class="card-body">
-      <h2 class="text-center">Edit Stock</h2>
-      <hr>
-      <form>
-        <div class="mb-3">
-          <label class="form-label">Product Name</label>
-          <input type="text" class="form-control" value="Cement (cem iiN)" readonly>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Quantity</label>
-          <input type="number" class="form-control" value="250" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Unit Price (UGX)</label>
-          <input type="number" class="form-control" value="30000" required>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Supplier</label>
-          <input type="text" class="form-control" value="XYZ Traders Ltd.">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Date Received</label>
-          <input type="date" class="form-control" value="2026-04-11">
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Notes</label>
-          <textarea class="form-control">Delivered in batch #CEM-2026-04</textarea>
-        </div>
-        <div class="row ">
-          <div class="col">
-            <button type="submit" class="btn">Save Changes</button>
+      <div style="margin-left: 500px">
+        <img
+          src="../static/Images/Logo.png"
+          style="height: 100px; width: 200px; justify-content: center"
+        />
+      </div>
+      <div class="container mt-4">
+        <div class="card shadow mx-auto" style="max-width: 600px">
+          <div class="card-body">
+            <h2 class="text-center">Edit Stock</h2>
+            <hr />
+            <form action="/" method="post">
+              <div class="mb-3">
+                <label class="form-label">Product Name</label>
+                <input
+                  type="text"
+                  name="product_name"
+                  class="form-control"
+                  value="Cement (cem iiN)"
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Quantity</label>
+                <input
+                  type="number"
+                  name="quantity"
+                  class="form-control"
+                  value="250"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Unit Price (UGX)</label>
+                <input
+                  type="number"
+                  name="unit_price"
+                  class="form-control"
+                  value="30000"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Supplier</label>
+                <input
+                  type="text"
+                  name="supplier"
+                  class="form-control"
+                  value="XYZ Traders Ltd."
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Date Received</label>
+                <input type="date" class="form-control" value="2026-04-11" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Notes</label>
+                <textarea class="form-control">
+Delivered in batch #CEM-2026-04</textarea
+                >
+              </div>
+              <div class="row">
+                <div class="col">
+                  <button type="submit" class="btn">Save Changes</button>
+                </div>
+                <div class="col text-end">
+                  <a href="stock.html" class="btn">
+                    <i class="bi bi-arrow-left me-1"></i> Back
+                  </a>
+                </div>
+              </div>
+            </form>
           </div>
-          <div class="col text-end">
-            <a href="stock.html" class="btn">
-              <i class="bi bi-arrow-left me-1"></i> Back
-            </a>
-          </div>
         </div>
-      </form>
+        <footer class="text-center">
+          © 2026 Nyondo General Hardware. All rights reserved. | Designed by
+          Tisha
+        </footer>
+      </div>
     </div>
-  </div>
-</div>
+  </body>
+</html>

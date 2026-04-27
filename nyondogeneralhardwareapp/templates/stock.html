@@ -19,28 +19,105 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark"
-     style="background: linear-gradient(135deg, #563f46, #6d4c55, #3c2f3d)">
-  <div class="container-fluid">
-    <!-- Logo -->
-    <a class="navbar-brand d-flex align-items-center" href="./dashboard.html">
-      <img src="../static/Images/Logo.png" alt="Logo" style="height: 60px; width: 200px;" />
-    </a>
+    <div class="d-flex" style="height: 100vh">
+<!-- Side bar links -->
+   
+      <!-- Sidebar -->
+      <aside
+        class="py-2 px-4 sidebar-gradient d-flex flex-column p-3"
+        style="width: 250px"
+      >
+      <img
+      src="../static/Images/Logo.png"
+      alt="Nyondo General Hardware Ltd Logo"
+      class="logo-img" style="height: 60px; width: 200px;"
+    />
+        <h6 class="mt-3 fw-bold">Menu</h6>
+        <hr />
+        <!-- Side bar links -->
+        <div>
+          <a
+            class="nav-link nav-list active align-items-center"
+            href="./dashboard.html"
+          >
+            <i class="bi bi-grid me-1"></i>
+            <span>Dashboard</span>
+          </a>
+        </div>
+        <br />
+        <div>
+          <a class="nav-link" href="{% url 'sales' %}">
+            <i class="bi bi-cart3 me-2"></i>
+            Sales</a
+          >
+        </div>
+        <br />
+        <div>
+          <div class="dropdown align-items-center">
+            <a
+              class="nav-link text-white me-1 d-flex align-items-center"
+              href="{% url 'supplier' %}"
+            >
+              <i class="bi bi-truck me-2"></i>
+              <span>Suppliers</span>
+            </a>
+          </div>
+        </div>
+        <br />
+        <div>
+          <a class="nav-link" href="{% url 'stock' %}">
+            <i class="bi bi-box-fill me-2"></i>
+            Stock</a
+          >
+        </div>
+        <br />
+        <div>
+          <a class="nav-link" href="{% url 'customer-deposit' %}"
+            ><i class="bi-cash-stack me-1"></i> Deposit Scheme</a
+          >
+        </div>
+        <br />
+        <div>
+          <a class="nav-link" href="{% url 'reports' %}"
+            ><i class="bi bi-bar-chart me-1"></i> Reports</a
+          >
+        </div>
+      </aside>
 
-    <!-- Search -->
-    <form class="d-flex mx-5" role="search">
-      <div class="position-relative">
-        <input class="form-control ps-5"
-               type="search"
-               placeholder="Search..."
-               aria-label="Search"
-               style="background: #3c2f3d; border: 2px solid #a67c8a; color: #d6d4e0;">
-        <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-white"></i>
-      </div>
-    </form>
+<!-- Main Area -->
+      <div class="flex-grow-1 d-flex flex-column">
+        <!-- Header -->
+        <nav class="navbar nav px-3 shadow-sm">
+          <div class="container-fluid">
+            <!-- Search -->
+            <form class="d-flex me-auto" style="max-width: 400px; flex: 1">
+              <div class="position-relative w-100">
+                <input
+                  class="form-control ps-5"
+                  type="search"
+                  placeholder="Search..."
+                  aria-label="Search"
+              
+    
+                />
+                <i
+                  class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
+                ></i>
+              </div>
+            </form>
 
-    <!-- Navbar Links -->
-      <li class="nav-item dropdown">
+            <!-- Right side -->
+            <ul class="navbar-nav ms-auto d-flex align-items-center flex-row">
+              <li class="nav-item me-3 position-relative">
+                <a class="nav-link" href="#">
+                  <i class="bi bi-bell fs-5"></i>
+                  <span
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                    >3</span
+                  >
+                </a>
+              </li>
+             <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
           <i class="bi bi-person-circle me-1"></i> Admin
         </a>
@@ -51,69 +128,14 @@
           <li><a class="dropdown-item" href="./logout.html"><i class="bi bi-box-arrow-right me-1"></i> Logout</a></li>
         </ul>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#"><i class="bi bi-bell" style="font-size: 20px;"></i></a>
-      </li>
-    </ul>
-  </div>
-</nav>
-<!-- Side bar links -->
-    <div class="container-fluid flex-grow-1">
-      <div class="row h-100">
-        <div
-          class="col-sm-2 py-2 px-5 sidebar-gradient d-flex flex-column"
-        
-        >
-          <h6 class="text-white mt-3 fw-bold">Menu</h6>
-          <hr />
+              </li>
+            </ul>
+          </div>
+        </nav>
 
-          <!-- Side bar links -->
-          <div>
-            <a
-              class="nav-link nav-list text-white d-flex align-items-center"
-              href="{% url 'dashboard' %}"
-            >
-              <i class="bi bi-grid me-1"></i>
-              <span>Dashboard</span>
-            </a>
-          </div>
-          <br />
-          <div>
-            <a class="nav-link text-white" href="{% url 'sales' %}">
-              <i class="bi bi-cart3 me-2"></i>
-              Sales</a
-            >
-          </div>
-          <br />
-          <div>
-            <div class="dropdown d-flex align-items-center">
-              <a
-                class="nav-link text-white me-1 d-flex align-items-center"
-                href="{% url 'supplier' %}"
-              >
-                <i class="bi bi-truck me-2"></i>
-                <span>Suppliers</span>
-              </a>
-             
-            </div>
-          </div>
-          <br />
-          <div>
-            <a class="nav-link text-white active" href="{% url 'stock' %}">
-              <i class="bi bi-box-fill me-2"></i>
-              Stock</a
-            >
-          </div>
-          <br />
-<div>
-            <a class="nav-link" href="{% url 'customer-deposit' %}"><i class="bi bi-truck-front me-1"></i> Deposit Scheme</a>
-          </div><br>
-          <div>
-            <a class="nav-link" href="{% url 'reports' %}"><i class="bi bi-bar-chart me-1"></i> Reports</a>
-          </div>
-        </div>
+
         <div class="col">
-          <h5 class="mt-4">Welcome to Nyondo Stock Hardware</h5>
+          <h5 class="mt-4 px-2">Welcome to Nyondo Stock Hardware</h5>
 
       <div class="container mt-4">
         <div class="card shadow">
@@ -144,7 +166,7 @@
                   <td>XYZ Traders Ltd.</td>
                   <td>11 Apr 2026</td>
                   <td>
-                    <button class="btn btn-sm "><i class="bi bi-pencil"></i> Edit</button>
+                    <a href="{% url 'stock-edit' %}" class="btn btn-sm "><i class="bi bi-pencil"></i> Edit</a>
                   </td>
                 </tr>
                 <tr>
@@ -156,7 +178,7 @@
                   <td>ABC Supplies</td>
                   <td>10 Apr 2026</td>
                   <td>
-                    <button class="btn btn-sm "><i class="bi bi-pencil"></i> Edit</button>
+                    <a href="{% url 'stock-edit' %}" class="btn btn-sm "><i class="bi bi-pencil"></i> Edit</a>
                   </td>
                 </tr>
               </tbody>
@@ -173,14 +195,21 @@
             </table>
 
             <div class="text-end mt-3">
-              <a href="stock-reg.html" class="btn">
+              <a href="{% url 'stock-reg' %}" class="btn">
                 <i class="bi bi-plus-circle me-1"></i> Register New Stock
               </a>
             </div>
           </div>
         </div>
+        
         </div>
-      
+         <footer class="text-center">
+            © 2026 Nyondo General Hardware. All rights reserved. | Designed by
+            Tisha
+          </footer>
+      </div>
+</div>
+</div>
      
        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
     integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"

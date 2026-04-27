@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title>Sales Dashboard</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -102,7 +102,7 @@
           <div>
             <a
               class="nav-link nav-list text-white active d-flex align-items-center"
-              href="./dashboard.html"
+              href="{% url 'dashboard' %}"
             >
               <i class="bi bi-grid me-1"></i>
               <span>Dashboard</span>
@@ -132,12 +132,35 @@
     <div class="col-md-4"><div class="card shadow text-center"><div class="card-body"><h6>Receipts Issued</h6><p class="fs-4">25</p></div></div></div>
     <div class="col-md-4"><div class="card shadow text-center"><div class="card-body"><h6>Sales Completed</h6><p class="fs-4">15</p></div></div></div>
   </div>
-   <!-- Quick Actions -->
-  <div class="class  mb-5">
-      <a href="" class="btn">Record New Deposit</a>
-      <button class="btn">Generate Receipt</button>
-      <button class="btn">Record Sale</button>
-    </div>
+   <!-- Action Buttons Row -->
+  <div class="d-flex mb-3 gap-2">
+    <!-- Record Sale -->
+    <a href="../templates/sales-reg.html" class="btn">
+      <i class="bi bi-cart-plus me-2"></i> Record Sale
+    </a>
+
+    <!-- Record Deposit -->
+    <a href="../templates/depositForm.html" class="btn">
+      <i class="bi bi-piggy-bank me-2"></i> Record Deposit
+    </a>
+    <div class="dropdown ">
+  <button class="btn dropdown-toggle" type="button" id="generateReceiptDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="bi bi-receipt-cutoff me-2"></i> Generate Receipt
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="generateReceiptDropdown">
+    <li>
+      <a class="dropdown-item" href="../templates/receiptForm.html">
+        <i class="bi bi-receipt me-2"></i> Sales Receipt
+      </a>
+    </li>
+    <li>
+      <a class="dropdown-item" href="../templates/depositForm.html">
+        <i class="bi bi-piggy-bank me-2"></i> Deposit Scheme Receipt
+      </a>
+    </li>
+  </ul>
+</div>
+</div>
  <!-- Sales Transactions Table -->
           <div class="card mb-4">
             <div class="card-body">

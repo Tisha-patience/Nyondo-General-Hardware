@@ -28,7 +28,8 @@
         <div class="card-body">
           <h2 class="text-center">NYONDO Deposit Receipt Form</h2>
           <hr />
-          <form>
+          <form action="/" method="post">
+            {% csrf_token %}
             <div class="mb-3">
               <label class="form-label">Receipt No</label>
               <input type="text" class="form-control" value="RCT-2026-001" readonly />
@@ -39,23 +40,19 @@
             </div>
             <div class="mb-3">
               <label class="form-label">Participant Name</label>
-              <input type="text" class="form-control" placeholder="Enter participant name" />
+              <input type="text" class="form-control" name="participant_name" placeholder="Enter participant name" required />
             </div>
             <div class="mb-3">
               <label class="form-label">NIN</label>
-              <input type="text" class="form-control" placeholder="Enter NIN" />
+              <input type="text"  name="nin" class="form-control" placeholder="Enter NIN" required/>
             </div>
             <div class="mb-3">
               <label class="form-label">Phone</label>
-              <input type="tel" class="form-control" placeholder="Enter phone number" />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Employer</label>
-              <input type="text" class="form-control" placeholder="Enter employer name" />
+              <input type="tel"  name="phone_number" class="form-control" placeholder="Enter phone number" required/>
             </div>
             <div class="mb-3">
               <label class="form-label">Amount Paid</label>
-              <input type="text" class="form-control" placeholder="Enter deposit amount" />
+              <input type="text" name="amount_paid" class="form-control" placeholder="Enter deposit amount"  required/>
             </div>
             <div class="mb-3">
               <label class="form-label">Cumulative Balance</label>
@@ -67,6 +64,10 @@
           </form>
         </div>
       </div>
+      <footer class="text-center">
+        © 2026 Nyondo General Hardware. All rights reserved. | Designed by Tisha
+      </footer>
+    
     </div>
   </body>
 </html>

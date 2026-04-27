@@ -29,7 +29,14 @@ urlpatterns = [
     path('reports/', views.reports, name='reports'),
     path('customer-deposit/', views.customer_deposit, name='customer-deposit'),
     path('supplierReg/', views.supplier_reg, name='supplierReg'),
-    path('back/', views.index, name='back'),
+    path('back/', views.back, name='back'),
+    path('receipt/', views.receipt, name='receipt'),
+    path('supplier-edit/', views.supplier_edit, name='supplier-edit'),
+    path('sales-reg/', views.sales_reg, name='sales-reg'),
+    path('stock-edit/', views.stock_edit, name='stock-edit'),
+    path('stock-reg/', views.stock_reg, name='stock-reg'),
+    path('receiptForm/', views.receipt_form, name='receiptForm'),
+    path('depositForm/', views.deposit_form, name='depositForm'),
    
     
 ]
