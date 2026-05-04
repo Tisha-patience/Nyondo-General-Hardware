@@ -26,6 +26,12 @@ urlpatterns = [
     path('accounts/dashboard/', views.dashboard, name='accountsdashboard'),
     path('accounts/sales/', views.sales, name='accountssales'),
     path('accounts/supplier/', views.supplier, name='accountssupplier'),
+    # Supplier actions with ID + slug
+    path("supplier/<int:pk>-<slug:slug>/deactivate/", views.deactivate_supplier, name="deactivate_supplier"),
+    path("supplier/<int:pk>-<slug:slug>/activate/", views.activate_supplier, name="activate_supplier"),
+    path("supplier/<int:pk>-<slug:slug>/view/", views.supplier_view, name="supplier_view"),
+    path("supplier/<int:pk>-<slug:slug>/edit/", views.supplier_edit, name="supplier_edit"),
+    path("supplier/<int:pk>-<slug:slug>/delete/", views.supplier_delete, name="supplier_delete"),
     path('accounts/stock/', views.stock, name='accountsstock'),
     path('accounts/reports/', views.reports, name='accountsreports'),
     path('accounts/customer-deposit/', views.customer_deposit, name='accountscustomer-deposit'),

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Supplier Details{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-sm" style="width: 500px;">
+    <div class="card-body">
+  <h4>{{ supplier.supplier_name }}</h4>
+  <p><strong>Contact:</strong> {{ supplier.contact_number }}</p>
+  <p><strong>Email:</strong> {{ supplier.email }}</p>
+  <p><strong>Address:</strong> {{ supplier.address }}</p>
+  <p><strong>Payment Terms:</strong> {{ supplier.payment_terms }}</p>
+  <p><strong>Credit Terms:</strong> {{ supplier.credit_terms }}</p>
+  <p><strong>Status:</strong> {% if supplier.is_active %} Active {% else %} Inactive {% endif %}</p>
+
+  <a href="{% url 'accountssupplier' %}" class="btn">Back</a>
+  </div>
+  </div>
+  </div>
+{% endblock %}

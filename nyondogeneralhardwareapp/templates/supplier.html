@@ -56,8 +56,9 @@
           <th>Name</th>
           <th>Phone</th>
           <th>Address</th>
-          <th>Email</th>
+           <th>Status</th>
           <th>Payment Terms</th>
+         
           <th>Credit Terms</th>
           <th>Actions</th>
         </tr>
@@ -68,8 +69,14 @@
         <td>{{ supplier.supplier_name }}</td>
         <td>{{ supplier.contact_number }}</td>
         <td>{{ supplier.address }}</td>
-        <td>{{ supplier.email }}</td>
-
+         <!-- Status badge -->
+        <td>
+          {% if supplier.is_active %}
+            <span class="badge bg-success">Active</span>
+          {% else %}
+            <span class="badge bg-secondary">Inactive</span>
+          {% endif %}
+        </td>
          <td>
         {% if supplier.get_payment_terms_display == "Cash" %}
           <span class="badge bg-success">Cash</span>
@@ -84,7 +91,43 @@
           —   <!-- shows a dash instead of None -->
         {% endif %}
       </td>
+      <!-- Action buttons -->
+        <td>
+  <!-- View -->
+  <a href="{% url 'supplier_view' supplier.id supplier.slug %}" 
+     class="btn btn-sm " title="View">
+     <i class="bi bi-eye"></i>
+  </a>
+
+  <!-- Edit -->
+  <a href="{% url 'supplier_edit' supplier.id supplier.slug %}" 
+     class="btn btn-sm" title="Edit">
+     <i class="bi bi-pencil"></i>
+  </a>
+
+  <!-- Delete -->
+  <a href="{% url 'supplier_delete' supplier.id supplier.slug %}" 
+     class="btn btn-sm" title="Delete">
+     <i class="bi bi-trash"></i>
+  </a>
+
+  <!-- Activate/Deactivate -->
+  {% if supplier.is_active %}
+    <a href="{% url 'deactivate_supplier' supplier.id supplier.slug %}" 
+       class="btn btn-sm " title="Deactivate">
+       <i class="bi bi-slash-circle"></i>
+    </a>
+  {% else %}
+    <a href="{% url 'activate_supplier' supplier.id supplier.slug %}" 
+       class="btn btn-sm" title="Activate">
+       <i class="bi bi-check-circle"></i>
+    </a>
+  {% endif %}
+</td>
+
+
         
+
       </tr>
     {% empty %}
       <tr><td colspan="6">No suppliers yet.</td></tr>

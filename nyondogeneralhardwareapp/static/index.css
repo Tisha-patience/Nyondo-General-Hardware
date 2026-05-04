@@ -88,8 +88,9 @@ img{
 }
 .custom-header th{
    /* background: #F2F2F2; */
-   background: #0ABAB5;
-   color: #344955;
+   background:  #50727B;
+   color: #fff;
+   /* color: #fff; */
    text-align: center;
 }
 
@@ -141,8 +142,8 @@ h6{
   background:  #344955;
 }
 .dropdown-item:hover{
-  background-color:  #98CA32;
-   color: #fff;
+  background-color:  #fff;
+   color:  #344955;
 }
 
 .tab-pane {
@@ -176,7 +177,7 @@ hr{
   box-shadow: 0 6px 12px rgba(0,0,0,0.2); /* stronger shadow */
 }
 footer{
-  color: #0ABAB5;
+  color:  #344955;
 }
 .card-custom {
   border-top: 6px solid #F9AA33; /* your accent color */

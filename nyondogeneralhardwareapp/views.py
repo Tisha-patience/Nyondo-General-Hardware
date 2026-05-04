@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from nyondogeneralhardwareapp.models import Stock, Supplier
 
 # Create your views here.
@@ -39,6 +40,27 @@ def supplier(request):
     return render(request, "supplier.html", context)
     return render(request, 'supplier.html')
 
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Supplier
+
+def deactivate_supplier(request, supplier_id):
+    supplier = get_object_or_404(Supplier, id=supplier_id)
+    supplier.is_active = False
+    supplier.save()
+    messages.warning(request, f"Supplier {supplier.supplier_name} has been deactivated.")
+    return redirect("accountssupplier")   # redirect back to supplier list
+
+def activate_supplier(request, supplier_id):
+    supplier = get_object_or_404(Supplier, id=supplier_id)
+    supplier.is_active = True
+    supplier.save()
+    messages.success(request, f"Supplier {supplier.supplier_name} has been reactivated.")
+    return redirect("accountssupplier")
+
+
+
+
 def stock(request):
     stocks = Stock.objects.all()
     return render(request, 'stock.html', {"stocks" : stocks})
@@ -71,7 +93,7 @@ def supplier_reg(request):
             credit_terms= sent_credit_terms,
         )
         return redirect ('accountssupplier')
-     print(request.POST)
+     
      return render(request, 'supplierReg.html')
 
 def back(request):
@@ -80,8 +102,23 @@ def back(request):
 def receipt(request):
     return render(request, 'receipt.html')
 
-def supplier_edit(request):
-    return render(request, 'supplier-edit.html')
+def supplier_edit(request, pk, slug):
+    supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
+    if request.method == "POST":
+        # Collect values manually from the form fields
+        supplier.supplier_name = request.POST.get("supplier_name")
+        supplier.contact_number = request.POST.get("contact_number")
+        supplier.email = request.POST.get("email")
+        supplier.address = request.POST.get("address")
+        supplier.payment_terms = request.POST.get("payment_terms")
+        supplier.credit_terms = request.POST.get("credit_terms")
+
+        # Save changes
+        supplier.save()
+        return redirect("accountssupplier") 
+
+
+    return render(request, 'supplier-edit.html', {"supplier":supplier})
 
 def sales_reg(request):
     return render(request, 'sales-reg.html')
@@ -105,7 +142,10 @@ def stock_reg(request):
         # ✅ fetch the Supplier object
         supplier = Supplier.objects.get(id=sent_supplier)
 
-
+ # ✅ Block inactive suppliers
+        if not supplier.is_active:
+            messages.error(request, "This supplier is deactivated. Choose another supplier.")
+            return redirect("accountsstock-reg")
 
         Stock.objects.create(
             product_name = sent_product_name,
@@ -122,7 +162,7 @@ def stock_reg(request):
         return redirect ('accountsstock')
 
 
-    suppliers = Supplier.objects.all()
+    suppliers = Supplier.objects.filter(is_active=True)
 
     return render(request, 'stock-reg.html', {"suppliers": suppliers})
 
@@ -135,4 +175,13 @@ def deposit_form(request):
         
     return render(request, 'depositForm.html')
 
-
+def supplier_view(request, pk, slug ):
+    supplier = get_object_or_404(Supplier, pk=pk,slug=slug)
+    return render(request, "supplier_view.html", {"supplier": supplier})
+    
+def supplier_delete(request, pk, slug):
+    supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
+    if request.method == "POST":
+        supplier.delete()
+        return redirect("accountssupplier")  # back to supplier list
+    return render(request, "supplier_delete.html", {"supplier": supplier})

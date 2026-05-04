@@ -13,15 +13,10 @@ body {
 }
 
 h2{
-  color: #98CA32;
+  color:  #344955;
 }
 
-.btn {
-  /* background: #563f46; */
-   background:  #7aa628;
-  color: #fff;
-  font-weight: bold;
-}
+
 
 .main {
   margin-right: 200px;
@@ -52,10 +47,16 @@ h2{
   background: rgba(255,255,255,0.12);
   outline: none;
 }
+.btn {
+  background-color:  #344955;
+  color: #fff;
+  font-weight: bold;
+  border-radius: 6px;
+  transition: background 0.3s ease;
+}
+
 .btn:hover {
-  transform: scale(1.02);
-  box-shadow: 0 0 25px rgba(152,202,50,0.8);
-  background-color: #7aa628;
+  background-color: #0ABAB5;
 }
 input{
   background-color: white;
@@ -69,5 +70,5 @@ h5{
   color: #fff;
 }
 footer{
-  color: #98CA32;
+  color: #0ABAB5;
 }

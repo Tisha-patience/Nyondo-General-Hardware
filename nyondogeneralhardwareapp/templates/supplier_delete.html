@@ -1,0 +1,18 @@
+{% extends "baseForm.html" %}
+
+{% block title %}Delete Supplier{% endblock %}
+
+{% block content %}
+  <h3>Delete Supplier</h3>
+  <p>Are you sure you want to delete <strong>{{ supplier.supplier_name }}</strong>?</p>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn">
+      <i class="bi bi-trash"></i> Yes, Delete
+    </button>
+    <a href="{% url 'accountssupplier' %}" class="btn">
+      <i class="bi bi-arrow-left"></i> Cancel
+    </a>
+  </form>
+{% endblock %}

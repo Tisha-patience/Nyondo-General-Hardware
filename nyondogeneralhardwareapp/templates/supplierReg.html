@@ -7,48 +7,31 @@
       <form action="/accounts/supplierReg/" method="post">
         {% csrf_token %}
         <!-- Supplier Info -->
-        <div class="mb-3">
-          <label class="form-label">Supplier Name</label>
-          <input
-            type="text"
-            name="supplier_name"
-            class="form-control"
-            placeholder="Enter supplier name"
-            required
-          />
+       <!-- Supplier Name + Contact Number in one row -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Supplier Name</label>
+            <input type="text" name="supplier_name" class="form-control"
+                   placeholder="Enter supplier name" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Contact Number</label>
+            <input type="text" name="contact_number" class="form-control"
+                   placeholder="Enter phone number" required />
+          </div>
         </div>
-
-        <div class="mb-3">
-          <label class="form-label">Contact Number</label>
-          <input
-            type="text"
-            name="contact_number"
-            class="form-control"
-            placeholder="Enter phone number"
-            required
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input
-            type="email"
-            name="email"
-            class="form-control"
-            placeholder="Enter email"
-            required
-          />
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label">Address</label>
-          <input
-            type="text"
-            name="address"
-            class="form-control"
-            placeholder="Enter address"
-            required
-          />
+        <!-- Email + Address in one row -->
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control"
+                   placeholder="Enter email" required />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Address</label>
+            <input type="text" name="address" class="form-control"
+                   placeholder="Enter address" required />
+          </div>
         </div>
 
         <!-- Payment Terms -->
