@@ -10,7 +10,8 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="../static/login.css" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'login.css'%}?v={{ time }}" />
   </head>
   <body class="d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow" style="width: 400px">

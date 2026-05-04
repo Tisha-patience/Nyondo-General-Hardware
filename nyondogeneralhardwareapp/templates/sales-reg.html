@@ -19,7 +19,7 @@
   </head>
 
   <body>
-    <div style="margin-left: 500px">
+    <div style="margin-left: 600px">
       <img
         src="../static/Images/Logo.png"
         alt="Logo"
@@ -29,12 +29,13 @@
     <div class="container">
       <div
         class="card shadow"
-        style="margin: 20px; margin-left: 300px; width: 500px"
+        style="margin: 20px; margin-left: 370px; width: 500px"
       >
         <div class="card-body">
           <h1 class="card-title text-center">Sales Form</h1>
           <hr />
-          <form>
+          <form method="post" action="/">
+            {% csrf_token %}
             <h2 class="text-center">Customer Details</h2>
 
             <div class="row my-3">
@@ -46,7 +47,6 @@
                   class="form-control"
                   placeholder="Full name"
                   aria-label="Full name"
-                  style="background-color: white"
                 />
               </div>
               <div class="col">
@@ -62,20 +62,7 @@
               </div>
             </div>
             <!-- end section 1 -->
-            <div class="col">
-              <label for="customerType" class="form-label">Type</label>
-              <select
-                class="form-select"
-                id="customerType"
-                aria-label="Customer type"
-                style="background-color: white"
-              >
-                <option selected disabled>Select a customer type</option>
-                <option value="retail">retail customer</option>
-                <option value="wholesale">wholesale customer</option>
-                <option value="individual">Individual buyer</option>
-              </select>
-            </div>
+            
             <hr />
             <!-- end of section 2 -->
 
@@ -194,41 +181,53 @@
                 <i class="bi bi-plus-circle me-1"></i> Add Item
               </button>
             </div>
-            <div class="mb-3">
-              <label class="form-label">Customer Location</label>
-              <select
-                class="form-select"
-                name="location"
+            <!-- Total Amount -->
+            <div class="form-group">
+              <label for="total_price">Total Amount (UGX)</label>
+              <input
+                type="number"
+                step="0.01"
+                name="total_price"
+                id="total_price"
+                class="form-control"
                 required
-                style="background-color: white"
-              >
-                <option value="nabweru">Nabweru (5 km)</option>
-                <option value="wakiso">Wakiso Town (8 km)</option>
-                <option value="kampala">Kampala Central (12 km)</option>
-              </select>
-            </div>
-
-            <div class="mb-3">
-              <label class="form-label">Goods Value (UGX)</label>
-              <input
-                type="number"
-                class="form-control"
-                id="goodsValue"
-                readonly
-                style="background-color: white"
               />
+              <small class="form-text text-muted">
+                This should equal <strong>quantity × unit price</strong>.
+              </small>
             </div>
-
-            <div class="mb-3">
-              <label class="form-label">Transport Cost</label>
+            <!-- Transport Distance -->
+            <div class="form-group">
+              <label for="distance_km">Delivery Distance (km)</label>
               <input
                 type="number"
+                name="distance_km"
+                id="distance_km"
                 class="form-control"
+                min="0"
+              />
+              <small class="form-text text-muted">
+                Free transport if within 10 km and total ≥ 500,000 UGX, else
+                30,000 UGX.
+              </small>
+            </div>
+
+            <!-- Transport Cost -->
+            <div class="form-group">
+              <label for="transport_cost">Transport Cost (UGX)</label>
+              <input
+                type="number"
+                step="0.01"
                 name="transport_cost"
+                id="transport_cost"
+                class="form-control"
                 readonly
-                style="background-color: white"
               />
+              <small class="form-text text-muted">
+                Auto-calculated based on distance and total amount.
+              </small>
             </div>
+
             <div class="row">
               <div class="col">
                 <button type="submit" class="btn">Save Sale</button>

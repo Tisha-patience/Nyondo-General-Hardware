@@ -37,7 +37,7 @@ h2{
   font-weight: bold;
 }
 .form-control, .form-select {
-  background: rgba(255,255,255,0.08);
+  background: #fff;
   border: 1px solid #344955;
   color: #344955;
   border-radius: 8px;
@@ -53,14 +53,15 @@ h2{
   outline: none;
 }
 .btn:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
   box-shadow: 0 0 25px rgba(152,202,50,0.8);
+  background-color: #7aa628;
 }
 input{
   background-color: white;
 }
 hr{
-  color: #98CA32;
+  color:#344955;
 }
 h5{
   text-align: center;

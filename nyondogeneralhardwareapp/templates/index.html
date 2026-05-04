@@ -12,7 +12,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../static/welcome.css" />
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'welcome.css'%}?v={{ time }}"/>
     <style></style>
   </head>
   <body>

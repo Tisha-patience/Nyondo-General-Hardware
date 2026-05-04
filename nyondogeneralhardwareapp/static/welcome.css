@@ -25,7 +25,7 @@ body::before {
   left: -50px;
   width: 200px;
   height: 200px;
-  background: rgba(152, 202, 50, 0.1);
+  background: #0abab455;
   border-radius: 50%;
 }
 
@@ -36,7 +36,7 @@ body::after {
   right: -80px;
   width: 250px;
   height: 250px;
-  background: rgba(152, 202, 50, 0.1);
+  background: #0abab455;
   border-radius: 50%;
 }
 
@@ -64,17 +64,17 @@ body::after {
 /* Headings glow */
 h1 {
   color: #fff;
-  text-shadow: 0 0 15px rgba(152,202,50,0.6);
+  /* text-shadow: 0 0 15px rgba(152,202,50,0.6); */
 }
 
 /* Button with animated shine */
 .btn-enter {
-  background: linear-gradient(90deg, #98CA32, #7aa628);
+  background: linear-gradient(90deg,#0ABAB5, #0ABAB5 );
   color: #fff;
   font-weight: bold;
   border-radius: 30px;
   padding: 12px 30px;
-  box-shadow: 0 0 20px rgba(152,202,50,0.6);
+  /* box-shadow: 0 0 20px rgba(152,202,50,0.6); */
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -98,5 +98,5 @@ h1 {
 
 .btn-enter:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(152,202,50,0.8);
+  /* box-shadow: 0 0 30px rgba(152,202,50,0.8); */
 }

@@ -1,24 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Store Manager Dashboard | Nyondo Stock</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="../static/dashboard.css"/>
 </head>
 <body>
-    <ul class="nav">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" href="#">Active</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Link</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Link</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-  </li>
-</ul>
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark" style="background:#344955;">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="#">Store Manager Dashboard</a>
+      <i class="bi bi-bell-fill" id="notifIcon"></i>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container py-4">
+    <!-- Metrics Cards -->
+    <div class="row g-4 mb-4">
+      <div class="col-md-3">
+        <div class="card shadow border-start border-3" style="border-color:#98CA32;">
+          <div class="card-body">
+            <h6>Stock Value</h6>
+            <h4>UGX 8,000,000</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card shadow border-start border-3" style="border-color:#98CA32;">
+          <div class="card-body">
+            <h6>Pending Orders</h6>
+            <h4>12</h4>
+          </div>
+        </div>
+      </div>
+      <!-- Add more cards -->
+    </div>
+
+    <!-- Stock Table -->
+    <div class="card shadow">
+      <div class="card-body">
+        <h6>Stock Levels</h6>
+        <table class="table table-hover">
+          <thead>
+            <tr><th>Product</th><th>Quantity</th><th>Reorder Level</th></tr>
+          </thead>
+          <tbody>
+            <tr class="table-danger"><td>Cement</td><td>20</td><td>50</td></tr>
+            <tr><td>Iron Bars</td><td>120</td><td>100</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mt-4">
+      <button class="btn btn-success me-2">Add Sale</button>
+      <button class="btn btn-primary me-2">Add Stock</button>
+      <button class="btn btn-secondary">Generate Report</button>
+    </div>
+  </div>
 </body>
 </html>
