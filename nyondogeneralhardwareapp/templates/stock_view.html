@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Stock Details{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-sm" style="width: 500px;">
+    <div class="card-body">
+  
+<h4 class="card-title">{{ stock.product_name }}</h4>
+      <p><strong>Specification:</strong> {{ stock.specification }}</p>
+      <p><strong>Quantity:</strong> {{ stock.quantity }} {{ stock.unit }}</p>
+      <p><strong>Unit Cost:</strong> UGX {{ stock.unit_cost }}</p>
+      <p><strong>Unit Price:</strong> UGX {{ stock.unit_price }}</p>
+      <p><strong>Supplier:</strong> {{ stock.supplier.supplier_name }}</p>
+      <p><strong>Payment Mode:</strong> {{ stock.payment_mode }}</p>
+      <p><strong>Credit Terms:</strong> {{ stock.credit_terms|default:"—" }}</p>
+      <p><strong>Date Received:</strong> {{ stock.date_received }}</p>
+  <a href="{% url 'accountsstock' %}" class="btn">Back</a>
+  </div>
+  </div>
+  </div>
+{% endblock %}

@@ -25,6 +25,9 @@ urlpatterns = [
     # Central Accounts/Admin hub
     path('accounts/dashboard/', views.dashboard, name='accountsdashboard'),
     path('accounts/sales/', views.sales, name='accountssales'),
+    path("sales/<int:pk>/", views.sale_view, name="sale_view"),
+    path("sales/<int:pk>/edit/", views.sale_edit, name="sale_edit"),
+    path("sales/<int:pk>/delete/", views.sale_delete, name="sale_delete"),
     path('accounts/supplier/', views.supplier, name='accountssupplier'),
     # Supplier actions with ID + slug
     path("supplier/<int:pk>-<slug:slug>/deactivate/", views.deactivate_supplier, name="deactivate_supplier"),
@@ -33,6 +36,9 @@ urlpatterns = [
     path("supplier/<int:pk>-<slug:slug>/edit/", views.supplier_edit, name="supplier_edit"),
     path("supplier/<int:pk>-<slug:slug>/delete/", views.supplier_delete, name="supplier_delete"),
     path('accounts/stock/', views.stock, name='accountsstock'),
+    path("stock/<int:pk>/", views.stock_view, name="stock_view"),
+    path("stock/<int:pk>/edit/", views.stock_edit, name="stock_edit"),
+    path("stock/<int:pk>/delete/", views.stock_delete, name="stock_delete"),
     path('accounts/reports/', views.reports, name='accountsreports'),
     path('accounts/customer-deposit/', views.customer_deposit, name='accountscustomer-deposit'),
     path('accounts/supplierReg/', views.supplier_reg, name='accountssupplierReg'),

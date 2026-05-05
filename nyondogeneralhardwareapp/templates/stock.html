@@ -16,6 +16,7 @@
               <th>Quantity</th>
               <th>Unit Price</th>
               <th>Payment Mode</th>
+              <th>Credit Terms</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -44,9 +45,37 @@
                 {% endif %}
               </td>
               <td>
-                <a href="#" class="btn btn-sm btn-outline-info">View</a>
-                <a href="#" class="btn btn-sm btn-outline-primary">Update</a>
-                <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                {% if stock.credit_terms %} {{ stock.credit_terms }} {% else %}
+                — {% endif %}
+              </td>
+
+              <td>
+                <!-- View -->
+                <a
+                  href="{% url 'stock_view' stock.id %}"
+                  class="btn btn-sm"
+                  title="View"
+                >
+                  <i class="bi bi-eye"></i>
+                </a>
+
+                <!-- Edit -->
+                <a
+                  href="{% url 'stock_edit' stock.id  %}"
+                  class="btn btn-sm"
+                  title="Edit"
+                >
+                  <i class="bi bi-pencil"></i>
+                </a>
+
+                <!-- Delete -->
+                <a
+                  href="{% url 'stock_delete' stock.id  %}"
+                  class="btn btn-sm"
+                  title="Delete"
+                >
+                  <i class="bi bi-trash"></i>
+                </a>
               </td>
             </tr>
             {% empty %}

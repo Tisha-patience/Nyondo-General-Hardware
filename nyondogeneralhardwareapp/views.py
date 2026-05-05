@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from nyondogeneralhardwareapp.models import Stock, Supplier
+from django.db.models import ProtectedError
+from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem
 
 # Create your views here.
 def index(request):
@@ -17,29 +18,75 @@ def dashboard(request):
     return render(request, 'dashboard.html', context)
 
 def sales(request):
-    return render(request, 'sales.html')
+    # Fetch all sales and their related items in one go
+    sales = Sale.objects.prefetch_related("items").all()
+
+    # Total number of sales
+    total_sales = sales.count()
+
+    # Total revenue = sum of grand totals (not sale.total_price, since that's per item)
+    total_revenue = sum(sale.grand_total for sale in sales)
+
+    context = {
+        "sales": sales,
+        "total_sales": total_sales,
+        "total_revenue": total_revenue,
+    }
+    return render(request, "sales.html", context)
+
+def sale_view(request, pk):
+    sale = get_object_or_404(Sale, pk=pk)
+    return render(request, "sale_view.html", {"sale": sale})
+
+def sale_edit(request, pk):
+    sale = get_object_or_404(Sale, pk=pk)
+    if request.method == "POST":
+        # Manual update from form fields
+        sale.customer_name = request.POST.get("customer_name")
+        sale.customer_phone = request.POST.get("customer_phone")
+        sale.quantity = request.POST.get("quantity")
+        sale.unit = request.POST.get("unit")
+        sale.total_price = request.POST.get("total_price")
+        sale.distance_km = request.POST.get("distance_km")
+        sale.transport_cost = request.POST.get("transport_cost")
+        
+        sale.save()
+        messages.success(request, "Sale updated successfully.")
+        return redirect("accountssales")
+
+    return render(request, "sale_edit.html", {"sale": sale})
+
+def sale_delete(request, pk):
+    sale = get_object_or_404(Sale, pk=pk)
+    if request.method == "POST":
+        sale.delete()
+        messages.success(request, "Sale deleted successfully.")
+        return redirect("accountssales")
+    return render(request, "sale_delete.html", {"sale": sale})
+
+
 
 def supplier(request):
-    # Total suppliers
+     # Total suppliers
     total_suppliers = Supplier.objects.count()
 
-    # Cash suppliers
-    cash_suppliers = Supplier.objects.filter(credit_terms="Cash").count()
+    # Total supplies
+    total_supplies = Stock.objects.count()
 
-    # Credit suppliers (anything not Cash)
-    credit_suppliers = Supplier.objects.exclude(credit_terms="Cash").count()
+    # Cash suppliers (distinct suppliers who delivered stock on Cash)
+    cash_suppliers = Stock.objects.filter(payment_mode="Cash").values("supplier").distinct().count()
 
-   
+    # Credit suppliers (distinct suppliers who delivered stock on Credit)
+    credit_suppliers = Stock.objects.filter(payment_mode="Credit").values("supplier").distinct().count()
+
     context = {
         "total_suppliers": total_suppliers,
         "cash_suppliers": cash_suppliers,
         "credit_suppliers": credit_suppliers,
+        "total_supplies": total_supplies,
         "suppliers": Supplier.objects.all(),
-        
     }
     return render(request, "supplier.html", context)
-    return render(request, 'supplier.html')
-
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Supplier
@@ -81,16 +128,13 @@ def supplier_reg(request):
         sent_contact_number = payload.get("contact_number")
         sent_address = payload.get("address")
         sent_email = payload.get("email")
-        sent_payment_terms = payload.get("payment_terms")
-        sent_credit_terms = payload.get("credit_terms") if sent_payment_terms == "Credit" else None
-
+        
         Supplier.objects.create(
             supplier_name= sent_supplier_name,
             contact_number= sent_contact_number,
             address= sent_address,
             email= sent_email,
-            payment_terms = sent_payment_terms,
-            credit_terms= sent_credit_terms,
+           
         )
         return redirect ('accountssupplier')
      
@@ -110,9 +154,7 @@ def supplier_edit(request, pk, slug):
         supplier.contact_number = request.POST.get("contact_number")
         supplier.email = request.POST.get("email")
         supplier.address = request.POST.get("address")
-        supplier.payment_terms = request.POST.get("payment_terms")
-        supplier.credit_terms = request.POST.get("credit_terms")
-
+       
         # Save changes
         supplier.save()
         return redirect("accountssupplier") 
@@ -121,10 +163,81 @@ def supplier_edit(request, pk, slug):
     return render(request, 'supplier-edit.html', {"supplier":supplier})
 
 def sales_reg(request):
+    
+    if request.method == "POST":
+        # Create Sale record
+        sale = Sale.objects.create(
+            customer_name=request.POST.get("customer_name"),
+            customer_phone=request.POST.get("customer_phone"),
+            distance_km=request.POST.get("distance_km") or 0,
+        )
+
+        # Collect multiple items
+        products = request.POST.getlist("product")  # e.g. ["cement", "ironbars", "nails"]
+        specs = request.POST.getlist("specification") # e.g. ["CEM II N", "10mm", "Inch 4"]
+        quantities = request.POST.getlist("quantity") # e.g. ["10", "5", "2"]
+        units = request.POST.getlist("unit") # e.g. ["bags", "pieces", "kg"]
+        unit_prices = request.POST.getlist("unit_price") # e.g. ["30000", "50000", "2000"]
+
+        # Loop through items
+        for i in range(len(products)):
+            qty = int(quantities[i])
+            price = float(unit_prices[i])
+            total = qty * price
+
+            SaleItem.objects.create(
+                sale=sale,
+                product=products[i],
+                specification=specs[i],
+                quantity=qty,
+                unit=units[i],
+                unit_price=price,
+                total_price=total,
+            )
+
+        # Update transport + grand total
+        sale.save()
+
+        return redirect("sale_receipt", pk=sale.pk)
+
+   
     return render(request, 'sales-reg.html')
 
-def stock_edit(request):
-    return render(request, 'stock-edit.html')
+def stock_edit(request,pk):
+    stock = get_object_or_404(Stock, pk=pk)
+    if request.method == "POST":
+        stock.quantity = request.POST.get("quantity")
+        stock.unit_cost = request.POST.get("unit_cost")
+        stock.unit_price = request.POST.get("unit_price")
+        stock.payment_mode = request.POST.get("payment_mode")
+        stock.credit_terms = request.POST.get("credit_terms")
+        stock.date_received = request.POST.get("date_received")
+
+
+        stock.save()
+        messages.success(request, "Stock updated successfully.")
+        return redirect("accountsstock")
+
+    return render(request, 'stock-edit.html', {"stock":stock})
+
+def stock_delete(request ,pk):
+    stock = get_object_or_404(Stock, pk=pk)
+    if request.method == "POST":
+        # Delete the record
+        stock.delete()
+        messages.success(request, f"{stock.product_name} deleted successfully.")
+        return redirect("accountsstock")
+
+    # If GET, show confirmation page
+    return render(request, "stock.delete.html", {"stock": stock})
+
+
+def stock_view(request, pk):
+    # Fetch the stock record by ID
+    stock = get_object_or_404(Stock, pk=pk)
+    # Render the detail page
+    return render(request, "stock_view.html", {"stock": stock})
+
 
 def stock_reg(request):
     if request.method == "POST":
@@ -133,6 +246,7 @@ def stock_reg(request):
         sent_specification = payload.get("specification")
         sent_supplier = payload.get("supplier")
         sent_payment_mode = payload.get("payment_mode")
+        sent_credit_terms= payload.get("credit_terms") if payload.get("payment_mode") == "Credit" else None,
         sent_unit_cost = payload.get("unit_cost")
         sent_unit_price = payload.get("unit_price")
         sent_quantity = payload.get("quantity")
@@ -152,6 +266,7 @@ def stock_reg(request):
             specification= sent_specification,
             supplier= supplier,
             payment_mode= sent_payment_mode,
+            credit_terms= sent_credit_terms,
             unit_cost= sent_unit_cost,
             unit_price= sent_unit_price,
             quantity= sent_quantity,
@@ -182,6 +297,16 @@ def supplier_view(request, pk, slug ):
 def supplier_delete(request, pk, slug):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     if request.method == "POST":
-        supplier.delete()
+        try:
+             supplier.delete()
+             messages.success(request, f"Supplier '{supplier.supplier_name}' deleted successfully.")
+        except ProtectedError:
+            messages.error(
+                request,
+                f"Cannot delete supplier '{supplier.supplier_name}' because stock records are linked to it. "
+                "Please deactivate the supplier instead."
+            )
+
+       
         return redirect("accountssupplier")  # back to supplier list
     return render(request, "supplier_delete.html", {"supplier": supplier})

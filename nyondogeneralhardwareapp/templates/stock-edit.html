@@ -1,105 +1,70 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Edit Stock</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
-    />
+{% extends "baseForm.html" %}
+{% block title %}
+  Edit Stock
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow mx-auto" style="max-width: 600px">
+    <div class="card-body">
+      <h2 class="text-center">Edit Stock</h2>
+      <hr />
+      <form method="post">
+        {% csrf_token %}
 
-    <link rel="stylesheet" href="../static/sales-reg.css" />
-  </head>
-  <body class="shiny-background">
-    <div class="container-fluid">
-      <div style="margin-left: 500px">
-        <img
-          src="../static/Images/Logo.png"
-          style="height: 100px; width: 200px; justify-content: center"
-        />
-      </div>
-      <div class="container mt-4">
-        <div class="card shadow mx-auto" style="max-width: 600px">
-          <div class="card-body">
-            <h2 class="text-center">Edit Stock</h2>
-            <hr />
-            <form action="/" method="post">
-              {% csrf_token %}
-              <div class="mb-3">
-                <label class="form-label">Product Name</label>
-                <input
-                  type="text"
-                  name="product_name"
-                  class="form-control"
-                  value="Cement (cem iiN)"
-                  readonly
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Quantity</label>
-                <input
-                  type="number"
-                  name="quantity"
-                  class="form-control"
-                  value="250"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Unit Price (UGX)</label>
-                <input
-                  type="number"
-                  name="unit_price"
-                  class="form-control"
-                  value="30000"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Supplier</label>
-                <input
-                  type="text"
-                  name="supplier"
-                  class="form-control"
-                  value="XYZ Traders Ltd."
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Date Received</label>
-                <input type="date" class="form-control" value="2026-04-11" />
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Notes</label>
-                <textarea class="form-control">
-Delivered in batch #CEM-2026-04</textarea
-                >
-              </div>
-              <div class="row">
-                <div class="col">
-                  <button type="submit" class="btn">Save Changes</button>
-                </div>
-                <div class="col text-end">
-                  <a href="stock.html" class="btn">
-                    <i class="bi bi-arrow-left me-1"></i> Back
-                  </a>
-                </div>
-              </div>
-            </form>
+        <!-- Quantity -->
+        <div class="mb-3">
+          <label class="form-label">Quantity</label>
+          <input type="number" name="quantity" class="form-control" value="{{ stock.quantity }}" required />
+        </div>
+
+        <!-- Unit Cost -->
+        <div class="mb-3">
+          <label class="form-label">Unit Cost (UGX)</label>
+          <input type="number" name="unit_cost" class="form-control" value="{{ stock.unit_cost }}" required />
+        </div>
+
+        <!-- Unit Price -->
+        <div class="mb-3">
+          <label class="form-label">Unit Price (UGX)</label>
+          <input type="number" name="unit_price" class="form-control" value="{{ stock.unit_price }}" required />
+        </div>
+
+        <!-- Payment Mode -->
+        <div class="mb-3">
+          <label class="form-label">Payment Mode</label>
+          <select name="payment_mode" class="form-select" required>
+            <option value="Cash" {% if stock.payment_mode == "Cash" %}selected{% endif %}>Cash</option>
+            <option value="Credit" {% if stock.payment_mode == "Credit" %}selected{% endif %}>Credit</option>
+          </select>
+        </div>
+
+        <!-- Credit Terms (only relevant if Credit) -->
+        <div class="mb-3">
+          <label class="form-label">Credit Terms</label>
+          <input type="text" name="credit_terms" class="form-control" value="{{ stock.credit_terms }}" />
+        </div>
+
+        <!-- Date Received -->
+        <div class="mb-3">
+          <label class="form-label">Date Received</label>
+          <input type="date" name="date_received" class="form-control" value="{{ stock.date_received|date:'Y-m-d' }}" />
+        </div>
+
+        
+
+        <!-- Buttons -->
+        <div class="row">
+          <div class="col">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+          </div>
+          <div class="col text-end">
+            <a href="{% url 'accountsstock' %}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
           </div>
         </div>
-        <footer class="text-center">
-          © 2026 Nyondo General Hardware. All rights reserved. | Designed by
-          Tisha
-        </footer>
-      </div>
+      </form>
     </div>
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

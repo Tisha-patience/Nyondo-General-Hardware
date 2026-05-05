@@ -8,24 +8,24 @@
       <div class="col-md-3">
         <div class="card text-center shadow-sm">
           <div class="card-body">
-            <h6>Total Products</h6>
-            <h4 class="text-primary">6,553</h4>
+            <h6> Sales</h6>
+            <h4 class="text-primary">{{ sales }}</h4>
           </div>
         </div>
       </div>
       <div class="col-md-3">
         <div class="card text-center shadow-sm">
           <div class="card-body">
-            <h6>Low Stock</h6>
-            <h4 class="text-warning">223</h4>
+            <h6>Total Sales</h6>
+            <h4 class="text-warning">{{ total_sales }}</h4>
           </div>
         </div>
       </div>
       <div class="col-md-3">
         <div class="card text-center shadow-sm">
           <div class="card-body">
-            <h6>Out of Stock</h6>
-            <h4 class="text-danger">54</h4>
+            <h6>Total Revenue</h6>
+            <h4 class="text-danger">{{ total_revenue }}</h4>
           </div>
         </div>
       </div>
@@ -75,14 +75,6 @@
 
             {% endfor %}
           </tbody>
-          <tfoot class="table-light">
-            <tr>
-              <td colspan="4" class="text-end">
-                <strong>Total Amount:</strong>
-              </td>
-              <td colspan="3"><strong>{{ total_amount }}</strong></td>
-            </tr>
-          </tfoot>
         </table>
       </div>
       

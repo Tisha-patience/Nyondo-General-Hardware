@@ -21,12 +21,6 @@ class Supplier(models.Model):
     contact_number = models.CharField(max_length=15, blank=True)    # Contact phone number
     address = models.TextField(blank=True)                 # Physical or mailing address
     email = models.EmailField(blank=True)                  # Optional email contact
-    PAYMENT_CHOICES = [
-        ("Cash", "Cash"),
-        ("Credit", "Credit"),
-    ]
-    payment_terms = models.CharField(max_length=10, choices=PAYMENT_CHOICES, default="Cash")
-    credit_terms = models.CharField(max_length=50, blank=True, null=True)  # e.g., "30 days", "Cash on Delivery"
     date_added = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)   
 
@@ -47,6 +41,50 @@ class Stock(models.Model):
         choices=[("Cash", "Cash"), ("Credit", "Credit")],
         default="Cash"
     )
+    credit_terms = models.CharField(max_length=50, blank=True, null=True)  # e.g., "30 days", "Cash on Delivery"
     date_received = models.DateField()
 
-  
+class Sale(models.Model):
+    customer_name = models.CharField(max_length=100)
+    customer_phone = models.CharField(max_length=15)
+    distance_km = models.PositiveIntegerField(default=0)
+    transport_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    grand_total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def total_amount(self):
+        return sum(item.total_price for item in self.items.all())
+
+    def calculate_transport(self):
+        if self.distance_km <= 10 and self.total_amount() >= 500000:
+            return 0
+        return 30000
+
+    def save(self, *args, **kwargs):
+        self.transport_cost = self.calculate_transport()
+        self.grand_total = self.total_amount() + self.transport_cost
+        super().save(*args, **kwargs)
+
+
+class SaleItem(models.Model):
+    sale = models.ForeignKey(Sale, related_name="items", on_delete=models.CASCADE)
+    product = models.CharField(max_length=50)
+    specification = models.CharField(max_length=50)
+    quantity = models.PositiveIntegerField()
+    unit = models.CharField(max_length=20)
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    total_price = models.DecimalField(max_digits=12, decimal_places=2)
+
+class SaleReceipt(models.Model):
+    sale = models.OneToOneField(Sale, on_delete=models.CASCADE)
+    receipt_number = models.CharField(max_length=20, unique=True)
+    issued_at = models.DateTimeField(auto_now_add=True)
+
+# class DepositReceipt(models.Model):
+#     deposit = models.OneToOneField(Deposit, on_delete=models.CASCADE)
+#     receipt_number = models.CharField(max_length=20, unique=True)
+#     issued_at = models.DateTimeField(auto_now_add=True)
+#     is_final = models.BooleanField(default=False)  # False = temporary, True = final
+
+
+

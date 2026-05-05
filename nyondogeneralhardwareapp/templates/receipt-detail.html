@@ -9,74 +9,53 @@
   <hr>
 
   <!-- Receipt Info -->
-  <div class="row">
-    <div class="col">
-      <strong>Receipt No:</strong> {{ receipt.receipt_number }}<br>
-      <strong>Date:</strong> {{ receipt.date_issued }}
+  <div class="card shadow mx-auto" style="max-width: 600px;">
+  <div class="card-body">
+    <h3 class="text-center">Receipt</h3>
+    <hr>
+
+     <!-- Customer Info -->
+    <p><strong>Customer:</strong> {{ receipt.sale.customer_name }}</p>
+    <p><strong>Phone:</strong> {{ receipt.sale.customer_phone }}</p>
+
+    <!-- Items Table -->
+    <table class="table table-bordered mt-3">
+      <thead class="table-light">
+        <tr>
+          <th>Product</th>
+          <th>Specification</th>
+          <th>Quantity</th>
+          <th>Unit</th>
+          <th>Unit Price (UGX)</th>
+          <th>Total (UGX)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in receipt.sale.items.all %}
+        <tr>
+          <td>{{ item.product }}</td>
+          <td>{{ item.specification }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.unit }}</td>
+          <td>{{ item.unit_price }}</td>
+          <td>{{ item.total_price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Transport + Grand Total -->
+    <p><strong>Delivery Distance:</strong> {{ receipt.sale.distance_km }} km</p>
+    <p><strong>Transport Cost:</strong> {{ receipt.sale.transport_cost }} UGX</p>
+
+    <div class="alert alert-success text-center mt-3">
+      <h4><strong>Final Total: {{ receipt.sale.grand_total }} UGX</strong></h4>
     </div>
-    <div class="col text-right">
-      <strong>Issued To:</strong> {{ receipt.issued_to }}<br>
-      <strong>Phone:</strong> {{ receipt.phone }}
-    </div>
-  </div>
-  <hr>
 
-  <!-- Sale Details -->
-  {% if receipt.sale %}
-  <h4>Sale Details</h4>
-  <table class="table table-sm">
-    <thead>
-      <tr><th>Product</th><th>Quantity</th><th>Unit Price</th><th>Total</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ receipt.sale.product.name }}</td>
-        <td>{{ receipt.sale.quantity }}</td>
-        <td>{{ receipt.sale.product.unit_price }}</td>
-        <td>{{ receipt.sale.total_price }}</td>
-      </tr>
-    </tbody>
-  </table>
-  {% endif %}
+    <hr>
+    <p><strong>Date:</strong> {{ receipt.issued_at|date:"d M Y, H:i" }}</p>
 
-  <!-- Deposit Details -->
-  {% if receipt.deposit %}
-  <h4>Deposit Details</h4>
-  <table class="table table-sm">
-    <thead>
-      <tr><th>Product</th><th>Amount Paid</th><th>Date</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>{{ receipt.deposit.product.name }}</td>
-        <td>{{ receipt.deposit.amount_paid }}</td>
-        <td>{{ receipt.deposit.date }}</td>
-      </tr>
-    </tbody>
-  </table>
-  {% endif %}
-
-  <!-- Transport -->
-  {% if receipt.sale.transport_set.all %}
-  <h4>Transport</h4>
-  <table class="table table-sm">
-    <thead>
-      <tr><th>Distance (km)</th><th>Charge</th></tr>
-    </thead>
-    <tbody>
-      {% for transport in receipt.sale.transport_set.all %}
-      <tr>
-        <td>{{ transport.distance_km }}</td>
-        <td>{{ transport.charge }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% endif %}
-
-  <!-- Totals -->
-  <hr>
-  <h4 class="text-right">Grand Total: UGX {{ receipt.total_amount }}</h4>
+  
 
   <!-- Footer -->
   <p class="text-center mt-4">Thank you for your business!</p>
