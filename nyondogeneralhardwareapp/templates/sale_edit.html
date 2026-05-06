@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit Sale</h2>
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group">
+    <label>Customer Name</label>
+    <input type="text" name="customer_name" value="{{ sale.customer_name }}" class="form-control">
+  </div>
+  <div class="form-group">
+    <label>Customer Phone</label>
+    <input type="text" name="customer_phone" value="{{ sale.customer_phone }}" class="form-control">
+  </div>
+  <div id="items-container">
+        <div class="row mb-3 item-row">
+          <div class="col-md-2">
+             <label for="name" class="form-label">Product Name</label>
+            <select class="form-select" id="name" name="product" required>
+              <option value="Cement">Cement</option>
+              <option value="Iron Bars">Iron Bars</option>
+              <option value="Nails">Nails</option>
+              <option value="Wheelbarrows">Wheelbarrows</option>
+              <option value="Wire Mesh">Wire Mesh</option>
+              <option value="Barbed Wire">Barbed Wire</option>
+              <option value="Iron Sheets">Iron Sheets</option>
+            </select>
+          </div>
+  <div class="form-group">
+    <label>Distance (km)</label>
+    <input type="number" name="distance_km" value="{{ sale.distance_km }}" class="form-control">
+  </div>
+
+  <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+{% endblock %}

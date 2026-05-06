@@ -45,6 +45,7 @@ class Stock(models.Model):
     date_received = models.DateField()
 
 class Sale(models.Model):
+
     customer_name = models.CharField(max_length=100)
     customer_phone = models.CharField(max_length=15)
     distance_km = models.PositiveIntegerField(default=0)
@@ -61,8 +62,10 @@ class Sale(models.Model):
         return 30000
 
     def save(self, *args, **kwargs):
-        self.transport_cost = self.calculate_transport()
-        self.grand_total = self.total_amount() + self.transport_cost
+        # ✅ Only recalc if Sale already exists in DB
+        if self.pk:
+            self.transport_cost = self.calculate_transport()
+            self.grand_total = self.total_amount() + self.transport_cost
         super().save(*args, **kwargs)
 
 

@@ -28,6 +28,7 @@ urlpatterns = [
     path("sales/<int:pk>/", views.sale_view, name="sale_view"),
     path("sales/<int:pk>/edit/", views.sale_edit, name="sale_edit"),
     path("sales/<int:pk>/delete/", views.sale_delete, name="sale_delete"),
+    path("receipt/<int:pk>/", views.sale_receipt, name="sale_receipt"),
     path('accounts/supplier/', views.supplier, name='accountssupplier'),
     # Supplier actions with ID + slug
     path("supplier/<int:pk>-<slug:slug>/deactivate/", views.deactivate_supplier, name="deactivate_supplier"),

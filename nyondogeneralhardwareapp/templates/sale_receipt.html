@@ -1,0 +1,81 @@
+{% extends 'baseForm.html' %}
+{% block title %}  Nyondo Sales Receipt {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <!-- Header -->
+      <h3 class="text-center">NYONDO General Hardware LTD</h3>
+      <p class="text-center">Nansana, Uganda</p>
+  <hr>
+      <p class="text-center mb-0">Official Sales Receipt</p>
+      <hr>
+
+      <!-- Customer Info -->
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <strong>Customer Name:</strong> {{ sale.customer_name }}<br>
+          <strong>Phone:</strong> {{ sale.customer_phone }}
+        </div>
+        <div class="col-md-6 text-end">
+          <strong>Date:</strong> {{ sale.date|date:"d M Y, H:i" }}<br>
+          <strong>Receipt No:</strong> RCPT-{{ sale.id }}
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <table class="table table-bordered">
+        <thead class="table-light">
+          <tr>
+            <th>Product</th>
+            <th>Specification</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in sale.items.all %}
+          <tr>
+            <td>{{ item.product }}</td>
+            <td>{{ item.specification }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unit }}</td>
+            <td>{{ item.unit_price }}</td>
+            <td>{{ item.total_price }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Totals -->
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <strong>Delivery Distance:</strong> {{ sale.distance_km }} km
+        </div>
+        <div class="col-md-6 text-end">
+          <p><strong>Transport Cost:</strong> {{ sale.transport_cost }}</p>
+          <p><strong>Grand Total:</strong> {{ sale.grand_total }}</p>
+        </div>
+      </div>
+
+      <hr>
+      <p class="text-center">Thank you for shopping with us!</p>
+      <p class="text-center"><em>Goods once sold are not returnable.</em></p>
+
+  <!-- Print Button -->
+  <div class="text-center mt-3">
+    <button onclick="window.print()" class="btn btn-secondary">Print Receipt</button>
+    
+          <a href="{% url 'accountssales' %}" class="btn">
+            <i class="bi bi-arrow-left"></i> Back
+          </a>
+        </div>
+  </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

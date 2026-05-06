@@ -42,9 +42,9 @@ h2{
   color: rgba(52,73,85,0.7);
 }
 .form-control:focus, .form-select:focus {
-  border-color: #98CA32;
-  box-shadow: 0 0 12px rgba(152,202,50,0.6);
-  background: rgba(255,255,255,0.12);
+  border-color:  #0ABAB5;
+  box-shadow:  #ba0ab7;
+  background:  #0ABAB5;
   outline: none;
 }
 .btn {
@@ -53,6 +53,9 @@ h2{
   font-weight: bold;
   border-radius: 6px;
   transition: background 0.3s ease;
+}
+.card-custom {
+  border-top: 6px solid #F9AA33; /* your accent color */
 }
 
 .btn:hover {

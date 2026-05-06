@@ -19,7 +19,7 @@ def dashboard(request):
 
 def sales(request):
     # Fetch all sales and their related items in one go
-    sales = Sale.objects.prefetch_related("items").all()
+    sales = Sale.objects.all()
 
     # Total number of sales
     total_sales = sales.count()
@@ -34,6 +34,50 @@ def sales(request):
     }
     return render(request, "sales.html", context)
 
+def sales_reg(request):
+    
+    if request.method == "POST":
+        # Create Sale record
+        distance = request.POST.get("distance_km")
+        sale = Sale.objects.create(
+            customer_name=request.POST.get("customer_name"),
+            customer_phone=request.POST.get("customer_phone"),
+            distance_km=int(distance) if distance else 0
+        )
+        
+        # Collect multiple items
+        products = request.POST.getlist("product")  # e.g. ["cement", "ironbars", "nails"]
+        specs = request.POST.getlist("specification") # e.g. ["CEM II N", "10mm", "Inch 4"]
+        quantities = request.POST.getlist("quantity") # e.g. ["10", "5", "2"]
+        units = request.POST.getlist("unit") # e.g. ["bags", "pieces", "kg"]
+        unit_prices = request.POST.getlist("unit_price") # e.g. ["30000", "50000", "2000"]
+
+        # Loop through items
+        for i in range(len(products)):
+            qty = int(quantities[i])
+            price = float(unit_prices[i])
+            total = qty * price
+
+            SaleItem.objects.create(
+                sale=sale,
+                product=products[i],
+                specification=specs[i],
+                quantity=qty,
+                unit=units[i],
+                unit_price=price,
+                total_price=total,
+            )
+
+        # Update transport + grand total
+        sale.save()
+
+        return redirect("sale_receipt", pk=sale.pk)
+
+   
+    return render(request, 'sales-reg.html')
+
+
+
 def sale_view(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     return render(request, "sale_view.html", {"sale": sale})
@@ -44,6 +88,7 @@ def sale_edit(request, pk):
         # Manual update from form fields
         sale.customer_name = request.POST.get("customer_name")
         sale.customer_phone = request.POST.get("customer_phone")
+        sale.product = request.POST.get("product")
         sale.quantity = request.POST.get("quantity")
         sale.unit = request.POST.get("unit")
         sale.total_price = request.POST.get("total_price")
@@ -64,7 +109,9 @@ def sale_delete(request, pk):
         return redirect("accountssales")
     return render(request, "sale_delete.html", {"sale": sale})
 
-
+def sale_receipt(request, pk):
+    sale = get_object_or_404(Sale.objects.prefetch_related("items"), pk=pk)
+    return render(request, "sale_receipt.html", {"sale": sale})
 
 def supplier(request):
      # Total suppliers
@@ -162,46 +209,6 @@ def supplier_edit(request, pk, slug):
 
     return render(request, 'supplier-edit.html', {"supplier":supplier})
 
-def sales_reg(request):
-    
-    if request.method == "POST":
-        # Create Sale record
-        sale = Sale.objects.create(
-            customer_name=request.POST.get("customer_name"),
-            customer_phone=request.POST.get("customer_phone"),
-            distance_km=request.POST.get("distance_km") or 0,
-        )
-
-        # Collect multiple items
-        products = request.POST.getlist("product")  # e.g. ["cement", "ironbars", "nails"]
-        specs = request.POST.getlist("specification") # e.g. ["CEM II N", "10mm", "Inch 4"]
-        quantities = request.POST.getlist("quantity") # e.g. ["10", "5", "2"]
-        units = request.POST.getlist("unit") # e.g. ["bags", "pieces", "kg"]
-        unit_prices = request.POST.getlist("unit_price") # e.g. ["30000", "50000", "2000"]
-
-        # Loop through items
-        for i in range(len(products)):
-            qty = int(quantities[i])
-            price = float(unit_prices[i])
-            total = qty * price
-
-            SaleItem.objects.create(
-                sale=sale,
-                product=products[i],
-                specification=specs[i],
-                quantity=qty,
-                unit=units[i],
-                unit_price=price,
-                total_price=total,
-            )
-
-        # Update transport + grand total
-        sale.save()
-
-        return redirect("sale_receipt", pk=sale.pk)
-
-   
-    return render(request, 'sales-reg.html')
 
 def stock_edit(request,pk):
     stock = get_object_or_404(Stock, pk=pk)

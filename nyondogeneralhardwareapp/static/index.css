@@ -143,11 +143,11 @@ h1{
   margin-right: 100px;
 }
 .dropdown-menu{
-  background:  #344955;
+  background: #fff;
 }
 .dropdown-item:hover{
-  background-color:  #fff;
-   color:  #344955;
+  background-color:  #344955;
+   color:  #fff;
 }
 
 .tab-pane {

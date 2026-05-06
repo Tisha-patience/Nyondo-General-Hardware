@@ -2,12 +2,12 @@
 {% block title %} Register Sale {% endblock %}
 
 {% block content %}
-<div class="card shadow mx-auto" style="max-width:900px">
+<div class="card shadow mx-auto" style="max-width:900px;  border: 5px solid  #0ABAB5">
   <div class="card-body">
     <h1 class="card-title text-center">Sales Form</h1>
     <hr />
 
-    <form method="post" action="/">
+    <form method="post" action= "/accounts/sales-reg/">
       {% csrf_token %}
 
       <!-- Customer Details -->
@@ -31,7 +31,7 @@
         <div class="row mb-3 item-row">
           <div class="col-md-2">
              <label for="name" class="form-label">Product Name</label>
-            <select class="form-select" id="name" name="product_name" required>
+            <select class="form-select" id="name" name="product" required>
               <option value="Cement">Cement</option>
               <option value="Iron Bars">Iron Bars</option>
               <option value="Nails">Nails</option>
