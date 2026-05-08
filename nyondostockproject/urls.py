@@ -49,7 +49,7 @@ urlpatterns = [
     path('accounts/stock-edit/', views.stock_edit, name='accountsstock-edit'),
     path('accounts/stock-reg/', views.stock_reg, name='accountsstock-reg'),
     path('accounts/receiptForm/', views.receipt_form, name='accountsreceiptForm'),
-    path('accounts/depositForm/', views.deposit_form, name='accountsdepositForm'),
+    path('accounts/customer-reg/', views.customer_reg, name='accountscustomer-reg'),
    
     
 ]

@@ -19,8 +19,8 @@
   <tbody>
     {% for item in sale.items.all %}
     <tr>
-      <td>{{ item.product }}</td>
-      <td>{{ item.specification }}</td>
+      <td>{{ item.stock.product_name }}</td>
+      <td>{{ item.stock.specification }}</td>
       <td>{{ item.quantity }}</td>
       <td>{{ item.unit }}</td>
       <td>{{ item.unit_price }}</td>

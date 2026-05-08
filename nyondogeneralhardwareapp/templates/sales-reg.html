@@ -26,99 +26,41 @@
       <hr />
 
       <!-- Items -->
-      <h4 class="text-center">Items</h4>
-      <div id="items-container">
-        <div class="row mb-3 item-row">
-          <div class="col-md-2">
-             <label for="name" class="form-label">Product Name</label>
-            <select class="form-select" id="name" name="product" required>
-              <option value="Cement">Cement</option>
-              <option value="Iron Bars">Iron Bars</option>
-              <option value="Nails">Nails</option>
-              <option value="Wheelbarrows">Wheelbarrows</option>
-              <option value="Wire Mesh">Wire Mesh</option>
-              <option value="Barbed Wire">Barbed Wire</option>
-              <option value="Iron Sheets">Iron Sheets</option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label for="specification" class="form-label">Specification</label>
-            <select
-              class="form-select"
-              id="specification"
-              name="specification"
-              required
-            >
-              <!-- Cement -->
-              <optgroup label="Cement">
-                <option value="CEM II N">CEM II N</option>
-                <option value="CEM III N">CEM III N</option>
-              </optgroup>
+     <h4 class="text-center">Items</h4>
+<div id="items-container">
+  <div class="row item-row">
+    <div class="col-md-4 ">
+    <label style="margin-bottom: 7px;">Product</label>
+    <select name="stock_id" class="form-control">
+      {% for stock in stocks %}
+        <option value="{{ stock.id }}">
+          {{ stock.product_name }} ({{ stock.specification }}) - {{ stock.quantity }} {{ stock.unit }} available
+        </option>
+      {% endfor %}
+    </select>
+    </div>
 
-              <!-- Iron Bars -->
-              <optgroup label="Iron Bars">
-                <option value="10mm">10mm</option>
-                <option value="12mm">12mm</option>
-                <option value="16mm">16mm</option>
-              </optgroup>
+    <div class="col-md-2">
+      <label class="form-label">Quantity</label>
+      <input type="number" name="quantity" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Unit</label>
+      <input type="text" name="unit" class="form-control" required>
+    </div>
+    <div class="col-md-2">
+      <label class="form-label">Unit Price</label>
+      <input type="number" step="0.01" name="unit_price" class="form-control" required>
+    </div>
+    <div class="col-md-1 d-flex align-items-end">
+      <button type="button" class="btn btn-sm remove-item w-100">
+        <i class="bi bi-trash"></i>
+      </button>
+    </div>
+  </div>
+</div>
 
-              <!-- Nails -->
-              <optgroup label="Nails">
-                <option value="Inch 1">Inch 1</option>
-                <option value="Inch 3">Inch 3</option>
-                <option value="Inch 4">Inch 4</option>
-                <option value="Inch 5">Inch 5</option>
-                <option value="Roofing nails 5kg">
-                  Roofing nails (5kg pack)
-                </option>
-              </optgroup>
-
-              <!-- Wheelbarrows -->
-              <optgroup label="Wheelbarrows">
-                <option value="Standard">Standard</option>
-                <option value="Heavy-duty">Heavy-duty</option>
-              </optgroup>
-
-              <!-- Wire Mesh -->
-              <optgroup label="Wire Mesh">
-                <option value="2m x 50m roll">2m × 50m roll</option>
-              </optgroup>
-
-              <!-- Barbed Wire -->
-              <optgroup label="Barbed Wire">
-                <option value="High tensile">High tensile</option>
-                <option value="Low tensile">Low tensile</option>
-              </optgroup>
-
-              <!-- Iron Sheets -->
-              <optgroup label="Iron Sheets">
-                <option value="Gauge 28 Red">Gauge 28 — Red</option>
-                <option value="Gauge 28 Blue">Gauge 28 — Blue</option>
-                <option value="Gauge 30 Galvanized">
-                  Gauge 30 — Galvanized
-                </option>
-              </optgroup>
-            </select>
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Quantity</label>
-            <input type="number" name="quantity" class="form-control" required>
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Unit</label>
-            <input type="text" name="unit" class="form-control" required>
-          </div>
-          <div class="col-md-2">
-            <label class="form-label">Unit Price</label>
-            <input type="number" step="0.01" name="unit_price" class="form-control" required>
-          </div>
-          <div class="col-md-1 d-flex align-items-end">
-            <button type="button" class="btn btn-sm  remove-item w-100">
-              <i class="bi bi-trash"></i>
-            </button>
-          </div>
-        </div>
-      </div>
+      
 
       <div class="mb-3">
         <button type="button" id="add-item" class="btn">

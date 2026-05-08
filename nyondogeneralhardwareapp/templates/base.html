@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Dashboard</title>
+    <title>{% block title %}{% endblock %}</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -21,74 +21,149 @@
   <body>
     <div class="d-flex" style="height: 100vh">
       <!-- Sidebar -->
-      <aside
-        class="py-2 px-4 sidebar-gradient d-flex flex-column p-3"
-        style="width: 250px;"
-      >
-      <img
-      src="{% static 'Images/Logo.png'%}"
+      <!-- =========================
+     MODERN SIDEBAR
+========================= -->
+
+<aside class="sidebar-gradient modern-sidebar d-flex flex-column">
+
+  <!-- LOGO SECTION -->
+
+  <div class="sidebar-logo text-center">
+
+    <img
+      src="{% static 'Images/Logo.png' %}"
       alt="Nyondo General Hardware Ltd Logo"
-      class="logo-img" style="height: 110px; width: 200px;"
-    />
-       
-        <hr />
-        <!-- Side bar links -->
-        <div>
-          <a
-            class="nav-link nav-list align-items-center {% if request.path == '/accounts/dashboard/' %}active{% endif %}"
-            href="{% url 'accountsdashboard' %}"
-          >
-            <i class="bi bi-grid me-1"></i>
-            <span>Dashboard</span>
-          </a>
-        </div>
-        <br />
-        <div>
-          <a class="nav-link {% if request.path == '/accounts/sales/' %}active{% endif %}" href="{% url 'accountssales' %}">
-            <i class="bi bi-cart3 me-2"></i>
-            Sales</a
-          >
-        </div>
-        <br />
-        <div>
-          <div class="dropdown align-items-center">
-            <a
-              class="nav-link  me-1 d-flex align-items-center {% if request.path == '/accounts/supplier/' %}active{% endif %}"
-              href="{% url 'accountssupplier' %}"
-            >
-              <i class="bi bi-truck me-2"></i>
-              <span>Suppliers</span>
-            </a>
-          </div>
-        </div>
-        <br />
-        <div>
-          <a class="nav-link {% if request.path == '/accounts/stock/' %}active{% endif %}" href="{% url 'accountsstock' %}">
-            <i class="bi bi-box-fill me-2"></i>
-            Stock</a
-          >
-        </div>
-        <br />
-        <div>
-          <a class="nav-link {% if request.path == '/accounts/customer-deposit/' %}active{% endif %}" href="{% url 'accountscustomer-deposit' %}"
-            ><i class="bi-cash-stack me-1"></i> Deposit Scheme</a
-          >
-        </div>
-        <br />
-        <div>
-          <a class="nav-link {% if request.path == '/accounts/reports/' %}active{% endif %}" href="{% url 'accountsreports' %}"
-            ><i class="bi bi-bar-chart me-1"></i> Reports</a
-          >
-        </div>
-      </aside>
+      class="logo-img"
+    >
+
+    <h5 class="company-name">
+      Nyondo Hardware
+    </h5>
+
+    <p class="company-subtitle">
+      Admin Dashboard
+    </p>
+
+  </div>
+
+  <!-- DIVIDER -->
+
+  <div class="sidebar-divider"></div>
+
+  <!-- NAVIGATION -->
+
+  <div class="sidebar-menu flex-grow-1">
+
+    <!-- DASHBOARD -->
+
+    <a
+      class="nav-link {% if request.path == '/accounts/dashboard/' %}active{% endif %}"
+      href="{% url 'accountsdashboard' %}"
+    >
+
+      <i class="bi bi-grid-fill"></i>
+
+      <span>Dashboard</span>
+
+    </a>
+
+    <!-- SALES -->
+
+    <a
+      class="nav-link {% if request.path == '/accounts/sales/' %}active{% endif %}"
+      href="{% url 'accountssales' %}"
+    >
+
+      <i class="bi bi-cart3"></i>
+
+      <span>Sales</span>
+
+    </a>
+
+    <!-- SUPPLIERS -->
+
+    <a
+      class="nav-link {% if request.path == '/accounts/supplier/' %}active{% endif %}"
+      href="{% url 'accountssupplier' %}"
+    >
+
+      <i class="bi bi-truck"></i>
+
+      <span>Suppliers</span>
+
+    </a>
+
+    <!-- STOCK -->
+
+    <a
+      class="nav-link {% if request.path == '/accounts/stock/' %}active{% endif %}"
+      href="{% url 'accountsstock' %}"
+    >
+
+      <i class="bi bi-box-seam-fill"></i>
+
+      <span>Stock</span>
+
+    </a>
+
+    <!-- DEPOSIT -->
+
+    <a
+      class="nav-link {% if request.path == '/accounts/customer-deposit/' %}active{% endif %}"
+      href="{% url 'accountscustomer-deposit' %}"
+    >
+
+      <i class="bi bi-cash-stack"></i>
+
+      <span>Deposit Scheme</span>
+
+    </a>
+
+    <!-- REPORTS -->
+
+    <a
+      class="nav-link {% if request.path == '/accounts/reports/' %}active{% endif %}"
+      href="{% url 'accountsreports' %}"
+    >
+
+      <i class="bi bi-bar-chart-line-fill"></i>
+
+      <span>Reports</span>
+
+    </a>
+
+  </div>
+
+  <!-- FOOTER -->
+
+  <div class="sidebar-footer">
+
+    <div class="admin-card">
+
+      <div class="admin-avatar">
+        A
+      </div>
+
+      <div>
+        <h6>Administrator</h6>
+        <small>System Admin</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</aside>
 
       <!-- Main Area -->
       <div class="flex-grow-1 d-flex flex-column">
         <!-- Header -->
         <nav class="navbar nav px-3 shadow-sm">
           <div class="container-fluid">
+            <h2 class="text-center mb-4 text-white">Welcome Back, Admin 👋</h2>
             <!-- Search -->
-            <form class="d-flex me-auto" style="max-width: 400px; flex: 1">
+            <!-- <form class="d-flex me-auto" style="max-width: 400px; flex: 1">
               <div class="position-relative w-100">
                 <input
                   class="form-control ps-5"
@@ -102,11 +177,12 @@
                   class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"
                 ></i>
               </div>
-            </form>
+              
+            </form> -->
 
             <!-- Right side -->
             <ul class="navbar-nav ms-auto d-flex align-items-center flex-row">
-              <li class="nav-item me-3 position-relative">
+              <!-- <li class="nav-item me-3 position-relative">
                 <a class="nav-link" href="#">
                   <i class="bi bi-bell fs-5" style="color:#98CA32;"></i>
                   <span
@@ -114,7 +190,8 @@
                     >3</span
                   >
                 </a>
-              </li>
+              </li> -->
+              
              <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
           <i class="bi bi-person-circle me-1"></i> Admin

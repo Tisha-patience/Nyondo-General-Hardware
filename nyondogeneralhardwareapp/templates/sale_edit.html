@@ -1,5 +1,11 @@
-{% extends "base.html" %}
+{% extends "baseForm.html" %}
+{% block title %}
+  Edit Sale
+{% endblock %}
 {% block content %}
+<div class="container mt-4">
+  <div class="card shadow mx-auto" style="max-width: 600px;  border: 5px solid  #0ABAB5">
+    <div class="card-body">
 <h2>Edit Sale</h2>
 <form method="post">
   {% csrf_token %}
@@ -11,9 +17,9 @@
     <label>Customer Phone</label>
     <input type="text" name="customer_phone" value="{{ sale.customer_phone }}" class="form-control">
   </div>
-  <div id="items-container">
-        <div class="row mb-3 item-row">
-          <div class="col-md-2">
+  <div>
+        <div class="row mb-3">
+          <div class="col">
              <label for="name" class="form-label">Product Name</label>
             <select class="form-select" id="name" name="product" required>
               <option value="Cement">Cement</option>
@@ -30,6 +36,18 @@
     <input type="number" name="distance_km" value="{{ sale.distance_km }}" class="form-control">
   </div>
 
-  <button type="submit" class="btn btn-primary">Save Changes</button>
+  <div class="row mt-3">
+          <div class="col">
+            <button type="submit" class="btn btn-success">Save Changes</button>
+          </div>
+  <div class="col text-end">
+            <a href="{% url 'accountssales' %}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
+          </div>
+          </div>
 </form>
+</div>
+</div>
+</div>
 {% endblock %}

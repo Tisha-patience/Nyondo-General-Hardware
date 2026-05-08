@@ -3,6 +3,23 @@ from django.utils.text import slugify
 
 # Create your models here.
 
+def generate_receipt_number():
+    # 1. Get the last receipt saved in the database, ordered by ID
+    last_receipt = SaleReceipt.objects.order_by("id").last()
+
+    # 2. If no receipts exist yet, start with the very first one
+    if not last_receipt:
+        return "RCPT-2026-0001"
+
+    # 3. Otherwise, take the last receipt’s number, split it by "-" and grab the last part
+    # Example: "RCPT-2026-0007" → "0007"
+    last_number = int(last_receipt.receipt_number.split("-")[-1])
+
+    # 4. Increment that number by 1 and format it with leading zeros
+    # Example: 7 → "0008"
+    return f"RCPT-2026-{last_number+1:04d}"
+
+
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
@@ -71,17 +88,25 @@ class Sale(models.Model):
 
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, related_name="items", on_delete=models.CASCADE)
-    product = models.CharField(max_length=50)
-    specification = models.CharField(max_length=50)
+    stock = models.ForeignKey(Stock, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     unit = models.CharField(max_length=20)
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
     total_price = models.DecimalField(max_digits=12, decimal_places=2)
 
+
+
 class SaleReceipt(models.Model):
     sale = models.OneToOneField(Sale, on_delete=models.CASCADE)
     receipt_number = models.CharField(max_length=20, unique=True)
     issued_at = models.DateTimeField(auto_now_add=True)
+    def save(self, *args, **kwargs):
+        if not self.receipt_number:
+            self.receipt_number = generate_receipt_number()
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.receipt_number
 
 # class DepositReceipt(models.Model):
 #     deposit = models.OneToOneField(Deposit, on_delete=models.CASCADE)

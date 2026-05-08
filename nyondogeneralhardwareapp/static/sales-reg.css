@@ -75,3 +75,18 @@ h5{
 footer{
   color: #0ABAB5;
 }
+
+.badge-light-danger {
+  background-color: #f8d7da; /* light red */
+  color: #721c24;           /* dark red text */
+}
+
+.badge-light-warning {
+  background-color: #fff3cd; /* light yellow */
+  color: #856404;            /* dark yellow text */
+}
+
+.badge-light-success {
+  background-color: #d4edda; /* light green */
+  color: #155724;            /* dark green text */
+}

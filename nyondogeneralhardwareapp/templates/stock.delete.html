@@ -6,8 +6,8 @@
       <p>Are you sure you want to delete <strong>{{ stock.product_name }}</strong>?</p>
       <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn"><i class="bi bi-trash"></i>Yes, Delete</button>
-        <a href="{% url 'accountsstock' %}" class="btn"><i class="bi bi-arrow-left"></i>Cancel</a>
+        <button type="submit" class="btn"><i class="bi bi-trash me-2"></i>Yes, Delete</button>
+        <a href="{% url 'accountsstock' %}" class="btn"><i class="bi bi-arrow-left me-2"></i>Cancel</a>
       </form>
     
 {% endblock %}

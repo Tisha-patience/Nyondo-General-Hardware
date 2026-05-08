@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import ProtectedError
+from django.db import transaction
 from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem
 
 # Create your views here.
@@ -37,44 +38,52 @@ def sales(request):
 def sales_reg(request):
     
     if request.method == "POST":
+        with transaction.atomic():
         # Create Sale record
-        distance = request.POST.get("distance_km")
-        sale = Sale.objects.create(
-            customer_name=request.POST.get("customer_name"),
-            customer_phone=request.POST.get("customer_phone"),
-            distance_km=int(distance) if distance else 0
+            distance = request.POST.get("distance_km")
+            sale = Sale.objects.create(
+               customer_name=request.POST.get("customer_name"),
+               customer_phone=request.POST.get("customer_phone"),
+               distance_km=int(distance) if distance else 0
         )
         
         # Collect multiple items
-        products = request.POST.getlist("product")  # e.g. ["cement", "ironbars", "nails"]
-        specs = request.POST.getlist("specification") # e.g. ["CEM II N", "10mm", "Inch 4"]
+         # Collect items
+        stock_ids = request.POST.getlist("stock_id")
         quantities = request.POST.getlist("quantity") # e.g. ["10", "5", "2"]
         units = request.POST.getlist("unit") # e.g. ["bags", "pieces", "kg"]
         unit_prices = request.POST.getlist("unit_price") # e.g. ["30000", "50000", "2000"]
 
         # Loop through items
-        for i in range(len(products)):
+        for i in range(len(stock_ids)):
+            stock_item = get_object_or_404(Stock, pk=stock_ids[i])
             qty = int(quantities[i])
             price = float(unit_prices[i])
             total = qty * price
 
+            # ✅ Safety check: prevent overselling
+            if stock_item.quantity < qty:
+                raise ValueError(f"Not enough stock for {stock_item.product_name}")
+
             SaleItem.objects.create(
                 sale=sale,
-                product=products[i],
-                specification=specs[i],
+                stock = stock_item,
                 quantity=qty,
                 unit=units[i],
                 unit_price=price,
                 total_price=total,
             )
+             # Reduce stock
+            stock_item.quantity -= qty
+            stock_item.save()
 
         # Update transport + grand total
         sale.save()
 
         return redirect("sale_receipt", pk=sale.pk)
 
-   
-    return render(request, 'sales-reg.html')
+    stocks = Stock.objects.all()
+    return render(request, 'sales-reg.html', {"stocks": stocks})
 
 
 
@@ -107,7 +116,7 @@ def sale_delete(request, pk):
         sale.delete()
         messages.success(request, "Sale deleted successfully.")
         return redirect("accountssales")
-    return render(request, "sale_delete.html", {"sale": sale})
+    return render(request, "sale.delete.html", {"sale": sale})
 
 def sale_receipt(request, pk):
     sale = get_object_or_404(Sale.objects.prefetch_related("items"), pk=pk)
@@ -138,15 +147,15 @@ from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Supplier
 
-def deactivate_supplier(request, supplier_id):
-    supplier = get_object_or_404(Supplier, id=supplier_id)
+def deactivate_supplier(request, pk,slug):
+    supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     supplier.is_active = False
     supplier.save()
     messages.warning(request, f"Supplier {supplier.supplier_name} has been deactivated.")
     return redirect("accountssupplier")   # redirect back to supplier list
 
-def activate_supplier(request, supplier_id):
-    supplier = get_object_or_404(Supplier, id=supplier_id)
+def activate_supplier(request, pk,slug):
+    supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     supplier.is_active = True
     supplier.save()
     messages.success(request, f"Supplier {supplier.supplier_name} has been reactivated.")
@@ -157,7 +166,19 @@ def activate_supplier(request, supplier_id):
 
 def stock(request):
     stocks = Stock.objects.all()
-    return render(request, 'stock.html', {"stocks" : stocks})
+     # Calculate status counts
+    available_count = stocks.filter(quantity__gt=10).count()
+    low_count = stocks.filter(quantity__gt=0, quantity__lte=10).count()
+    out_count = stocks.filter(quantity=0).count()
+
+    return render(request, "stock.html", {
+        "stocks": stocks,
+        "available_count": available_count,
+        "low_count": low_count,
+        "out_count": out_count,
+        "total_count": stocks.count(),
+    })
+   
 
 def reports(request):
 
@@ -291,11 +312,11 @@ def stock_reg(request):
 def receipt_form(request):
     return render(request, 'receiptForm.html')
 
-def deposit_form(request):
+def customer_reg(request):
     if request.method == "POST":
         payload = request.POST
         
-    return render(request, 'depositForm.html')
+    return render(request, 'customer-reg.html')
 
 def supplier_view(request, pk, slug ):
     supplier = get_object_or_404(Supplier, pk=pk,slug=slug)

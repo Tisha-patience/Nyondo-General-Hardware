@@ -185,10 +185,20 @@
           />
         </div>
 
-        <div class="text-center">
+        <div class="row">
+          <div class="col">
           <button type="submit" class="btn mt-4 w-50">Add Stock</button>
           
         </div>
+         <div class="col text-end mt-4">
+            <a
+              href="{% url 'accountsstock' %}"
+              class="btn btn-secondary"
+            >
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
+          </div>
+          </div>
       </form>
     </div>
   </div>

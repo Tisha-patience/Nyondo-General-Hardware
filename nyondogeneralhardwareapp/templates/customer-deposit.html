@@ -1,58 +1,43 @@
-{% extends 'base.html' %}
-{% block content %}
-   <div class="col">
-            <h1 class="mt-4 px-5">Customer Deposit Scheme</h1>
-            <div class="container mt-4">
-  <div class="card shadow">
-    <div class="card-body">
-      <h2>Participants</h2>
-<table class="table table-bordered table-striped" >
-  <thead class="custom-header">
-    <tr>
-        <th>Name</th>
-        <th>NIN</th>
-        <th>Phone</th>
-        <th>Registered On</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for p in participants %}
-    <tr>
-        <td>{{ p.name }}</td>
-        <td>{{ p.nin }}</td>
-        <td>{{ p.phone }}</td>
-        <td>{{ p.registered_on|date:"Y-m-d H:i" }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-
-<h2>Deposits</h2>
-<table class="table table-bordered table-striped">
-  <thead class="custom-header">
-    <tr>
-        <th>Participant</th>
-        <th>Product</th>
-        <th>Amount Paid</th>
-        <th>Date</th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for d in deposits %}
-    <tr>
-        <td>{{ d.participant.name }}</td>
-        <td>{{ d.product_name }}</td>
-        <td>{{ d.amount_paid }}</td>
-        <td>{{ d.date|date:"Y-m-d H:i" }}</td>
-    </tr>
-    {% endfor %}
-    </tbody>
-</table>
-</div>
-</div>
-</div>
-</div>
-       
+{% extends "base.html" %}
+{% block title %}
+    Nyondo Deposit Scheme
 {% endblock %}
-
-       
+{% block content %}
+<h2>Customer Deposits</h2>
+<div class="text-end mb-3" style="margin-right: 20px;">
+<a href="{% url 'accountscustomer-reg' %}" class="btn ">➕ Register Customer</a>
+</div>
+<div class="dashboard-table-card" style="margin: 20px;">
+<div class="table-responsive">
+<table class="table modern-table align-middle mt-3">
+  <thead>
+    <tr>
+      <th>Customer Name</th>
+      <th>NIN</th>
+      <th>Phone</th>
+      <th>Product</th>
+      <th>Payment Method</th>
+      <th>Date Registered</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for deposit in deposits %}
+    <tr>
+      <td>{{ deposit.participant.name }}</td>
+      <td>{{ deposit.participant.nin }}</td>
+      <td>{{ deposit.participant.phone }}</td>
+      <td>{{ deposit.product }}</td>
+      <td>{{ deposit.payment_method }}</td>
+      <td>{{ deposit.date_registered }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6">No deposits yet.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</div>
+</div>
+{% endblock %}
