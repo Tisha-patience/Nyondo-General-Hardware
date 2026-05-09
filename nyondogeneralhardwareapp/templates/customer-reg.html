@@ -8,7 +8,8 @@
     <div class="card-body">
       <h2 class="text-center">Enroll in NYONDO Scheme</h2>
       <hr />
-      <form method="post" action="/">
+      <form method="post" action="/accounts/customer-reg/">
+        {% csrf_token %}
         <!-- Personal Info -->
         <div class="mb-3">
           <label class="form-label">Full Name (as on National ID)</label>
@@ -35,13 +36,14 @@
             <option value="bars">Bars</option>
           </select>
         </div>
+ <label class="form-label">First Amount Deposited</label>
+  <input type="number" name="amount_paid" class="form-control" required>
 
         <!-- Payment Method -->
         <div class="mb-3">
           <label class="form-label">Payment Method</label>
           <select class="form-select" name="payment_method" required>
             <option selected disabled>Choose method</option>
-            <option value="salary">Salary Deduction</option>
             <option value="cash">Cash Deposit</option>
             <option value="mobile">Mobile Money</option>
           </select>

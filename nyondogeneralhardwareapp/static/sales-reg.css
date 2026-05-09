@@ -1,92 +1,502 @@
-body {
+/* =========================
+   GLOBAL FORM STYLING
+========================= */
+
+body{
   margin: 0;
   padding: 0;
-  /* background-color: #6d4c55; */
-  background: linear-gradient(135deg, #344955 0%, #2a3640 100%);
-  
+
+  min-height: 100vh;
+
+  font-family: 'Poppins', sans-serif;
+
+  background:
+    linear-gradient(
+      135deg,
+      #344955 0%,
+      #2b3c46 45%,
+      #1f2c34 100%
+    );
+
+  position: relative;
+
+  overflow-x: hidden;
 }
 
-.card-body {
-  background: #FAFAFA;
-  color:  #344955;
+/* =========================
+   BACKGROUND GLOW
+========================= */
+
+body::before{
+
+  content: "";
+
+  position: fixed;
+
+  width: 350px;
+  height: 350px;
+
+  border-radius: 50%;
+
+  background: rgba(10,186,181,0.18);
+
+  top: -120px;
+  left: -100px;
+
+  filter: blur(80px);
+
+  z-index: 0;
+}
+
+body::after{
+
+  content: "";
+
+  position: fixed;
+
+  width: 300px;
+  height: 300px;
+
+  border-radius: 50%;
+
+  background: rgba(249,170,51,0.18);
+
+  bottom: -100px;
+  right: -100px;
+
+  filter: blur(80px);
+
+  z-index: 0;
+}
+
+/* =========================
+   MAIN CARD
+========================= */
+
+.card{
+
+  position: relative;
+
+  z-index: 2;
+
+  background: rgba(255,255,255,0.96);
+
+  border: none !important;
+
+  border-radius: 30px !important;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.18);
+
+  backdrop-filter: blur(12px);
+
+  transition: 0.3s ease;
+}
+
+/* CARD HOVER */
+
+.card:hover{
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 25px 70px rgba(0,0,0,0.22);
+}
+
+/* TOP BORDER ACCENT */
+
+.card::before{
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 6px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #0ABAB5,
+      #F9AA33
+    );
+}
+
+/* =========================
+   CARD BODY
+========================= */
+
+.card-body{
+
+  padding: 45px !important;
+
+  background: transparent;
+
+  color: #344955;
+}
+
+/* =========================
+   TITLES
+========================= */
+
+.card-title{
+
+  font-size: 2rem;
+
+  font-weight: 700;
+
+  color: #344955;
+
+  margin-bottom: 10px;
+}
+
+h4{
+
+  font-size: 1.25rem;
+
+  font-weight: 700;
+
+  color: #344955;
+
+  margin-bottom: 25px;
+
+  position: relative;
+}
+
+/* SECTION TITLE LINE */
+
+h4::after{
+
+  content: "";
+
+  display: block;
+
+  width: 60px;
+  height: 4px;
+
   border-radius: 10px;
+
+  background: #0ABAB5;
+
+  margin: 10px auto 0;
 }
 
-h2{
-  color:  #344955;
-}
+/* =========================
+   LABELS
+========================= */
 
+.form-label{
 
+  font-size: 14px;
 
-.main {
-  margin-right: 200px;
-}
+  font-weight: 600;
 
-.card {
-  background: #FAFAFA;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-.card-title {
   color: #344955;
-  font-weight: bold;
+
+  margin-bottom: 10px;
 }
-.form-control, .form-select {
-  background: #fff;
-  border: 1px solid #344955;
-  color: #344955;
-  border-radius: 8px;
+
+/* =========================
+   INPUTS
+========================= */
+
+.form-control,
+.form-select{
+
+  height: 54px;
+
+  border-radius: 16px !important;
+
+  border: 1px solid #dbe4ee !important;
+
+  background: #f8fafc !important;
+
+  padding: 12px 18px;
+
+  font-size: 15px;
+
+  color: #344955 !important;
+
+  transition: all 0.3s ease;
+
+  box-shadow: none !important;
+}
+
+/* PLACEHOLDER */
+
+.form-control::placeholder{
+
+  color: #94a3b8 !important;
+}
+
+/* FOCUS */
+
+.form-control:focus,
+.form-select:focus{
+
+  background: #fff !important;
+
+  border-color: #0ABAB5 !important;
+
+  box-shadow:
+    0 0 0 5px rgba(10,186,181,0.10) !important;
+}
+
+/* =========================
+   SELECT
+========================= */
+
+select.form-control{
+
+  cursor: pointer;
+}
+
+/* =========================
+   ITEM ROWS
+========================= */
+
+.item-row{
+
+  background: #ffffff;
+
+  border: 1px solid #edf2f7;
+
+  border-radius: 22px;
+
+  padding: 20px;
+
+  margin-bottom: 20px;
+
   transition: all 0.3s ease;
 }
-.form-control::placeholder {
-  color: rgba(52,73,85,0.7);
-}
-.form-control:focus, .form-select:focus {
-  border-color:  #0ABAB5;
-  box-shadow:  #ba0ab7;
-  background:  #0ABAB5;
-  outline: none;
-}
-.btn {
-  background-color:  #344955;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 6px;
-  transition: background 0.3s ease;
-}
-.card-custom {
-  border-top: 6px solid #F9AA33; /* your accent color */
+
+.item-row:hover{
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.06);
+
+  transform: translateY(-2px);
 }
 
-.btn:hover {
-  background-color: #0ABAB5;
+/* =========================
+   BUTTONS
+========================= */
+
+.btn{
+
+  border: none !important;
+
+  border-radius: 16px !important;
+
+  padding: 13px 24px !important;
+
+  font-weight: 600 !important;
+
+  font-size: 15px;
+
+  transition: all 0.3s ease !important;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  position: relative;
+
+  overflow: hidden;
 }
-input{
-  background-color: white;
+
+/* PRIMARY BUTTON */
+
+.btn{
+
+  background:
+    linear-gradient(
+      135deg,
+      #344955,
+      #2b3c46
+    ) !important;
+
+  color: #fff !important;
+
+  box-shadow:
+    0 10px 25px rgba(52,73,85,0.20);
 }
+
+/* BUTTON HOVER */
+
+.btn:hover{
+
+  transform: translateY(-3px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #0ABAB5,
+      #089c98
+    ) !important;
+
+  color: white !important;
+
+  box-shadow:
+    0 14px 30px rgba(10,186,181,0.25);
+}
+
+/* REMOVE BUTTON */
+
+.remove-item{
+
+  width: 45px !important;
+  height: 45px !important;
+
+  border-radius: 14px !important;
+
+  background: #fee2e2 !important;
+
+  color: #dc2626 !important;
+
+  padding: 0 !important;
+
+  box-shadow: none !important;
+}
+
+.remove-item:hover{
+
+  background: #dc2626 !important;
+
+  color: white !important;
+}
+
+/* =========================
+   ADD ITEM BUTTON
+========================= */
+
+#add-item{
+
+  background:
+    linear-gradient(
+      135deg,
+      #0ABAB5,
+      #099d99
+    ) !important;
+}
+
+/* =========================
+   TOTAL FIELDS
+========================= */
+
+#grand_total,
+#transport_cost{
+
+  background: #ecfeff !important;
+
+  border: 1px solid #99f6e4 !important;
+
+  font-weight: 700;
+
+  color: #0f766e !important;
+}
+
+/* =========================
+   HR
+========================= */
+
 hr{
-  color:#344955;
+
+  border: none;
+
+  height: 1px;
+
+  background:
+    linear-gradient(
+      to right,
+      transparent,
+      #cbd5e1,
+      transparent
+    );
+
+  margin: 35px 0;
 }
-h5{
-  text-align: center;
-  font-family:Georgia, 'Times New Roman', Times, serif;
-  color: #fff;
+
+/* =========================
+   BADGES
+========================= */
+
+.badge-light-danger{
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+
+  padding: 8px 14px;
+
+  border-radius: 30px;
+
+  font-weight: 600;
 }
+
+.badge-light-warning{
+
+  background: #fef3c7;
+
+  color: #92400e;
+
+  padding: 8px 14px;
+
+  border-radius: 30px;
+
+  font-weight: 600;
+}
+
+.badge-light-success{
+
+  background: #dcfce7;
+
+  color: #166534;
+
+  padding: 8px 14px;
+
+  border-radius: 30px;
+
+  font-weight: 600;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
 footer{
-  color: #0ABAB5;
+
+  color: rgba(255,255,255,0.7);
+
+  text-align: center;
 }
 
-.badge-light-danger {
-  background-color: #f8d7da; /* light red */
-  color: #721c24;           /* dark red text */
-}
+/* =========================
+   RESPONSIVE
+========================= */
 
-.badge-light-warning {
-  background-color: #fff3cd; /* light yellow */
-  color: #856404;            /* dark yellow text */
-}
+@media(max-width: 768px){
 
-.badge-light-success {
-  background-color: #d4edda; /* light green */
-  color: #155724;            /* dark green text */
+  .card-body{
+    padding: 28px !important;
+  }
+
+  .card-title{
+    font-size: 1.6rem;
+  }
+
+  .item-row{
+    padding: 18px;
+  }
+
+  .btn{
+    width: 100%;
+  }
+
 }

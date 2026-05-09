@@ -1,0 +1,29 @@
+{% extends 'baseForm.html' %}
+{% block title %}
+    Delete Deposit
+{% endblock %}
+{% block content %}
+    <div class="card shadow mx-auto" style="max-width:600px; border:2px solid #dc3545; padding:20px;">
+  <h2 class="text-center text-danger">Confirm Delete</h2>
+  <hr>
+  <p>Are you sure you want to delete this deposit?</p>
+
+  <ul>
+    <li><strong>Customer:</strong> {{ deposit.participant.name }}</li>
+    <li><strong>Product:</strong> {{ deposit.product }}</li>
+    <li><strong>Amount:</strong> UGX {{ deposit.amount_paid }}</li>
+    <li><strong>Date:</strong> {{ deposit.date_registered|date:"Y-m-d H:i" }}</li>
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-trash"></i> Yes, Delete
+    </button>
+    <a href="{% url 'accountscustomer-deposit' %}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left"></i> Cancel
+    </a>
+  </form>
+</div>
+
+{% endblock %}

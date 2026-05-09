@@ -42,13 +42,15 @@ urlpatterns = [
     path("stock/<int:pk>/delete/", views.stock_delete, name="stock_delete"),
     path('accounts/reports/', views.reports, name='accountsreports'),
     path('accounts/customer-deposit/', views.customer_deposit, name='accountscustomer-deposit'),
+    path("deposits/<int:pk>/update/", views.deposit_update, name="deposit_update"),
+    path("deposits/<int:pk>/delete/", views.deposit_delete, name="deposit_delete"),
+    path("deposits/<int:pk>/receipt/", views.deposit_receipt, name="deposit_receipt"),
     path('accounts/supplierReg/', views.supplier_reg, name='accountssupplierReg'),
     path('accounts/receipt/', views.receipt, name='accountsreceipt'),
     path('accounts/supplier-edit/', views.supplier_edit, name='accountssupplier-edit'),
     path('accounts/sales-reg/', views.sales_reg, name='accountssales-reg'),
     path('accounts/stock-edit/', views.stock_edit, name='accountsstock-edit'),
     path('accounts/stock-reg/', views.stock_reg, name='accountsstock-reg'),
-    path('accounts/receiptForm/', views.receipt_form, name='accountsreceiptForm'),
     path('accounts/customer-reg/', views.customer_reg, name='accountscustomer-reg'),
    
     

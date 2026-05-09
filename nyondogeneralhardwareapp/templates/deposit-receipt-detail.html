@@ -1,32 +1,41 @@
-{% extends 'baseForm.html' %}
-{% block content %}
-  <div class="col">
-          <!-- NYONDO Scheme Receipt Example -->
-          <div class="card mt-5">
-            <div class="card-body">
-              <h3 class="text-center">Temporary Receipt</h3>
-              <hr />
-              <p><strong>Receipt No:</strong> NYONDO-2026-001</p>
-              <p><strong>Date:</strong> 11 Apr 2026</p>
-              <p><strong>Customer:</strong> John Okello (NIN: CF12345678)</p>
-              <p><strong>Deposit Amount:</strong> 150,000 UGX</p>
-              <p><strong>Cumulative Deposits:</strong> 450,000 UGX</p>
-              <p>
-                <strong>Eligible Goods:</strong> 15 bags of Cement (based on
-                balance)
-              </p>
-              <hr />
-              <p class="text-muted">
-                This is a temporary receipt. Final goods allocation will be
-                confirmed at pickup.
-              </p>
-              <button class="btn"><i class="bi bi-printer"></i> Print</button>
-              <button class="btn">
-                <i class="bi bi-download"></i> Download PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+{% extends 'baseForm.html' %} 
+{% block title %}
+  Nyondo Deposit Scheme | Temporary Receipt
 {% endblock %}
-      
+{% block content %}
+<div class="col">
+  <!-- NYONDO Scheme Receipt Example -->
+  <div class="card mt-5">
+    <div class="card-body">
+      <h3 class="text-center">Temporary Receipt</h3>
+      <hr />
+
+      <p><strong>Receipt No:</strong> {{ deposit.receipt.receipt_number }}</p>
+      <p><strong>Customer:</strong> {{ deposit.participant.name }}</p>
+      <p><strong>NIN:</strong> {{ deposit.participant.nin }}</p>
+      <p><strong>Phone:</strong> {{ deposit.participant.phone }}</p>
+      <p><strong>Product:</strong> {{ deposit.product }}</p>
+      <p><strong>Amount Paid:</strong> UGX {{ deposit.amount_paid }}</p>
+      <p><strong>Payment Method:</strong> {{ deposit.payment_method }}</p>
+      <p>
+        <strong>Date:</strong> {{ deposit.date_registered|date:"Y-m-d H:i" }}
+      </p>
+
+      <hr />
+      <p class="text-muted">
+        This is a temporary receipt. Final goods allocation will be confirmed at
+        pickup.
+      </p>
+      <div class="text-center">
+        <button onclick="window.print()" class="btn btn-primary">
+          <i class="bi bi-printer"></i> Print Receipt
+        </button>
+        <a href="{% url 'accountscustomer-deposit' %}" class="btn btn-secondary">
+          <i class="bi bi-arrow-left"></i> Back to Deposits
+        </a>
+      </div>
+    </div>
+
+    {% endblock %}
+  </div>
+</div>

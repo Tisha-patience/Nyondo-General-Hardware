@@ -1,359 +1,242 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
+
 {% block title %}
-  Nyondo Admin Dashboard
+Nyondo Admin Dashboard
 {% endblock %}
+
 {% block content %}
-<!-- Content -->
-<main class="p-4 overflow-auto">
+
+<main class="dashboard-wrapper">
+
   
-  <!-- Your cards, tabs, tables go here -->
-  <!-- Overview Cards -->
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <div class="card text-center card-custom">
-        <!-- <div class="card-top"></div> -->
-        <div class="card-body">
-          <h6>Total Participants</h6>
-          <p class="fs-4">250</p>
+
+  <!-- STATS -->
+  <div class="row g-4 mb-4">
+
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card">
+        <div class="stats-icon blue">
+          <i class="bi bi-people-fill"></i>
         </div>
-      </div>
-    </div>
-
-    <div class="col-md-3">
-      <div class="card text-center card-custom">
-        <div class="card-body">
-          <h6>Total Deposits</h6>
-          <p class="fs-4">{{ total_deposits }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-center card-custom">
-        <div class="card-body">
-          <h6>Goods Distributed</h6>
-          <p class="fs-4">450 Units</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card text-center card-custom">
-        <div class="card-body">
-          <h6>Supplier Credit</h6>
-          <p class="fs-4">UGX 15,000,000</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Tabs -->
-  <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
-
-  <li class="nav-item">
-    <a class="nav-link active"
-       data-bs-toggle="tab"
-       href="#participants">
-
-      <i class="bi bi-people-fill"></i>
-      Participants
-
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a class="nav-link"
-       data-bs-toggle="tab"
-       href="#deposits">
-
-      <i class="bi bi-cash-stack"></i>
-      Deposits
-
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a class="nav-link"
-       data-bs-toggle="tab"
-       href="#goods">
-
-      <i class="bi bi-box-seam"></i>
-      Goods
-
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a class="nav-link"
-       data-bs-toggle="tab"
-       href="#suppliers">
-
-      <i class="bi bi-truck"></i>
-      Suppliers
-
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a class="nav-link"
-       data-bs-toggle="tab"
-       href="#sales">
-
-      <i class="bi bi-cart-check"></i>
-      Sales Activity
-
-    </a>
-  </li>
-
-  <li class="nav-item">
-    <a class="nav-link"
-       data-bs-toggle="tab"
-       href="#stock">
-
-      <i class="bi bi-bar-chart-line"></i>
-      Stock Activity
-
-    </a>
-  </li>
-
-</ul>
-
-  <div class="tab-content mt-4">
-
-  <!-- PARTICIPANTS -->
-  <div class="tab-pane fade show active" id="participants">
-
-    <div class="dashboard-table-card">
-
-      <div class="table-header">
 
         <div>
-          <h4>Participants</h4>
-          <p>Registered salary scheme participants</p>
+          <p>Total Customers</p>
+          <h3>{{ total_customers }}</h3>
         </div>
-
-        <div class="table-actions">
-
-          
-
-          <button class="btn btn-primary">
-            <i class="bi bi-person-plus"></i>
-            Add Participant
-          </button>
-
-        </div>
-
       </div>
-
-      <div class="table-responsive">
-
-        <table class="table modern-table align-middle">
-
-          <thead>
-            <tr>
-              <th>Participant</th>
-              <th>NIN</th>
-              <th>Phone</th>
-              <th>Employer</th>
-              <th>Interval</th>
-              <th>Product</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            <tr>
-
-              <td>
-                <div class="user-info">
-                  <div class="avatar">JD</div>
-                  <span>John Doe</span>
-                </div>
-              </td>
-
-              <td>CF123456789</td>
-
-              <td>+256700123456</td>
-
-              <td>ABC Ltd.</td>
-
-              <td>
-                <span class="badge bg-primary">
-                  Monthly
-                </span>
-              </td>
-
-              <td>
-                <span class="badge bg-success">
-                  Cement
-                </span>
-              </td>
-
-              <td>
-                <span class="status active-status">
-                  Active
-                </span>
-              </td>
-
-            </tr>
-
-            <tr>
-
-              <td>
-                <div class="user-info">
-                  <div class="avatar purple">JS</div>
-                  <span>Jane Smith</span>
-                </div>
-              </td>
-
-              <td>CF987654321</td>
-
-              <td>+256701987654</td>
-
-              <td>XYZ Corp.</td>
-
-              <td>
-                <span class="badge bg-warning text-dark">
-                  Weekly
-                </span>
-              </td>
-
-              <td>
-                <span class="badge bg-info text-dark">
-                  Iron Sheets
-                </span>
-              </td>
-
-              <td>
-                <span class="status pending-status">
-                  Pending
-                </span>
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
-
-      </div>
-
     </div>
 
-  </div>
-
-  <!-- DEPOSITS -->
-  <div class="tab-pane fade" id="deposits">
-
-    <div class="dashboard-table-card">
-
-      <div class="table-header">
-
-        <div>
-          <h4>Deposits</h4>
-          <p>Recent participant deposits</p>
-        </div>
-
-        <button class="btn btn-success">
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card">
+        <div class="stats-icon green">
           <i class="bi bi-cash-stack"></i>
-          Record Deposit
-        </button>
+        </div>
+
+        <div>
+          <p>Total Revenue</p>
+          <h3>UGX {{ total_revenue }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card">
+        <div class="stats-icon orange">
+          <i class="bi bi-box-seam-fill"></i>
+        </div>
+
+        <div>
+          <p>Stock Items</p>
+          <h3>{{ stock_items }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+      <div class="stats-card">
+        <div class="stats-icon red">
+          <i class="bi bi-truck"></i>
+        </div>
+
+        <div>
+          <p>Suppliers</p>
+          <h3>{{ suppliers }}</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="row g-4">
+
+    <!-- LEFT SIDE -->
+    <div class="col-lg-8">
+
+      <!-- RECENT TRANSACTIONS -->
+      <div class="dashboard-card mb-4">
+
+        <div class="card-header-custom">
+          <div>
+            <h5>Recent Transactions</h5>
+            <p>Latest customer deposits</p>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+
+          <table class="table modern-table align-middle">
+
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              {% for deposit in recent_deposits %}
+
+              <tr>
+
+                <td>
+                  <div class="user-info">
+
+                    <div class="avatar {% cycle 'blue' 'purple' 'orange' 'green' %}">
+                      {{ deposit.participant.name|slice:":1"|upper }}
+                    </div>
+
+                    <div>
+                      <strong>{{ deposit.participant.name }}</strong><br>
+                      <small>{{ deposit.participant.phone }}</small>
+                    </div>
+
+                  </div>
+                </td>
+
+                <td>
+                  {{ deposit.date_registered|date:"d M Y" }}
+                </td>
+
+                <td>
+                  UGX {{ deposit.amount_paid }}
+                </td>
+
+                <td>
+                  <span class="status completed-status">
+                    Completed
+                  </span>
+                </td>
+
+              </tr>
+
+              {% empty %}
+
+              <tr>
+                <td colspan="4" class="text-center py-4">
+                  No recent deposits
+                </td>
+              </tr>
+
+              {% endfor %}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
 
-      <div class="table-responsive">
+      <!-- RECENT ACTIVITY -->
+      <div class="dashboard-card">
 
-        <table class="table modern-table align-middle">
+        <div class="card-header-custom">
+          <div>
+            <h5>Recent Activity</h5>
+            <p>Latest system updates</p>
+          </div>
+        </div>
 
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Participant</th>
-              <th>Amount</th>
-              <th>Balance</th>
-              <th>Receipt</th>
-              <th>Status</th>
-            </tr>
-          </thead>
+        <div class="activity-list">
 
-          <tbody>
+          {% for activity in activities %}
 
-            <tr>
-              <td>11 Apr 2026</td>
+          <div class="activity-item">
 
-              <td>John Doe</td>
+            <div class="activity-dot {{ activity.color }}"></div>
 
-              <td class="fw-bold text-success">
-                UGX 150,000
-              </td>
+            <div>
+              <strong>{{ activity.title }}</strong><br>
+              <small>{{ activity.timestamp }}</small>
+            </div>
 
-              <td>UGX 450,000</td>
+          </div>
 
-              <td>
-                <span class="receipt-pill">
-                  RCT-2026-001
-                </span>
-              </td>
+          {% empty %}
 
-              <td>
-                <span class="status completed-status">
-                  Completed
-                </span>
-              </td>
-            </tr>
+          <p>No recent activity</p>
 
-            <tr>
+          {% endfor %}
 
-              <td>11 Apr 2026</td>
-
-              <td>Jane Smith</td>
-
-              <td class="fw-bold text-success">
-                UGX 200,000
-              </td>
-
-              <td>UGX 200,000</td>
-
-              <td>
-                <span class="receipt-pill">
-                  RCT-2026-002
-                </span>
-              </td>
-
-              <td>
-                <span class="status active-status">
-                  Verified
-                </span>
-              </td>
-
-            </tr>
-
-          </tbody>
-
-        </table>
+        </div>
 
       </div>
 
     </div>
 
-  </div>
+    <!-- RIGHT SIDE -->
+    <div class="col-lg-4">
 
-</div>
+      <!-- QUICK ACTIONS -->
+      <div class="dashboard-card mb-4">
 
-  <!-- Quick Actions -->
-  <div class="mt-5">
-    <a href="../templates/sales-reg.html" class="btn me-5">
-      <i class="bi bi-cart-plus me-2"></i> Add Sale
-    </a>
-    <a href="../templates/supplierReg.html" class="btn me-5">
-      <i class="bi bi-person-plus me-2"></i> Register Supplier
-    </a>
-    <a href="../templates/stock-reg.html" class="btn me-5">
-      <i class="bi bi-box-seam me-2"></i> Update Stock
-    </a>
-    <a href="../templates/receipt.html" class="btn me-5">
-      <i class="bi bi-bar-chart me-2"></i> Receipts
-    </a>
-  </div>
-  <br /><br />
-  {% endblock %}
+        <div class="card-header-custom">
+
+          <div>
+            <h5>Quick Actions</h5>
+            <p>Shortcuts</p>
+          </div>
+
+        </div>
+
+        <div class="quick-actions-grid">
+
+          <a href="#" class="quick-action">
+            <i class="bi bi-plus-circle"></i>
+            Add Sale
+          </a>
+
+          <a href="#" class="quick-action">
+            <i class="bi bi-box-seam"></i>
+            Stock
+          </a>
+
+          <a href="#" class="quick-action">
+            <i class="bi bi-person-plus"></i>
+            Supplier
+          </a>
+
+          <a href="#" class="quick-action">
+            <i class="bi bi-bar-chart"></i>
+            Reports
+          </a>
+
+        </div>
+
+      </div>
+
+     
+
+      </div>
+
+    </div>
+
+  
+
 </main>
+
+{% endblock %}

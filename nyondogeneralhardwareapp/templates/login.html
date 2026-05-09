@@ -1,80 +1,278 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login- Nyondo Stock</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'login.css'%}?v={{ time }}" />
-  </head>
-  <body class="d-flex justify-content-center align-items-center vh-100">
-    <div class="card shadow" style="width: 400px">
-      <div class="card-body">
-        <h1 class="card-title text-center mb-4">Login</h1>
-        <form action="/" method="post">
-          {% csrf_token %}
-          <div>
-            <label class="form-label">Username</label>
-            <input
-        
-              type="text"
-              class="form-control"
-              required
-            /><br />
-          </div>
-          <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label"
-              >Email address</label
-            >
-            <input
-             
-              type="email"
-              name="email"
-              class="form-control"
-              id="exampleInputEmail1"
-              aria-describedby="emailHelp"
-              required
-            />
-          </div>
-          <div class="mb-3">
-            <label>Password</label>
-            <input
-              
-              type="password"
-              class="form-control"
-              required
-            /><br />
-          </div>
-          <div class="form-check">
-            <input
-              class="form-check-input mb-3"
-              type="checkbox"
-              id="rememberMe"
-            />
-            <label class="form-check-label mb-5" for="rememberMe"
-              >Remember me</label
-            >
-          </div>
-          <div class="text-center">
-            <button type="submit" class="btn">Login</button>
-          </div>
-          <div class="text-center">
-            <a href="./forgot-password.html">Forgot password?</a><br />
-          </div>
-        </form>
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>
+    Login | Nyondo Stock
+  </title>
+
+  <!-- Bootstrap -->
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+
+  <!-- Bootstrap Icons -->
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+
+  <!-- Google Font -->
+
+  <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+  >
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  >
+
+  {% load static %}
+
+  <link
+    rel="stylesheet"
+    href="{% static 'login.css' %}"
+  />
+
+</head>
+
+<body>
+
+  <!-- BACKGROUND GLOWS -->
+
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+
+  <!-- LOGIN CONTAINER -->
+
+  <div class="login-container">
+
+    <!-- LEFT PANEL -->
+
+    <div class="login-left">
+
+      <img
+        src="{% static 'Images/Logo.png' %}"
+        alt="Nyondo Hardware Logo"
+        class="login-logo"
+      >
+
+      <div class="welcome-badge">
+
+        <i class="bi bi-shield-check"></i>
+
+        Secure Hardware Management System
+
       </div>
+
+      <h1>
+
+        Welcome Back to
+        <span>Nyondo Hardware</span>
+
+      </h1>
+
+      <p>
+
+        Manage stock, suppliers, deposits,
+        sales, and reports from one
+        professional dashboard.
+
+      </p>
+
+      <!-- FEATURE LIST -->
+
+      <div class="feature-list">
+
+        <div class="feature-item">
+
+          <i class="bi bi-box-seam"></i>
+
+          <span>Inventory Tracking</span>
+
+        </div>
+
+        <div class="feature-item">
+
+          <i class="bi bi-cash-stack"></i>
+
+          <span>Deposit Management</span>
+
+        </div>
+
+        <div class="feature-item">
+
+          <i class="bi bi-bar-chart-line"></i>
+
+          <span>Business Reports</span>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"
-    ></script>
-  </body>
+    <!-- RIGHT PANEL -->
+
+    <div class="login-right">
+
+      <div class="login-card">
+
+        <div class="login-header">
+
+          <h2>Login</h2>
+
+          <p>
+            Access your dashboard securely
+          </p>
+
+        </div>
+
+        <!-- FORM -->
+
+        <form action="/" method="post">
+
+          {% csrf_token %}
+
+          <!-- USERNAME -->
+
+          <div class="form-group">
+
+            <label>
+              Username
+            </label>
+
+            <div class="input-group-custom">
+
+              <i class="bi bi-person"></i>
+
+              <input
+                type="text"
+                class="form-control"
+                placeholder="Enter username"
+                required
+              >
+
+            </div>
+
+          </div>
+
+          <!-- EMAIL -->
+
+          <div class="form-group">
+
+            <label>
+              Email Address
+            </label>
+
+            <div class="input-group-custom">
+
+              <i class="bi bi-envelope"></i>
+
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                placeholder="Enter email"
+                required
+              >
+
+            </div>
+
+          </div>
+
+          <!-- PASSWORD -->
+
+          <div class="form-group">
+
+            <label>
+              Password
+            </label>
+
+            <div class="input-group-custom">
+
+              <i class="bi bi-lock"></i>
+
+              <input
+                type="password"
+                class="form-control"
+                placeholder="Enter password"
+                required
+              >
+
+            </div>
+
+          </div>
+
+          <!-- OPTIONS -->
+
+          <div class="login-options">
+
+            <div class="form-check">
+
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="rememberMe"
+              >
+
+              <label
+                class="form-check-label"
+                for="rememberMe"
+              >
+
+                Remember me
+
+              </label>
+
+            </div>
+
+            <a href="#">
+              Forgot Password?
+            </a>
+
+          </div>
+
+          <!-- BUTTON -->
+
+          <button
+            type="submit"
+            class="login-btn"
+          >
+
+            <i class="bi bi-box-arrow-in-right"></i>
+
+            Login
+
+          </button>
+
+        </form>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+
 </html>

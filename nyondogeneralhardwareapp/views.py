@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import ProtectedError
 from django.db import transaction
-from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem
+from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant
 
 # Create your views here.
 def index(request):
@@ -185,8 +185,7 @@ def reports(request):
     return render(request, 'reports.html')
 
 
-def customer_deposit(request):
-    return render(request, 'customer-deposit.html')
+
 
 def supplier_reg(request):
      if request.method == "POST":
@@ -207,6 +206,7 @@ def supplier_reg(request):
         return redirect ('accountssupplier')
      
      return render(request, 'supplierReg.html')
+
 
 def back(request):
     return render(request, 'index.html')
@@ -309,14 +309,69 @@ def stock_reg(request):
 
     return render(request, 'stock-reg.html', {"suppliers": suppliers})
 
-def receipt_form(request):
-    return render(request, 'receiptForm.html')
+def customer_deposit(request):
+     deposits = Deposit.objects.select_related("participant").all()
+    
+     return render(request, 'customer-deposit.html', {"deposits": deposits})
 
 def customer_reg(request):
-    if request.method == "POST":
-        payload = request.POST
+     if request.method == "POST":
+        # Create participant
+        participant = Participant.objects.create(
+            name=request.POST.get("name"),
+            nin=request.POST.get("nin"),
+            phone=request.POST.get("number"),
+            registered_on=request.POST.get("date"),
+        )
+
+        # Create first deposit linked to participant
+        deposit = Deposit.objects.create(
+            participant=participant,
+            product=request.POST.get("product"),
+            amount_paid=request.POST.get("amount_paid"),
+            payment_method=request.POST.get("payment_method"),
+            date_registered=request.POST.get("date"),
+        )
+
+        messages.success(request, f"{participant.name} enrolled successfully with first deposit.")
+        # ✅ Redirect straight to receipt page
+        return redirect("deposit_receipt", pk=deposit.pk)
+
         
-    return render(request, 'customer-reg.html')
+     return render(request, 'customer-reg.html')
+
+def deposit_update(request, pk):
+    deposit = get_object_or_404(Deposit, pk=pk)
+
+    if request.method == "POST":
+        deposit.participant_id = request.POST.get("participant_id")
+        deposit.product = request.POST.get("product")
+        deposit.amount_paid = request.POST.get("amount_paid")
+        deposit.payment_method = request.POST.get("payment_method")
+        deposit.date_registered = request.POST.get("date_registered")
+        deposit.save()
+
+        messages.info(request, "Deposit updated successfully.")
+        return redirect("deposit_receipt", pk=deposit.pk)
+
+    participants = Participant.objects.all()
+    return render(request, "deposit_update.html", {"deposit": deposit, "participants": participants})
+
+def deposit_delete(request, pk):
+    deposit = get_object_or_404(Deposit, pk=pk)
+
+    if request.method == "POST":
+        deposit.delete()
+        messages.warning(request, f"Deposit for {deposit.participant.name} has been deleted.")
+        return redirect("accountscustomer-deposit")
+
+    # Confirmation page
+    return render(request, "deposit_delete.html", {"deposit": deposit})
+
+
+def deposit_receipt(request, pk):
+    deposit = get_object_or_404(Deposit, pk=pk)
+    return render(request, "deposit-receipt-detail.html", {"deposit": deposit})
 
 def supplier_view(request, pk, slug ):
     supplier = get_object_or_404(Supplier, pk=pk,slug=slug)

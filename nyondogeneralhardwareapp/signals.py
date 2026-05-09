@@ -1,6 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Sale, SaleReceipt, SaleItem, Stock
+from .models import Sale, SaleReceipt, SaleItem, Stock, Deposit, DepositReceipt
 
 # Auto-create receipt when a Sale is made
 @receiver(post_save, sender=Sale)
@@ -26,3 +26,9 @@ def update_sale_and_stock(sender, instance, created, **kwargs):
         sale.transport_cost = sale.calculate_transport()
         sale.grand_total = sale.total_amount() + sale.transport_cost
         sale.save()
+
+# --- Deposit signals ---
+@receiver(post_save, sender=Deposit)
+def create_deposit_receipt(sender, instance, created, **kwargs):
+    if created:
+        DepositReceipt.objects.create(deposit=instance)

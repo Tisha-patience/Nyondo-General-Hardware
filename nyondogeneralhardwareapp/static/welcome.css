@@ -1,102 +1,450 @@
-body {
-  background: linear-gradient(135deg, #344955 0%, #2a3640 100%);
-  background-image:  url("logo-white.png") no-repeat center center fixed;
-  background-size: 300px;
-  color: white;
-  text-align: center;
-  padding-top: 100px;
-  overflow: hidden;
+/* =========================
+   GLOBAL
+========================= */
 
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.motto {
-  font-size: 1.2rem;
-  font-style: italic;
+body{
+
+  font-family: 'Poppins', sans-serif;
+
+  min-height: 100vh;
+
+  overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+
+  background:
+    linear-gradient(
+      135deg,
+      #344955 0%,
+      #2b3c46 45%,
+      #1f2c34 100%
+    );
+
+  color: white;
+}
+
+/* =========================
+   BACKGROUND GLOW
+========================= */
+
+.bg-glow{
+
+  position: absolute;
+
+  border-radius: 50%;
+
+  filter: blur(80px);
+
+  opacity: 0.35;
+
+  z-index: 0;
+}
+
+.glow-1{
+
+  width: 350px;
+  height: 350px;
+
+  background: #0ABAB5;
+
+  top: -120px;
+  left: -100px;
+
+  animation: floatGlow 8s ease-in-out infinite;
+}
+
+.glow-2{
+
+  width: 300px;
+  height: 300px;
+
+  background: #F9AA33;
+
+  bottom: -100px;
+  right: -80px;
+
+  animation: floatGlow 10s ease-in-out infinite alternate;
+}
+
+@keyframes floatGlow{
+
+  0%{
+    transform: translateY(0px);
+  }
+
+  100%{
+    transform: translateY(25px);
+  }
+}
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.welcome-container{
+
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  position: relative;
+
+  z-index: 2;
+}
+
+/* =========================
+   GLASS CARD
+========================= */
+
+.welcome-card{
+
+  width: 100%;
+  max-width: 760px;
+
+  padding: 55px;
+
+  border-radius: 32px;
+
+  background: rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(20px);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.25);
+
+  text-align: center;
+
+  position: relative;
+
+  overflow: hidden;
+}
+
+/* SHINE EFFECT */
+
+.welcome-card::before{
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -100%;
+
+  width: 100%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,0.06),
+      transparent
+    );
+
+  animation: shine 6s linear infinite;
+}
+
+@keyframes shine{
+
+  from{
+    left: -100%;
+  }
+
+  to{
+    left: 100%;
+  }
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo-wrapper{
+  margin-bottom: 18px;
+}
+
+.logo-img{
+
+  width: 240px;
+
+  max-width: 100%;
+
+  object-fit: contain;
+
+  filter:
+    drop-shadow(0 8px 25px rgba(0,0,0,0.25));
+
+  animation: floatLogo 4s ease-in-out infinite;
+}
+
+@keyframes floatLogo{
+
+  0%{
+    transform: translateY(0px);
+  }
+
+  50%{
+    transform: translateY(-8px);
+  }
+
+  100%{
+    transform: translateY(0px);
+  }
+}
+
+/* =========================
+   BADGE
+========================= */
+
+.welcome-badge{
+
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 18px;
+
+  border-radius: 50px;
+
+  background: rgba(255,255,255,0.10);
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  margin-bottom: 28px;
+}
+
+.welcome-badge i{
+  color: #F9AA33;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.welcome-title{
+
+  font-size: 3rem;
+
+  font-weight: 800;
+
+  line-height: 1.2;
+
+  margin-bottom: 18px;
+}
+
+.welcome-title span{
+  color: #F9AA33;
+}
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.welcome-text{
+
+  max-width: 620px;
+
+  margin: auto;
+
+  color: rgba(255,255,255,0.78);
+
+  font-size: 1.08rem;
+
+  line-height: 1.8;
+
+  margin-bottom: 38px;
+}
+
+/* =========================
+   BUTTON
+========================= */
+
+.welcome-actions{
   margin-bottom: 40px;
 }
 
+.btn-enter{
 
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
 
-/* Decorative background shapes */
-body::before {
-  content: "";
-  position: absolute;
-  top: -50px;
-  left: -50px;
-  width: 200px;
-  height: 200px;
-  background: #0abab455;
-  border-radius: 50%;
-}
+  padding: 15px 34px;
 
-body::after {
-  content: "";
-  position: absolute;
-  bottom: -80px;
-  right: -80px;
-  width: 250px;
-  height: 250px;
-  background: #0abab455;
-  border-radius: 50%;
-}
+  border-radius: 50px;
 
-/* Glow animation */
-@keyframes pulse {
-  from {
-    transform: scale(1);
-    opacity: 0.6;
-  }
-  to {
-    transform: scale(1.2);
-    opacity: 1;
-  }
-}
+  background:
+    linear-gradient(
+      135deg,
+      #0ABAB5,
+      #099d99
+    );
 
-/* Logo glow */
-.logo-img {
-  /* width: 140px; */
-  /* filter: drop-shadow(0 0 15px rgba(152,202,50,0.7)); */
-   width: 300px;
-  max-width: 100%;
-  margin-bottom: 20px;
-}
-
-/* Headings glow */
-h1 {
   color: #fff;
-  /* text-shadow: 0 0 15px rgba(152,202,50,0.6); */
-}
 
-/* Button with animated shine */
-.btn-enter {
-  background: linear-gradient(90deg,#0ABAB5, #0ABAB5 );
-  color: #fff;
-  font-weight: bold;
-  border-radius: 30px;
-  padding: 12px 30px;
-  /* box-shadow: 0 0 20px rgba(152,202,50,0.6); */
-  transition: all 0.3s ease;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition: all 0.35s ease;
+
+  box-shadow:
+    0 12px 30px rgba(10,186,181,0.35);
+
   position: relative;
+
   overflow: hidden;
 }
 
-.btn-enter::after {
+.btn-enter:hover{
+
+  transform: translateY(-4px);
+
+  color: #fff;
+
+  box-shadow:
+    0 18px 40px rgba(10,186,181,0.45);
+}
+
+/* BUTTON SHINE */
+
+.btn-enter::after{
+
   content: "";
+
   position: absolute;
+
   top: 0;
   left: -100%;
+
   width: 100%;
   height: 100%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-  animation: shine 3s infinite;
+
+  background:
+    linear-gradient(
+      120deg,
+      transparent,
+      rgba(255,255,255,0.4),
+      transparent
+    );
+
+  animation: buttonShine 3s infinite;
 }
 
-@keyframes shine {
-  from { left: -100%; }
-  to { left: 100%; }
+@keyframes buttonShine{
+
+  from{
+    left: -100%;
+  }
+
+  to{
+    left: 100%;
+  }
 }
 
-.btn-enter:hover {
-  transform: scale(1.05);
-  /* box-shadow: 0 0 30px rgba(152,202,50,0.8); */
+/* =========================
+   MINI STATS
+========================= */
+
+.mini-stats{
+
+  display: flex;
+
+  justify-content: center;
+
+  gap: 18px;
+
+  flex-wrap: wrap;
+}
+
+.stat-box{
+
+  min-width: 150px;
+
+  padding: 18px;
+
+  border-radius: 18px;
+
+  background: rgba(255,255,255,0.06);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  transition: all 0.3s ease;
+}
+
+.stat-box:hover{
+
+  transform: translateY(-5px);
+
+  background: rgba(255,255,255,0.10);
+}
+
+.stat-box i{
+
+  display: block;
+
+  font-size: 1.4rem;
+
+  margin-bottom: 10px;
+
+  color: #F9AA33;
+}
+
+.stat-box span{
+
+  font-size: 14px;
+
+  font-weight: 500;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 768px){
+
+  .welcome-card{
+    padding: 35px 25px;
+  }
+
+  .welcome-title{
+    font-size: 2rem;
+  }
+
+  .welcome-text{
+    font-size: 0.95rem;
+  }
+
+  .logo-img{
+    width: 180px;
+  }
+
+  .btn-enter{
+    width: 100%;
+    justify-content: center;
+  }
+
+  .stat-box{
+    width: 100%;
+  }
+
 }

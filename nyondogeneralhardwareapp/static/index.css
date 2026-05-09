@@ -658,11 +658,10 @@ img{
   gap: 12px;
 }
 
-.avatar{
+.avatar {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #2563eb;
   color: white;
   display: flex;
   align-items: center;
@@ -670,8 +669,20 @@ img{
   font-weight: 600;
 }
 
-.avatar.purple{
-  background: #8b5cf6;
+.avatar.blue {
+  background: #2563eb; /* blue */
+}
+
+.avatar.purple {
+  background: #8b5cf6; /* purple */
+}
+
+.avatar.orange {
+  background: #f97316; /* orange */
+}
+
+.avatar.green {
+  background: #22c55e; /* green */
 }
 
 /* =========================
@@ -772,6 +783,466 @@ hr{
   .nav-tabs .nav-link{
     font-size: 13px;
     padding: 10px 14px;
+  }
+
+}
+/* =========================
+   QUICK ACTIONS CARD
+========================= */
+
+.dashboard-card{
+
+  background: #ffffff;
+
+  border-radius: 24px;
+
+  padding: 24px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.05);
+
+  border: 1px solid rgba(255,255,255,0.4);
+
+  transition: 0.3s ease;
+}
+
+/* HEADER */
+
+.card-header-custom{
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  margin-bottom: 24px;
+}
+
+.card-header-custom h5{
+
+  font-size: 1.2rem;
+
+  font-weight: 700;
+
+  color: #344955;
+
+  margin-bottom: 5px;
+}
+
+.card-header-custom p{
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  margin: 0;
+}
+
+/* =========================
+   QUICK ACTIONS GRID
+========================= */
+
+.quick-actions-grid{
+
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 18px;
+}
+
+/* ACTION CARD */
+
+.quick-action{
+
+  position: relative;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc 0%,
+      #eef2f7 100%
+    );
+
+  border-radius: 22px;
+
+  padding: 28px 20px;
+
+  text-align: center;
+
+  text-decoration: none;
+
+  color: #344955;
+
+  overflow: hidden;
+
+  transition: all 0.35s ease;
+
+  border: 1px solid rgba(52,73,85,0.06);
+
+  min-height: 150px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+}
+
+/* HOVER EFFECT */
+
+.quick-action:hover{
+
+  transform:
+    translateY(-8px)
+    scale(1.02);
+
+  background:
+    linear-gradient(
+      135deg,
+      #344955 0%,
+      #3f5d69 100%
+    );
+
+  color: white;
+
+  box-shadow:
+    0 18px 40px rgba(52,73,85,0.18);
+}
+
+/* ICON */
+
+.quick-action i{
+
+  width: 65px;
+
+  height: 65px;
+
+  border-radius: 18px;
+
+  background: rgba(10,186,181,0.12);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  font-size: 1.7rem;
+
+  margin-bottom: 16px;
+
+  color: #0ABAB5;
+
+  transition: 0.35s ease;
+}
+
+/* ICON HOVER */
+
+.quick-action:hover i{
+
+  background: rgba(255,255,255,0.12);
+
+  color: #ffffff;
+
+  transform:
+    rotate(-6deg)
+    scale(1.08);
+}
+
+/* TEXT */
+
+.quick-action{
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.3px;
+}
+
+/* GLOW EFFECT */
+
+.quick-action::before{
+
+  content: "";
+
+  position: absolute;
+
+  top: -40px;
+
+  right: -40px;
+
+  width: 120px;
+
+  height: 120px;
+
+  background: rgba(10,186,181,0.08);
+
+  border-radius: 50%;
+
+  transition: 0.4s ease;
+}
+
+.quick-action:hover::before{
+
+  transform: scale(1.4);
+
+  background: rgba(255,255,255,0.08);
+}
+
+/* ACTIVE CLICK */
+
+.quick-action:active{
+
+  transform: scale(0.98);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 768px){
+
+  .quick-actions-grid{
+
+    grid-template-columns: 1fr;
+  }
+
+}
+/* =========================
+   RECENT ACTIVITY CARD
+========================= */
+
+.dashboard-card{
+
+  background: #ffffff;
+
+  border-radius: 24px;
+
+  padding: 26px;
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.05);
+
+  border: 1px solid rgba(255,255,255,0.4);
+
+  transition: 0.3s ease;
+}
+
+/* TITLE */
+
+.dashboard-card h5{
+
+  font-size: 1.2rem;
+
+  font-weight: 700;
+
+  color: #344955;
+
+  margin-bottom: 24px;
+
+  position: relative;
+}
+
+/* SMALL ACCENT LINE */
+
+.dashboard-card h5::after{
+
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+
+  bottom: -10px;
+
+  width: 45px;
+
+  height: 4px;
+
+  border-radius: 20px;
+
+  background: #0ABAB5;
+}
+
+/* =========================
+   ACTIVITY LIST
+========================= */
+
+.activity-list{
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+/* ACTIVITY ITEM */
+
+.activity-item{
+
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  padding: 18px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #f8fafc 0%,
+      #eef2f7 100%
+    );
+
+  transition: 0.35s ease;
+
+  overflow: hidden;
+}
+
+/* HOVER */
+
+.activity-item:hover{
+
+  transform: translateX(6px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #344955 0%,
+      #3d5663 100%
+    );
+
+  box-shadow:
+    0 12px 30px rgba(52,73,85,0.15);
+}
+
+/* TEXT HOVER */
+
+.activity-item:hover strong,
+.activity-item:hover small{
+
+  color: white;
+}
+
+/* ACTIVITY DOT */
+
+.activity-dot{
+
+  width: 14px;
+
+  height: 14px;
+
+  border-radius: 50%;
+
+  position: relative;
+
+  flex-shrink: 0;
+}
+
+/* GLOW EFFECT */
+
+.activity-dot::after{
+
+  content: "";
+
+  position: absolute;
+
+  inset: -5px;
+
+  border-radius: 50%;
+
+  opacity: 0.25;
+}
+
+/* COLORS */
+
+.activity-dot.green{
+  background: #10b981;
+}
+
+.activity-dot.green::after{
+  background: #10b981;
+}
+
+.activity-dot.orange{
+  background: #f59e0b;
+}
+
+.activity-dot.orange::after{
+  background: #f59e0b;
+}
+
+.activity-dot.blue{
+  background: #3b82f6;
+}
+
+.activity-dot.blue::after{
+  background: #3b82f6;
+}
+
+.activity-dot.red{
+  background: #ef4444;
+}
+
+.activity-dot.red::after{
+  background: #ef4444;
+}
+
+/* TEXT */
+
+.activity-item strong{
+
+  color: #344955;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  transition: 0.3s ease;
+}
+
+.activity-item small{
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  transition: 0.3s ease;
+}
+
+/* EMPTY MESSAGE */
+
+.activity-list p{
+
+  text-align: center;
+
+  color: #94a3b8;
+
+  padding: 20px 0;
+
+  margin: 0;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 768px){
+
+  .activity-item{
+
+    padding: 15px;
   }
 
 }

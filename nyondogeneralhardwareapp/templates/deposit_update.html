@@ -1,0 +1,25 @@
+<form method="post" action="/">
+  {% csrf_token %}
+  <label>Participant</label>
+  <select name="participant_id" class="form-control">
+    {% for p in participants %}
+      <option value="{{ p.id }}">{{ p.name }} ({{ p.nin }})</option>
+    {% endfor %}
+  </select>
+
+  <label>Product</label>
+  <input type="text" name="product" class="form-control" required>
+
+  <label>Amount Paid</label>
+  <input type="number" name="amount_paid" class="form-control" required>
+
+  <label>Payment Method</label>
+  <input type="text" name="payment_method" class="form-control" required>
+
+   <!-- ✅ Date field for editing -->
+  <label>Date Registered</label>
+  <input type="date" name="date_registered" class="form-control" 
+         value="{{ deposit.date_registered|date:'Y-m-d' }}" required>
+
+  <button type="submit" class="btn btn-primary">Update Deposit</button>
+</form>

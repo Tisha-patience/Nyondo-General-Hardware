@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
 # Create your models here.
@@ -108,11 +109,43 @@ class SaleReceipt(models.Model):
     def __str__(self):
         return self.receipt_number
 
-# class DepositReceipt(models.Model):
-#     deposit = models.OneToOneField(Deposit, on_delete=models.CASCADE)
-#     receipt_number = models.CharField(max_length=20, unique=True)
-#     issued_at = models.DateTimeField(auto_now_add=True)
-#     is_final = models.BooleanField(default=False)  # False = temporary, True = final
+class Participant(models.Model):
+    name = models.CharField(max_length=100)
+    nin = models.CharField(max_length=20, unique=True)
+    phone = models.CharField(max_length=15)
+    registered_on = models.DateTimeField(default=timezone.now)
 
+    def __str__(self):
+        return f"{self.name} ({self.nin})"
+
+
+class Deposit(models.Model):
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name="deposits")
+    product = models.CharField(max_length=100)
+    amount_paid = models.DecimalField(max_digits=12, decimal_places=2)
+    payment_method = models.CharField(max_length=50, default="Cash")
+    date_registered = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.participant.name} - {self.product} ({self.amount_paid})"
+
+
+class DepositReceipt(models.Model):
+    deposit = models.OneToOneField(Deposit, on_delete=models.CASCADE, related_name="receipt")
+    receipt_number = models.CharField(max_length=20, unique=True)
+    issued_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        if not self.receipt_number:
+            last_receipt = DepositReceipt.objects.order_by("id").last()
+            if not last_receipt:
+                self.receipt_number = "DEP-2026-0001"
+            else:
+                last_number = int(last_receipt.receipt_number.split("-")[-1])
+                self.receipt_number = f"DEP-2026-{last_number+1:04d}"
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.receipt_number
 
 
