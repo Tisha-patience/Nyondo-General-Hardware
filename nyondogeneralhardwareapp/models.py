@@ -149,3 +149,19 @@ class DepositReceipt(models.Model):
         return self.receipt_number
 
 
+class GoodsCollection(models.Model):
+    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name="collections")
+    product = models.CharField(max_length=100)   # e.g. "CEM II N", "Iron Bar 12mm", "Gauge 28 Red"
+    quantity = models.PositiveIntegerField()
+    date_collected = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.participant.name} - {self.product} ({self.quantity})"
+    
+class GoodsReceipt(models.Model):
+    collection = models.OneToOneField("GoodsCollection", on_delete=models.CASCADE, related_name="receipt")
+    receipt_number = models.CharField(max_length=20, unique=True)
+    date_issued = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Receipt {self.receipt_number} for {self.collection.participant.name}"

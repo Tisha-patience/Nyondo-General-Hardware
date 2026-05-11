@@ -1,4 +1,11 @@
-<form method="post" action="/">
+{% extends 'baseForm.html' %}
+{% block title %}
+Update Deposit
+{% endblock %}
+
+{% block content %}
+
+<form method="post" action="{% url 'deposit_update' deposit.pk %}">
   {% csrf_token %}
   <label>Participant</label>
   <select name="participant_id" class="form-control">
@@ -7,14 +14,14 @@
     {% endfor %}
   </select>
 
-  <label>Product</label>
-  <input type="text" name="product" class="form-control" required>
+ <label>Product</label>
+  <input type="text" name="product" class="form-control" value="{{ deposit.product }}" required>
 
   <label>Amount Paid</label>
-  <input type="number" name="amount_paid" class="form-control" required>
+  <input type="number" name="amount_paid" class="form-control" value="{{ deposit.amount_paid }}" required>
 
   <label>Payment Method</label>
-  <input type="text" name="payment_method" class="form-control" required>
+  <input type="text" name="payment_method" class="form-control" value="{{ deposit.payment_method }}" required>
 
    <!-- ✅ Date field for editing -->
   <label>Date Registered</label>
@@ -23,3 +30,4 @@
 
   <button type="submit" class="btn btn-primary">Update Deposit</button>
 </form>
+{% endblock %}

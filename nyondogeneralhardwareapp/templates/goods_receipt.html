@@ -1,0 +1,21 @@
+{% extends 'baseForm.html' %}
+{% block title %} Final Receipt {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow mx-auto" style="max-width: 700px; border: 3px solid #0ABAB5;">
+    <div class="card-body">
+      <h2 class="text-center">Final Receipt</h2>
+      <hr>
+      <p><strong>Receipt No:</strong> {{ receipt.receipt_number }}</p>
+      <p><strong>Customer:</strong> {{ collection.participant.name }}</p>
+      <p><strong>Product:</strong> {{ collection.product }}</p>
+      <p><strong>Quantity:</strong> {{ collection.quantity }}</p>
+      <p><strong>Date:</strong> {{ receipt.date_issued|date:"Y-m-d H:i" }}</p>
+      <hr>
+      <p class="text-center">Thank you for your business!</p>
+      <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
+    </div>
+  </div>
+</div>
+{% endblock %}

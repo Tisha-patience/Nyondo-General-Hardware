@@ -52,6 +52,16 @@ urlpatterns = [
     path('accounts/stock-edit/', views.stock_edit, name='accountsstock-edit'),
     path('accounts/stock-reg/', views.stock_reg, name='accountsstock-reg'),
     path('accounts/customer-reg/', views.customer_reg, name='accountscustomer-reg'),
-   
-    
+    path('accounts/customer-profile/<int:pk>/', views.customer_profile, name='customer_profile'),
+    path('accounts/customer-deposit/add-payment/<int:participant_id>/', views.deposit_add_payment, name='deposit_add_payment'),
+    path(
+    "customers/<int:participant_id>/pick-goods/<str:product>/<int:quantity>/",
+    views.pick_goods,
+    name="pick_goods"
+),
+
+    path("collections/<int:pk>/receipt/", views.goods_receipt, name="goods_receipt"),
+
+
+
 ]

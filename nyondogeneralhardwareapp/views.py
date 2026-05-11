@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.db.models import Sum
 from django.db.models import ProtectedError
 from django.db import transaction
-from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant
+from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection
 
 # Create your views here.
 def index(request):
@@ -13,8 +14,34 @@ def login(request):
     return render(request, 'login.html')
 
 def dashboard(request):
+   # Stats
+    total_customers = Participant.objects.count()
+
+    # ✅ Revenue = deposits + sales
+    deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+    sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
+    total_revenue = deposits_total + sales_total
+
+    stock_items = Stock.objects.count()
+    suppliers = Supplier.objects.count()
+
+    # Recent deposits (transactions table)
+    recent_deposits = Deposit.objects.select_related("participant").order_by("-date_registered")[:5]
+
+    # Recent activity (replace with Activity model later)
+    activities = [
+        {"title": "New sale recorded", "timestamp": "2 mins ago", "color": "green"},
+        {"title": "Stock updated", "timestamp": "20 mins ago", "color": "orange"},
+        {"title": "Supplier added", "timestamp": "1 hour ago", "color": "blue"},
+    ]
+
     context = {
-        "total_deposits" : 1200000
+        "total_customers": total_customers,
+        "total_revenue": total_revenue,
+        "stock_items": stock_items,
+        "suppliers": suppliers,
+        "recent_deposits": recent_deposits,
+        "activities": activities,
     }
     return render(request, 'dashboard.html', context)
 
@@ -310,12 +337,16 @@ def stock_reg(request):
     return render(request, 'stock-reg.html', {"suppliers": suppliers})
 
 def customer_deposit(request):
-     deposits = Deposit.objects.select_related("participant").all()
-    
-     return render(request, 'customer-deposit.html', {"deposits": deposits})
-
+     participants = Participant.objects.all()
+     for p in participants:
+        # Total deposits
+        p.total_deposits = p.deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+        # Latest payment method
+        latest = p.deposits.order_by("-date_registered").first()
+        p.latest_method = latest.payment_method if latest else "—"
+        return render(request, "customer-deposit.html", {"participants": participants})
 def customer_reg(request):
-     if request.method == "POST":
+    if request.method == "POST":
         # Create participant
         participant = Participant.objects.create(
             name=request.POST.get("name"),
@@ -337,8 +368,85 @@ def customer_reg(request):
         # ✅ Redirect straight to receipt page
         return redirect("deposit_receipt", pk=deposit.pk)
 
+    return render(request, 'customer-reg.html')
+
+def customer_profile(request, pk):
+    participant = get_object_or_404(Participant, pk=pk)
+    # Fetch all deposits and collections for this participant
+    deposits = participant.deposits.order_by("-date_registered")
+    total_balance = deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+    collections = participant.collections.order_by("-date_collected")
+
+    # thresholds (unit prices)
+    thresholds = {
+        "CEM II N (bag)": 50000,
+        "CEM III N (bag)": 70000,
+        "Iron Bar 10mm (piece)": 20000,
+        "Iron Bar 12mm (piece)": 25000,
+        "Iron Bar 16mm (piece)": 30000,
+        "Iron Sheet Gauge 28 Red": 60000,
+        "Iron Sheet Gauge 28 Blue": 60000,
+        "Iron Sheet Gauge 30 Galvanized": 70000,
+    }
+
+    # eligibility calculation
+    eligibility = {}
+    for product, price in thresholds.items():
+        eligibility[product] = total_balance // price if total_balance >= price else 0
+
+    context = {
+        "participant": participant,
+        "deposits": deposits,
+        "collections": collections,
+        "total_balance": total_balance,
+        "eligibility": eligibility,
+    }
+    return render(request, "customer_profile.html", context)
+
+def deposit_add_payment(request, participant_id):
+    participant = get_object_or_404(Participant, pk=participant_id)
+
+    if request.method == "POST":
+        deposit = Deposit.objects.create(
+            participant=participant,
+            product=request.POST.get("product"),
+            amount_paid=request.POST.get("amount_paid"),
+            payment_method=request.POST.get("payment_method"),
+            date_registered=request.POST.get("date_registered"),
+        )
+        # ✅ Redirect to receipt page after saving
+        return redirect("deposit_receipt", pk=deposit.pk)
+
+    # ✅ Render the form template
+    return render(request, "deposit_add_payment.html", {"participant": participant})
+
+def goods_receipt(request, pk):
+    collection = get_object_or_404(GoodsCollection, pk=pk)
+    receipt = collection.receipt
+    return render(request, "goods_receipt.html", {"collection": collection, "receipt": receipt})
+
+
+
+def pick_goods(request, participant_id, product=None, quantity=None):
+    participant = get_object_or_404(Participant, pk=participant_id)
+
+    if request.method == "POST":
+        GoodsCollection.objects.create(
+            participant=participant,
+            product=request.POST.get("product"),
+            quantity=int(request.POST.get("quantity")),
+        )
+        # ✅ Redirect straight to final receipt
+        return redirect("goods_receipt", pk=collection.pk)
         
-     return render(request, 'customer-reg.html')
+
+    # ✅ Pass product and quantity to template for prefill
+    return render(
+        request,
+        "goodsCollection_form.html",
+        {"participant": participant, "product": product, "quantity": quantity},
+    )
+
 
 def deposit_update(request, pk):
     deposit = get_object_or_404(Deposit, pk=pk)

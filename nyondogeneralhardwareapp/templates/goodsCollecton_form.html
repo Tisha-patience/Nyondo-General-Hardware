@@ -1,0 +1,56 @@
+{% extends 'baseForm.html' %}
+{% block title %} Pick Goods {% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <div class="card shadow mx-auto" style="max-width: 700px; border: 3px solid #0ABAB5;">
+    <div class="card-body">
+      <h2 class="text-center">Pick Goods for {{ participant.name }}</h2>
+      <hr />
+
+      <form method="post">
+        {% csrf_token %}
+
+        <!-- Product -->
+        <div class="mb-3">
+          <label class="form-label">Product</label>
+          <select class="form-select" name="product" required>
+            <optgroup label="Cement">
+              <option value="CEM II N" {% if product == "CEM II N" %}selected{% endif %}>CEM II N</option>
+              <option value="CEM III N" {% if product == "CEM III N" %}selected{% endif %}>CEM III N</option>
+            </optgroup>
+            <optgroup label="Iron Bars">
+              <option value="Iron Bar 10mm" {% if product == "Iron Bar 10mm" %}selected{% endif %}>10mm</option>
+              <option value="Iron Bar 12mm" {% if product == "Iron Bar 12mm" %}selected{% endif %}>12mm</option>
+              <option value="Iron Bar 16mm" {% if product == "Iron Bar 16mm" %}selected{% endif %}>16mm</option>
+            </optgroup>
+            <optgroup label="Iron Sheets">
+              <option value="Gauge 28 Red" {% if product == "Gauge 28 Red" %}selected{% endif %}>Gauge 28 — Red</option>
+              <option value="Gauge 28 Blue" {% if product == "Gauge 28 Blue" %}selected{% endif %}>Gauge 28 — Blue</option>
+              <option value="Gauge 30 Galvanized" {% if product == "Gauge 30 Galvanized" %}selected{% endif %}>Gauge 30 — Galvanized</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Quantity -->
+        <div class="mb-3">
+          <label class="form-label">Quantity</label>
+          <input type="number" name="quantity" class="form-control" value="{{ quantity }}" required>
+        </div>
+
+        <!-- Submit -->
+        <div class="row">
+          <div class="col">
+            <button type="submit" class="btn btn-primary">Confirm Collection</button>
+          </div>
+          <div class="col text-end">
+            <a href="{% url 'customer_profile' participant.pk %}" class="btn btn-secondary">
+              <i class="bi bi-arrow-left me-1"></i> Back to Profile
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

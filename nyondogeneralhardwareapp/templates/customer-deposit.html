@@ -59,68 +59,47 @@
               <th>NIN</th>
               <th>Contact</th>
               <th>Date Registered</th>
-              <th>Product</th>
-              <th>Amount</th>
-              <th>Payment Method</th>
+              <th>Total Deposits</th>
+              <th>Latest Payment Method</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {% for deposit in deposits %}
+            {% for participant in participants %}
             <tr>
               <!-- Customer Name with avatar -->
               <td>
                 <div class="user-info">
                   <div class="avatar {% cycle 'blue' 'purple' 'orange' 'green' %}">
-                    {{ deposit.participant.name|slice:":2"|upper }}
+                    {{ participant.name|slice:":2"|upper }}
                   </div>
-                  <span>{{ deposit.participant.name }}</span>
+                  <span>{{ participant.name }}</span>
                 </div>
               </td>
-
-              <td>{{ deposit.participant.nin }}</td>
-              <td>{{ deposit.participant.phone }}</td>
-              <td>{{ deposit.date_registered|date:"Y-m-d H:i" }}</td>
-
-              <td>
-                <span class="badge bg-primary">{{ deposit.product }}</span>
               </td>
-
+              <td>{{ participant.nin }}</td>
+              <td>{{ participant.phone }}</td>
+              <td>{{ participant.registered_on|date:"Y-m-d H:i" }}</td>
               <td>
-                <span class="badge bg-success">{{ deposit.amount_paid }}</span>
+                <span class="badge bg-success"
+                  >UGX {{ participant.total_deposits }}</span
+                >
               </td>
-
               <td>
                 <span class="status active-status"
-                  >{{ deposit.payment_method }}</span
+                  >{{ participant.latest_method }}</span
                 >
               </td>
 
-              <!-- Actions -->
               <td>
-                <div class="d-inline-flex gap-1">
-                <a
-                  href="{% url 'deposit_receipt' deposit.pk %}"
-                  class="btn btn-sm btn-info"
-                  title="View Receipt"
-                >
-                  <i class="bi bi-receipt"></i>
-                </a>
-                <a
-                  href="{% url 'deposit_update' deposit.pk %}"
-                  class="btn btn-sm btn-warning"
-                  title="Edit"
-                >
-                  <i class="bi bi-pencil"></i>
-                </a>
-                <a
-                  href="{% url 'deposit_delete' deposit.pk %}"
-                  class="btn btn-sm btn-danger"
-                  title="Delete"
-                >
-                  <i class="bi bi-trash"></i>
-                </a>
-                </div>
+                  <a
+                    href="{% url 'customer_profile' participant.pk %}"
+                    class="btn btn-sm"
+                    title="View Participant"
+                  >
+                    <i class="bi bi-person"></i>
+                  </a>
+                
               </td>
             </tr>
             {% empty %}

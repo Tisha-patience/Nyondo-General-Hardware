@@ -1,6 +1,7 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from .models import Sale, SaleReceipt, SaleItem, Stock, Deposit, DepositReceipt
+import uuid
+from .models import Sale, SaleReceipt, SaleItem, Stock, Deposit, DepositReceipt, GoodsCollection, GoodsReceipt 
 
 # Auto-create receipt when a Sale is made
 @receiver(post_save, sender=Sale)
@@ -32,3 +33,11 @@ def update_sale_and_stock(sender, instance, created, **kwargs):
 def create_deposit_receipt(sender, instance, created, **kwargs):
     if created:
         DepositReceipt.objects.create(deposit=instance)
+
+@receiver(post_save, sender=GoodsCollection)
+def create_goods_receipt(sender, instance, created, **kwargs):
+    if created:
+        GoodsReceipt.objects.create(
+            collection=instance,
+            receipt_number=str(uuid.uuid4())[:8]  # short unique code
+        )        
