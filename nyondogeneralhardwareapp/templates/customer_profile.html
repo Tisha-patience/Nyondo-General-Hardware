@@ -1,6 +1,4 @@
-{% extends 'baseForm.html' %}
-{% block title %} Customer Profile {% endblock %}
-
+{% extends 'baseForm.html' %} {% block title %} Customer Profile {% endblock %}
 {% block content %}
 <div class="container mt-4">
   <div class="card shadow mb-4">
@@ -8,11 +6,27 @@
       <h2>{{ participant.name }}</h2>
       <p><strong>NIN:</strong> {{ participant.nin }}</p>
       <p><strong>Phone:</strong> {{ participant.phone }}</p>
-      <hr>
+      <hr />
       <h4>Total Balance: UGX {{ total_balance }}</h4>
-      <a href="{% url 'deposit_add_payment' participant.pk %}" class="btn btn-success mt-2">
+      <a
+        href="{% url 'deposit_add_payment' participant.pk %}"
+        class="btn btn-success mt-2"
+      >
         <i class="bi bi-plus-circle"></i> Add Payment
       </a>
+      
+      <a
+        href="{% url 'participant_delete' participant.pk %}"
+        class="btn btn-danger"
+      >
+        <i class="bi bi-person-x"></i> Delete Participant
+      </a>
+      <a
+              href="{% url 'accountscustomer-deposit' %}"
+              class="btn btn-secondary"
+            >
+              <i class="bi bi-arrow-left me-1"></i> Back
+            </a>
     </div>
   </div>
 
@@ -21,7 +35,15 @@
     <div class="card-body">
       <h5>Deposit History</h5>
       <table class="table">
-        <thead><tr><th>Product</th><th>Amount</th><th>Method</th><th>Date</th><th>Receipt</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>Date</th>
+            <th>Receipt</th>
+          </tr>
+        </thead>
         <tbody>
           {% for deposit in deposits %}
           <tr>
@@ -29,10 +51,20 @@
             <td>UGX {{ deposit.amount_paid }}</td>
             <td>{{ deposit.payment_method }}</td>
             <td>{{ deposit.date_registered|date:"Y-m-d" }}</td>
-            <td><a href="{% url 'deposit_receipt' deposit.pk %}" class="btn btn-sm btn-info">Receipt</a></td>
+            <td>
+              <a
+                href="{% url 'deposit_receipt' deposit.pk %}"
+                class="btn btn-sm btn-info"
+                >Receipt</a
+              >
+               <a href="{% url 'deposit_update' deposit.pk %}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{% url 'deposit_delete' deposit.pk %}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
           </tr>
           {% empty %}
-          <tr><td colspan="5">No deposits yet.</td></tr>
+          <tr>
+            <td colspan="5">No deposits yet.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -45,15 +77,19 @@
       <h5>Goods Eligibility</h5>
       <ul class="list-group">
         {% for product, qty in eligibility.items %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          {{ product }}
-          {% if qty > 0 %}
-            <span class="badge bg-success">Eligible: {{ qty }}</span>
-            <a href="{% url 'pick_goods' participant.pk product qty %}" class="btn btn-sm btn-primary ms-2">
-              Pick Goods
-            </a>
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+        >
+          {{ product }} {% if qty > 0 %}
+          <span class="badge bg-success">Eligible: {{ qty }}</span>
+          <a
+            href="{% url 'pick_goods' participant.pk product qty %}"
+            class="btn btn-sm btn-primary ms-2"
+          >
+            Pick Goods
+          </a>
           {% else %}
-            <span class="badge bg-danger">Not Eligible</span>
+          <span class="badge bg-danger">Not Eligible</span>
           {% endif %}
         </li>
         {% endfor %}
@@ -66,7 +102,13 @@
     <div class="card-body">
       <h5>Goods Collected</h5>
       <table class="table">
-        <thead><tr><th>Product</th><th>Quantity</th><th>Date</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Date</th>
+          </tr>
+        </thead>
         <tbody>
           {% for c in collections %}
           <tr>
@@ -75,7 +117,9 @@
             <td>{{ c.date_collected|date:"Y-m-d H:i" }}</td>
           </tr>
           {% empty %}
-          <tr><td colspan="3">No goods collected yet.</td></tr>
+          <tr>
+            <td colspan="3">No goods collected yet.</td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>

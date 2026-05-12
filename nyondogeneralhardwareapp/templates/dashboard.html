@@ -13,7 +13,8 @@ Nyondo Admin Dashboard
   <!-- STATS -->
   <div class="row g-4 mt-4">
 
-    <div class="col-lg-3 col-md-6 card card-custom">
+    <div class="col-lg-3 col-md-6">
+      <div class="card card-custom">
       <div class="card-body">
         <div class="stats-icon blue">
           <i class="bi bi-people-fill"></i>
@@ -25,8 +26,11 @@ Nyondo Admin Dashboard
         </div>
       </div>
     </div>
+    </div>
 
-    <div class="col-lg-3 col-md-6  card card-custom">
+    <div class="col-lg-3 col-md-6 ">
+      <div class="card card-custom">
+       
       <div class="card-body">
         <div class="stats-icon green">
           <i class="bi bi-cash-stack"></i>
@@ -38,8 +42,10 @@ Nyondo Admin Dashboard
         </div>
       </div>
     </div>
+    </div>
 
-    <div class="col-lg-3 col-md-6 card card-custom">
+    <div class="col-lg-3 col-md-6 ">
+      <div class="card card-custom">
       <div class="card-body">
         <div class="stats-icon orange">
           <i class="bi bi-box-seam-fill"></i>
@@ -51,8 +57,10 @@ Nyondo Admin Dashboard
         </div>
       </div>
     </div>
+</div>
 
-    <div class="col-lg-3 col-md-6 card card-custom">
+    <div class="col-lg-3 col-md-6 ">
+      <div class="card card-custom">
       <div class="card-body">
         <div class="stats-icon red">
           <i class="bi bi-truck"></i>
@@ -64,7 +72,7 @@ Nyondo Admin Dashboard
         </div>
       </div>
     </div>
-
+    </div>
   </div>
 
   <!-- MAIN GRID -->
@@ -77,74 +85,44 @@ Nyondo Admin Dashboard
       <div class="dashboard-card mt-4">
 
         <div class="card-header-custom">
-          <div>
-            <h5>Recent Transactions</h5>
-            <p>Latest customer deposits</p>
-          </div>
-        </div>
+  <div>
+    <h5 class="mb-3">Recent Transactions</h5>
+    <p>Summary of deposits</p>
+  </div>
+</div>
 
-        <div class="table-responsive">
-
-          <table class="table modern-table align-middle">
-
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-              {% for deposit in recent_deposits %}
-
-              <tr>
-
-                <td>
-                  <div class="user-info">
-
-                    <div class="avatar {% cycle 'blue' 'purple' 'orange' 'green' %}">
-                      {{ deposit.participant.name|slice:":1"|upper }}
-                    </div>
-
-                    <div>
-                      <strong>{{ deposit.participant.name }}</strong><br>
-                      <small>{{ deposit.participant.phone }}</small>
-                    </div>
-
-                  </div>
-                </td>
-
-                <td>
-                  {{ deposit.date_registered|date:"d M Y" }}
-                </td>
-
-                <td>
-                  UGX {{ deposit.amount_paid }}
-                </td>
-
-                <td>
-                  <span class="status completed-status">
-                    Completed
-                  </span>
-                </td>
-
-              </tr>
-
-              {% empty %}
-
-              <tr>
-                <td colspan="4" class="text-center py-4">
-                  No recent deposits
-                </td>
-              </tr>
-
-              {% endfor %}
-
-            </tbody>
-
+<div class="table-responsive">
+  <table class="table modern-table align-middle">
+    <thead>
+      <tr>
+        <th>Customer</th>
+        <th>Phone</th>
+        <th>Total Deposits</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for participant in participants %}
+        <tr>
+          <td>
+            <div class="user-info">
+              <div class="avatar {% cycle 'blue' 'purple' 'orange' 'green' %}">
+                {{ participant.name|slice:":1"|upper }}
+              </div>
+              <div>
+                <strong>{{ participant.name }}</strong><br>
+                <small>{{ participant.phone }}</small>
+              </div>
+            </div>
+          </td>
+          <td>{{ participant.phone }}</td>
+          <td><strong>UGX {{ participant.total_deposits }}</strong></td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3" class="text-center py-4">No customers yet</td>
+        </tr>
+      {% endfor %}
+    </tbody>
           </table>
 
         </div>
@@ -156,7 +134,7 @@ Nyondo Admin Dashboard
 
         <div class="card-header-custom">
           <div>
-            <h5>Recent Activity</h5>
+            <h5 class="mb-3">Recent Activity</h5>
             <p>Latest system updates</p>
           </div>
         </div>
@@ -205,22 +183,22 @@ Nyondo Admin Dashboard
 
         <div class="quick-actions-grid">
 
-          <a href="#" class="quick-action">
+          <a href="{% url 'accountssales-reg' %}" class="quick-action">
             <i class="bi bi-plus-circle"></i>
             Add Sale
           </a>
 
-          <a href="#" class="quick-action">
+          <a href="{% url 'accountsstock' %}" class="quick-action">
             <i class="bi bi-box-seam"></i>
             Stock
           </a>
 
-          <a href="#" class="quick-action">
+          <a href="{% url 'accountssupplier' %}" class="quick-action">
             <i class="bi bi-person-plus"></i>
             Supplier
           </a>
 
-          <a href="#" class="quick-action">
+          <a href="{% url 'accountsreports' %}" class="quick-action">
             <i class="bi bi-bar-chart"></i>
             Reports
           </a>

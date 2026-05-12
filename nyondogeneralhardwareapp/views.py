@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+import io, csv
+from django.http import HttpResponse
+from django.db.models import Sum
+from django.utils.dateparse import parse_date
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
 from django.db.models import Sum
 from django.db.models import ProtectedError
 from django.db import transaction
-from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection
+from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity
 
 # Create your views here.
 def index(request):
@@ -14,10 +20,7 @@ def login(request):
     return render(request, 'login.html')
 
 def dashboard(request):
-   # Stats
     total_customers = Participant.objects.count()
-
-    # ✅ Revenue = deposits + sales
     deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
     sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
     total_revenue = deposits_total + sales_total
@@ -25,26 +28,22 @@ def dashboard(request):
     stock_items = Stock.objects.count()
     suppliers = Supplier.objects.count()
 
-    # Recent deposits (transactions table)
-    recent_deposits = Deposit.objects.select_related("participant").order_by("-date_registered")[:5]
+    # Get participants with their total deposits
+    participants = Participant.objects.all()
+    for p in participants:
+        p.total_deposits = p.deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
 
-    # Recent activity (replace with Activity model later)
-    activities = [
-        {"title": "New sale recorded", "timestamp": "2 mins ago", "color": "green"},
-        {"title": "Stock updated", "timestamp": "20 mins ago", "color": "orange"},
-        {"title": "Supplier added", "timestamp": "1 hour ago", "color": "blue"},
-    ]
+    activities = Activity.objects.order_by("-timestamp")[:6]
 
     context = {
         "total_customers": total_customers,
         "total_revenue": total_revenue,
         "stock_items": stock_items,
         "suppliers": suppliers,
-        "recent_deposits": recent_deposits,
+        "participants": participants,
         "activities": activities,
     }
-    return render(request, 'dashboard.html', context)
-
+    return render(request, "dashboard.html", context)
 def sales(request):
     # Fetch all sales and their related items in one go
     sales = Sale.objects.all()
@@ -73,6 +72,10 @@ def sales_reg(request):
                customer_phone=request.POST.get("customer_phone"),
                distance_km=int(distance) if distance else 0
         )
+            Activity.objects.create(
+    title=f"New sale recorded (UGX {sale.grand_total})",
+    color="blue"
+)
         
         # Collect multiple items
          # Collect items
@@ -141,6 +144,10 @@ def sale_delete(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     if request.method == "POST":
         sale.delete()
+        Activity.objects.create(
+    title=f"Sale deleted for {sale.customer_name}",
+    color="red"
+)
         messages.success(request, "Sale deleted successfully.")
         return redirect("accountssales")
     return render(request, "sale.delete.html", {"sale": sale})
@@ -208,10 +215,154 @@ def stock(request):
    
 
 def reports(request):
+    # Default summary stats
+    deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+    sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
+    total_revenue = deposits_total + sales_total
+    stock_remaining = Stock.objects.aggregate(Sum("quantity"))["quantity__sum"] or 0
+    total_customers = Participant.objects.count()
+    sales = Sale.objects.order_by("-date")[:10]
 
-    return render(request, 'reports.html')
+    context = {
+        "total_revenue": total_revenue,
+        "total_sales": sales_total,
+        "stock_remaining": stock_remaining,
+        "total_customers": total_customers,
+        "sales": sales,
+        "report_type": None,
+    }
+
+    return render(request, 'reports.html', context)
+
+def generate_report(request):
+    report_type = request.GET.get("report_type")
+    from_date = parse_date(request.GET.get("from_date"))
+    to_date = parse_date(request.GET.get("to_date"))
+
+    data = None
+
+    if report_type == "Sales Report":
+        qs = Sale.objects.all()
+        if from_date: qs = qs.filter(date__gte=from_date)
+        if to_date: qs = qs.filter(date__lte=to_date)
+        data = qs.order_by("-date")
+
+    elif report_type == "Revenue Report":
+        deposits = Deposit.objects.all()
+        sales = Sale.objects.all()
+        if from_date:
+            deposits = deposits.filter(date_registered__gte=from_date)
+            sales = sales.filter(date__gte=from_date)
+        if to_date:
+            deposits = deposits.filter(date_registered__lte=to_date)
+            sales = sales.filter(date__lte=to_date)
+        data = {
+            "deposits_total": deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0,
+            "sales_total": sales.aggregate(Sum("grand_total"))["grand_total__sum"] or 0,
+        }
+
+    elif report_type == "Stock Report":
+        data = Stock.objects.all()
+
+    elif report_type == "Customer Report":
+        data = Participant.objects.annotate(
+            total_deposits=Sum("deposits__amount_paid")
+        ).order_by("-total_deposits")
+
+    return render(request, "reports.html", {
+        "report_type": report_type,
+        "data": data,
+        "from_date": request.GET.get("from_date"),
+        "to_date": request.GET.get("to_date"),
+    })
 
 
+def export_report_pdf(request):
+    report_type = request.GET.get("report_type")
+    from_date = parse_date(request.GET.get("from_date"))
+    to_date = parse_date(request.GET.get("to_date"))
+
+    buffer = io.BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 800, f"{report_type}")
+
+    if report_type == "Sales Report":
+        qs = Sale.objects.all()
+        if from_date: qs = qs.filter(date__gte=from_date)
+        if to_date: qs = qs.filter(date__lte=to_date)
+
+        y = 760
+        for sale in qs.order_by("-date"):
+            line = f"{sale.customer_name} | {sale.date.strftime('%d %b %Y')} | UGX {sale.grand_total}"
+            p.drawString(100, y, line)
+            y -= 20
+
+    elif report_type == "Revenue Report":
+        deposits = Deposit.objects.all()
+        sales = Sale.objects.all()
+        if from_date:
+            deposits = deposits.filter(date_registered__gte=from_date)
+            sales = sales.filter(date__gte=from_date)
+        if to_date:
+            deposits = deposits.filter(date_registered__lte=to_date)
+            sales = sales.filter(date__lte=to_date)
+
+        deposits_total = deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+        sales_total = sales.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
+
+        p.drawString(100, 760, f"Total Deposits: UGX {deposits_total}")
+        p.drawString(100, 740, f"Total Sales: UGX {sales_total}")
+        p.drawString(100, 720, f"Total Revenue: UGX {deposits_total + sales_total}")
+
+    # Add Stock Report / Customer Report export logic similarly
+
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+    return HttpResponse(buffer, content_type="application/pdf")
+
+
+def export_report_excel(request):
+    report_type = request.GET.get("report_type")
+    from_date = parse_date(request.GET.get("from_date"))
+    to_date = parse_date(request.GET.get("to_date"))
+
+    response = HttpResponse(content_type="text/csv")
+    response["Content-Disposition"] = f'attachment; filename="{report_type}.csv"'
+    writer = csv.writer(response)
+
+    if report_type == "Sales Report":
+        writer.writerow(["Customer", "Date", "Items", "Amount"])
+        qs = Sale.objects.all()
+        if from_date: qs = qs.filter(date__gte=from_date)
+        if to_date: qs = qs.filter(date__lte=to_date)
+        for sale in qs.order_by("-date"):
+            writer.writerow([
+                sale.customer_name,
+                sale.date.strftime("%d %b %Y"),
+                sale.total_items,
+                sale.grand_total,
+            ])
+
+    elif report_type == "Revenue Report":
+        deposits = Deposit.objects.all()
+        sales = Sale.objects.all()
+        if from_date:
+            deposits = deposits.filter(date_registered__gte=from_date)
+            sales = sales.filter(date__gte=from_date)
+        if to_date:
+            deposits = deposits.filter(date_registered__lte=to_date)
+            sales = sales.filter(date__lte=to_date)
+
+        deposits_total = deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+        sales_total = sales.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
+        writer.writerow(["Deposits Total", "Sales Total", "Revenue Total"])
+        writer.writerow([deposits_total, sales_total, deposits_total + sales_total])
+
+    # Add Stock Report / Customer Report export logic similarly
+
+    return response
 
 
 def supplier_reg(request):
@@ -230,6 +381,10 @@ def supplier_reg(request):
             email= sent_email,
            
         )
+        Activity.objects.create(
+    title=f"Supplier {supplier.supplier_name} added",
+    color="orange"
+)
         return redirect ('accountssupplier')
      
      return render(request, 'supplierReg.html')
@@ -280,6 +435,10 @@ def stock_delete(request ,pk):
     if request.method == "POST":
         # Delete the record
         stock.delete()
+        Activity.objects.create(
+    title=f"Stock {stock.product_name} deleted",
+    color="red"
+)
         messages.success(request, f"{stock.product_name} deleted successfully.")
         return redirect("accountsstock")
 
@@ -329,6 +488,10 @@ def stock_reg(request):
             date_received= sent_date_received,
 
         )
+        Activity.objects.create(
+    title=f"Stock {stock.product_name} added",
+    color="orange"
+)
         return redirect ('accountsstock')
 
 
@@ -345,6 +508,17 @@ def customer_deposit(request):
         latest = p.deposits.order_by("-date_registered").first()
         p.latest_method = latest.payment_method if latest else "—"
         return render(request, "customer-deposit.html", {"participants": participants})
+     
+def participant_delete(request, pk):
+    participant = get_object_or_404(Participant, pk=pk)
+
+    if request.method == "POST":
+        participant.delete()
+        messages.warning(request, f"Participant {participant.name} has been deleted.")
+        return redirect("accountscustomer-deposit")  # back to main page
+
+    return render(request, "participant_delete.html", {"participant": participant})
+
 def customer_reg(request):
     if request.method == "POST":
         # Create participant
@@ -414,6 +588,10 @@ def deposit_add_payment(request, participant_id):
             payment_method=request.POST.get("payment_method"),
             date_registered=request.POST.get("date_registered"),
         )
+        Activity.objects.create(
+    title=f"Deposit added for {participant.name}",
+    color="green"
+)
         # ✅ Redirect to receipt page after saving
         return redirect("deposit_receipt", pk=deposit.pk)
 
@@ -470,6 +648,10 @@ def deposit_delete(request, pk):
 
     if request.method == "POST":
         deposit.delete()
+        Activity.objects.create(
+    title=f"Deposit deleted for {deposit.participant.name}",
+    color="red"
+)
         messages.warning(request, f"Deposit for {deposit.participant.name} has been deleted.")
         return redirect("accountscustomer-deposit")
 

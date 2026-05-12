@@ -1,0 +1,25 @@
+{% extends 'baseForm.html' %}
+{% block title %} Delete Participant {% endblock %}
+{% block content %}
+<div class="card shadow mx-auto" style="max-width:600px; border:2px solid #dc3545; padding:20px;">
+  <h2 class="text-center text-danger">Confirm Delete</h2>
+  <hr>
+  <p>Are you sure you want to delete this participant? This will also remove all their deposits and collections.</p>
+
+  <ul>
+    <li><strong>Name:</strong> {{ participant.name }}</li>
+    <li><strong>NIN:</strong> {{ participant.nin }}</li>
+    <li><strong>Phone:</strong> {{ participant.phone }}</li>
+  </ul>
+
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+      <i class="bi bi-trash"></i> Yes, Delete
+    </button>
+    <a href="{% url 'customer_profile' participant.pk %}" class="btn btn-secondary">
+      <i class="bi bi-arrow-left"></i> Cancel
+    </a>
+  </form>
+</div>
+{% endblock %}

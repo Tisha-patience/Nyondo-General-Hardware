@@ -94,7 +94,8 @@ class SaleItem(models.Model):
     unit = models.CharField(max_length=20)
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
     total_price = models.DecimalField(max_digits=12, decimal_places=2)
-
+def __str__(self):
+        return f"{self.stock.product_name} x {self.quantity}"
 
 
 class SaleReceipt(models.Model):
@@ -165,3 +166,11 @@ class GoodsReceipt(models.Model):
 
     def __str__(self):
         return f"Receipt {self.receipt_number} for {self.collection.participant.name}"
+
+class Activity(models.Model):
+    title = models.CharField(max_length=255)
+    color = models.CharField(max_length=20, default="blue")
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.timestamp})"

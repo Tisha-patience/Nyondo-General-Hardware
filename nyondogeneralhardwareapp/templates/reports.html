@@ -1,67 +1,228 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Store Manager Dashboard | Nyondo Stock</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"/>
-  <link rel="stylesheet" href="../static/dashboard.css"/>
-</head>
-<body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-dark" style="background:#344955;">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold" href="#">Store Manager Dashboard</a>
-      <i class="bi bi-bell-fill" id="notifIcon"></i>
-    </div>
-  </nav>
+{% extends "base.html" %}
 
-  <!-- Main Content -->
-  <div class="container py-4">
-    <!-- Metrics Cards -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-3">
-        <div class="card shadow border-start border-3" style="border-color:#98CA32;">
-          <div class="card-body">
-            <h6>Stock Value</h6>
-            <h4>UGX 8,000,000</h4>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-3">
-        <div class="card shadow border-start border-3" style="border-color:#98CA32;">
-          <div class="card-body">
-            <h6>Pending Orders</h6>
-            <h4>12</h4>
-          </div>
-        </div>
-      </div>
-      <!-- Add more cards -->
+{% block title %}
+Nyondo Reports Dashboard
+{% endblock %}
+
+{% block content %}
+
+<main class="reports-wrapper container-fluid py-4">
+
+  <!-- PAGE HEADER -->
+  <div class="reports-header mb-4">
+
+    <div>
+      <h2>Reports & Analytics</h2>
+      <p>Monitor business performance, sales, revenue and inventory insights.</p>
     </div>
 
-    <!-- Stock Table -->
-    <div class="card shadow">
-      <div class="card-body">
-        <h6>Stock Levels</h6>
-        <table class="table table-hover">
-          <thead>
-            <tr><th>Product</th><th>Quantity</th><th>Reorder Level</th></tr>
-          </thead>
-          <tbody>
-            <tr class="table-danger"><td>Cement</td><td>20</td><td>50</td></tr>
-            <tr><td>Iron Bars</td><td>120</td><td>100</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <div class="reports-actions">
+  <a href="{% url 'export_report_pdf' %}?report_type={{ report_type }}&from_date={{ from_date }}&to_date={{ to_date }}" class="btn btn-export">
+    <i class="bi bi-download"></i> Export PDF
+  </a>
 
-    <!-- Quick Actions -->
-    <div class="mt-4">
-      <button class="btn btn-success me-2">Add Sale</button>
-      <button class="btn btn-primary me-2">Add Stock</button>
-      <button class="btn btn-secondary">Generate Report</button>
-    </div>
+  <a href="{% url 'export_report_excel' %}?report_type={{ report_type }}&from_date={{ from_date }}&to_date={{ to_date }}" class="btn btn-export">
+    <i class="bi bi-file-earmark-excel"></i> Export Excel
+  </a>
+</div>
+
+
   </div>
-</body>
-</html>
+
+  <!-- FILTERS -->
+  <form method="get" action="{% url 'generate_report' %}">
+    <div class="report-card mb-4">
+      <div class="row g-3 align-items-end">
+
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label">From Date</label>
+          <input type="date" name="from_date" class="form-control" value="{{ from_date }}">
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label">To Date</label>
+          <input type="date" name="to_date" class="form-control" value="{{ to_date }}">
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <label class="form-label">Report Type</label>
+          <select name="report_type" class="form-select">
+            <option {% if report_type == "Sales Report" %}selected{% endif %}>Sales Report</option>
+            <option {% if report_type == "Revenue Report" %}selected{% endif %}>Revenue Report</option>
+            <option {% if report_type == "Stock Report" %}selected{% endif %}>Stock Report</option>
+            <option {% if report_type == "Customer Report" %}selected{% endif %}>Customer Report</option>
+          </select>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <button type="submit" class="btn btn-generate w-100">
+            <i class="bi bi-bar-chart-line"></i>
+            Generate Report
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </form>
+  <!-- STATS -->
+  <div class="row g-4 mb-4">
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="report-stat-card">
+
+        <div class="report-icon blue">
+          <i class="bi bi-cash-stack"></i>
+        </div>
+
+        <div>
+          <p>Total Revenue</p>
+          <h3>UGX {{ total_revenue }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="report-stat-card">
+
+        <div class="report-icon green">
+          <i class="bi bi-cart-check"></i>
+        </div>
+
+        <div>
+          <p>Total Sales</p>
+          <h3>{{ total_sales }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="report-stat-card">
+
+        <div class="report-icon orange">
+          <i class="bi bi-box-seam"></i>
+        </div>
+
+        <div>
+          <p>Stock Remaining</p>
+          <h3>{{ stock_remaining }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+      <div class="report-stat-card">
+
+        <div class="report-icon red">
+          <i class="bi bi-people"></i>
+        </div>
+
+        <div>
+          <p>Customers</p>
+          <h3>{{ total_customers }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- REPORT TABLE -->
+  <div class="report-card">
+
+    <div class="card-header-custom mb-4">
+
+      <div>
+        <h5>Sales Report</h5>
+        <p>Latest generated sales records</p>
+      </div>
+
+    </div>
+
+    <div class="table-responsive">
+
+      <table class="table modern-report-table align-middle">
+
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {% for sale in sales %}
+
+          <tr>
+
+            <td>
+              <div class="user-info">
+
+                <div class="avatar {% cycle 'blue' 'green' 'orange' 'purple' %}">
+                  {{ sale.customer_name|slice:":1"|upper }}
+                </div>
+
+                <div>
+                  <strong>{{ sale.customer_name }}</strong><br>
+                  <small>{{ sale.customer_phone }}</small>
+                </div>
+
+              </div>
+            </td>
+
+            <td>
+              {{ sale.date|date:"d M Y" }}
+            </td>
+
+            <td>
+  {% for item in sale.items.all %}
+    {{ item.stock.product_name }} ({{ item.quantity }})<br>
+  {% endfor %}
+</td>
+            <td>
+              UGX {{ sale.grand_total }}
+            </td>
+
+            <td>
+              <span class="status-badge success">
+                Completed
+              </span>
+            </td>
+
+          </tr>
+
+          {% empty %}
+
+          <tr>
+            <td colspan="5" class="text-center py-5">
+              No reports available
+            </td>
+          </tr>
+
+          {% endfor %}
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</main>
+
+{% endblock %}
