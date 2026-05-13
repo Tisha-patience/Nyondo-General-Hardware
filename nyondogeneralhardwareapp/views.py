@@ -675,3 +675,21 @@ def manager_dashboard(request):
         "available_items": available_items,
     }
     return render(request, "store_dashboard.html", context)   
+
+def login(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            
+    
+
+    return render(request, "login.html")
+
+def logout(request):
+    logout(request)
+    messages.info(request, "You have been logged out.")
+    return redirect("login")
