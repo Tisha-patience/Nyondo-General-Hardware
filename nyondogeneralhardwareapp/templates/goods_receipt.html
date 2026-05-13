@@ -5,16 +5,63 @@
 <div class="container mt-4">
   <div class="card shadow mx-auto" style="max-width: 700px; border: 3px solid #0ABAB5;">
     <div class="card-body">
-      <h2 class="text-center">Final Receipt</h2>
+
+      <!-- Header -->
+      <h2 class="text-center">NYONDO General Hardware LTD</h2>
+      <p class="text-center">Nansana, Uganda</p>
       <hr>
-      <p><strong>Receipt No:</strong> {{ receipt.receipt_number }}</p>
-      <p><strong>Customer:</strong> {{ collection.participant.name }}</p>
-      <p><strong>Product:</strong> {{ collection.product }}</p>
-      <p><strong>Quantity:</strong> {{ collection.quantity }}</p>
-      <p><strong>Date:</strong> {{ receipt.date_issued|date:"Y-m-d H:i" }}</p>
+
+      <!-- Receipt Info -->
+      <div class="row mb-3">
+        <div class="col">
+          <strong>Receipt No:</strong> {{ collection.receipt.receipt_number }}<br>
+          <strong>Date:</strong> {{ collection.receipt.date_issued|date:"Y-m-d H:i" }}
+        </div>
+      </div>
+
+      <!-- Customer Info -->
+      <h5>Customer Details</h5>
+      <p><strong>Name:</strong> {{ collection.participant.name }}</p>
+      <p><strong>Phone:</strong> {{ collection.participant.phone }}</p>
+      <p><strong>NIN:</strong> {{ collection.participant.nin }}</p>
       <hr>
-      <p class="text-center">Thank you for your business!</p>
-      <button onclick="window.print()" class="btn btn-primary">Print Receipt</button>
+
+      <!-- Product Table -->
+      <h5>Goods Collected</h5>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ collection.stock.product_name }}</td>
+            <td>{{ collection.quantity }}</td>
+            <td>UGX {{ collection.stock.unit_price }}</td>
+            <td>UGX {{ receipt.total_amount }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Totals -->
+      <hr>
+      <h4 class="text-end">Grand Total: UGX {{ collection.receipt.total_amount }}</h4>
+
+      <!-- Footer -->
+      <p class="text-center mt-4">Thank you for your business!</p>
+      <p class="text-center"><em>Goods once sold are not returnable.</em></p>
+
+      <!-- Print Button -->
+      <div class="text-center mt-3">
+        <button onclick="window.print()" class="btn btn-primary">
+          <i class="bi bi-printer"></i> Print Receipt
+        </button>
+      </div>
+
     </div>
   </div>
 </div>

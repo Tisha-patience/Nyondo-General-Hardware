@@ -42,8 +42,6 @@ urlpatterns = [
     path("stock/<int:pk>/delete/", views.stock_delete, name="stock_delete"),
     path('accounts/reports/', views.reports, name='accountsreports'),
     path("reports/generate/", views.generate_report, name="generate_report"),
-    path("reports/export/pdf/", views.export_report_pdf, name="export_report_pdf"),
-    path("reports/export/excel/", views.export_report_excel, name="export_report_excel"),
     path('accounts/customer-deposit/', views.customer_deposit, name='accountscustomer-deposit'),
     path("deposits/<int:pk>/update/", views.deposit_update, name="deposit_update"),
     path("deposits/<int:pk>/delete/", views.deposit_delete, name="deposit_delete"),
@@ -53,6 +51,7 @@ urlpatterns = [
     path('accounts/supplier-edit/', views.supplier_edit, name='accountssupplier-edit'),
     path('accounts/sales-reg/', views.sales_reg, name='accountssales-reg'),
     path('accounts/stock-edit/', views.stock_edit, name='accountsstock-edit'),
+    path("manager/dashboard/", views.manager_dashboard, name="manager_dashboard"),
     path('accounts/stock-reg/', views.stock_reg, name='accountsstock-reg'),
     path('accounts/customer-reg/', views.customer_reg, name='accountscustomer-reg'),
     path('accounts/customer-profile/<int:pk>/', views.customer_profile, name='customer_profile'),
@@ -65,6 +64,7 @@ urlpatterns = [
 
     path("collections/<int:pk>/receipt/", views.goods_receipt, name="goods_receipt"),
     path("participants/<int:pk>/delete/", views.participant_delete, name="participant_delete"),
+    path("attendant/dashboard/", views.attendant_dashboard, name="attendant_dashboard"),
 
 
 

@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-import io, csv
-from django.http import HttpResponse
-from django.db.models import Sum
+from django.utils.timezone import now
+from django.db.models import Sum, Count, F
 from django.utils.dateparse import parse_date
-from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from django.db.models import Sum
 from django.db.models import ProtectedError
@@ -277,92 +275,6 @@ def generate_report(request):
     })
 
 
-def export_report_pdf(request):
-    report_type = request.GET.get("report_type")
-    from_date = parse_date(request.GET.get("from_date"))
-    to_date = parse_date(request.GET.get("to_date"))
-
-    buffer = io.BytesIO()
-    p = canvas.Canvas(buffer, pagesize=A4)
-    p.setFont("Helvetica", 12)
-    p.drawString(100, 800, f"{report_type}")
-
-    if report_type == "Sales Report":
-        qs = Sale.objects.all()
-        if from_date: qs = qs.filter(date__gte=from_date)
-        if to_date: qs = qs.filter(date__lte=to_date)
-
-        y = 760
-        for sale in qs.order_by("-date"):
-            line = f"{sale.customer_name} | {sale.date.strftime('%d %b %Y')} | UGX {sale.grand_total}"
-            p.drawString(100, y, line)
-            y -= 20
-
-    elif report_type == "Revenue Report":
-        deposits = Deposit.objects.all()
-        sales = Sale.objects.all()
-        if from_date:
-            deposits = deposits.filter(date_registered__gte=from_date)
-            sales = sales.filter(date__gte=from_date)
-        if to_date:
-            deposits = deposits.filter(date_registered__lte=to_date)
-            sales = sales.filter(date__lte=to_date)
-
-        deposits_total = deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
-        sales_total = sales.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
-
-        p.drawString(100, 760, f"Total Deposits: UGX {deposits_total}")
-        p.drawString(100, 740, f"Total Sales: UGX {sales_total}")
-        p.drawString(100, 720, f"Total Revenue: UGX {deposits_total + sales_total}")
-
-    # Add Stock Report / Customer Report export logic similarly
-
-    p.showPage()
-    p.save()
-    buffer.seek(0)
-    return HttpResponse(buffer, content_type="application/pdf")
-
-
-def export_report_excel(request):
-    report_type = request.GET.get("report_type")
-    from_date = parse_date(request.GET.get("from_date"))
-    to_date = parse_date(request.GET.get("to_date"))
-
-    response = HttpResponse(content_type="text/csv")
-    response["Content-Disposition"] = f'attachment; filename="{report_type}.csv"'
-    writer = csv.writer(response)
-
-    if report_type == "Sales Report":
-        writer.writerow(["Customer", "Date", "Items", "Amount"])
-        qs = Sale.objects.all()
-        if from_date: qs = qs.filter(date__gte=from_date)
-        if to_date: qs = qs.filter(date__lte=to_date)
-        for sale in qs.order_by("-date"):
-            writer.writerow([
-                sale.customer_name,
-                sale.date.strftime("%d %b %Y"),
-                sale.total_items,
-                sale.grand_total,
-            ])
-
-    elif report_type == "Revenue Report":
-        deposits = Deposit.objects.all()
-        sales = Sale.objects.all()
-        if from_date:
-            deposits = deposits.filter(date_registered__gte=from_date)
-            sales = sales.filter(date__gte=from_date)
-        if to_date:
-            deposits = deposits.filter(date_registered__lte=to_date)
-            sales = sales.filter(date__lte=to_date)
-
-        deposits_total = deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
-        sales_total = sales.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
-        writer.writerow(["Deposits Total", "Sales Total", "Revenue Total"])
-        writer.writerow([deposits_total, sales_total, deposits_total + sales_total])
-
-    # Add Stock Report / Customer Report export logic similarly
-
-    return response
 
 
 def supplier_reg(request):
@@ -600,16 +512,17 @@ def deposit_add_payment(request, participant_id):
 
 def goods_receipt(request, pk):
     collection = get_object_or_404(GoodsCollection, pk=pk)
-    receipt = collection.receipt
-    return render(request, "goods_receipt.html", {"collection": collection, "receipt": receipt})
-
-
+    receipt = collection.receipt   # ✅ correct reverse relation
+    return render(request, "goods_receipt.html", {
+        "collection": collection,
+        "receipt": receipt,
+    })
 
 def pick_goods(request, participant_id, product=None, quantity=None):
     participant = get_object_or_404(Participant, pk=participant_id)
 
     if request.method == "POST":
-        GoodsCollection.objects.create(
+        collection =GoodsCollection.objects.create(
             participant=participant,
             product=request.POST.get("product"),
             quantity=int(request.POST.get("quantity")),
@@ -671,8 +584,8 @@ def supplier_delete(request, pk, slug):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     if request.method == "POST":
         try:
-             supplier.delete()
-             messages.success(request, f"Supplier '{supplier.supplier_name}' deleted successfully.")
+            supplier.delete()
+            messages.success(request, f"Supplier '{supplier.supplier_name}' deleted successfully.")
         except ProtectedError:
             messages.error(
                 request,
@@ -680,6 +593,85 @@ def supplier_delete(request, pk, slug):
                 "Please deactivate the supplier instead."
             )
 
-       
         return redirect("accountssupplier")  # back to supplier list
     return render(request, "supplier_delete.html", {"supplier": supplier})
+
+def attendant_dashboard(request):
+    today = now().date()
+
+    # Today's sales total
+    today_sales = Sale.objects.filter(date__date=today).aggregate(
+        Sum("grand_total")
+    )["grand_total__sum"] or 0
+
+    # Receipts issued today (GoodsCollection with receipts)
+    receipts_count = GoodsCollection.objects.filter(
+        date_collected__date=today,
+        receipt__isnull=False
+    ).count()
+
+    # Customers served today
+    customers_today = Sale.objects.filter(date__date=today).values("customer_name").distinct().count()
+
+    # Low stock count
+    low_stock = Stock.objects.filter(quantity__lte=10, quantity__gt=0).count()
+
+    # Low stock items list
+    low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
+
+    # Recent sales
+    sales = Sale.objects.order_by("-date")[:10]
+
+    # All stock
+    stocks = Stock.objects.all()
+
+    context = {
+        "today_sales": today_sales,
+        "receipts_count": receipts_count,
+        "customers_today": customers_today,
+        "low_stock": low_stock,
+        "low_stock_items": low_stock_items,
+        "sales": sales,
+        "stocks": stocks,
+    }
+    return render(request, "attendant_dashboard.html", context)
+
+def manager_dashboard(request):
+    today = now().date()
+
+    # Summary cards
+    total_quantity = Stock.objects.aggregate(Sum("quantity"))["quantity__sum"] or 0
+    total_stock_value = Stock.objects.aggregate(
+        total_value=Sum(F("quantity") * F("unit_price"))
+    )["total_value"] or 0
+    credit_supplies = Stock.objects.filter(payment_mode="Credit").count()
+
+    sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
+    stock_cost_total = Stock.objects.aggregate(
+        total_cost=Sum(F("quantity") * F("unit_cost"))
+    )["total_cost"] or 0
+    profit_margin = sales_total - (stock_cost_total or 0)
+
+    # Stock levels
+    low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
+    out_of_stock_items = Stock.objects.filter(quantity=0)
+    available_items = Stock.objects.filter(quantity__gt=10)
+
+    # Editable stock table
+    stocks = Stock.objects.all()
+
+    # Recent suppliers
+    suppliers = Supplier.objects.order_by("-id")[:5]
+
+    context = {
+        "total_quantity": total_quantity,
+        "total_stock_value": total_stock_value,
+        "credit_supplies": credit_supplies,
+        "profit_margin": profit_margin,
+        "stocks": stocks,
+        "suppliers": suppliers,
+        "low_stock_items": low_stock_items,
+        "out_of_stock_items": out_of_stock_items,
+        "available_items": available_items,
+    }
+    return render(request, "store_dashboard.html", context)   

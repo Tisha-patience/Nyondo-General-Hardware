@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}
+Sales Attendant Dashboard
+{% endblock %}
+
+{% block content %}
+
+
+
+  <!-- PAGE HEADER -->
+  <div class="dashboard-header mb-4">
+
+    <div>
+      <h2>Sales Attendant Dashboard</h2>
+      <p>Record sales, issue receipts and monitor stock availability.</p>
+    </div>
+
+    <a href="{% url 'accountssales-reg' %}" class="btn-main">
+      <i class="bi bi-plus-circle"></i>
+      New Sale
+    </a>
+
+  </div>
+
+  <!-- STATS -->
+  <div class="row g-4 mb-4">
+
+    <!-- SALES -->
+    <div class="col-lg-3 col-md-6">
+
+      <div class="stats-card">
+
+        <div class="stats-icon blue">
+          <i class="bi bi-cash-stack"></i>
+        </div>
+
+        <div>
+          <p>Today's Sales</p>
+          <h3>UGX {{ today_sales }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- RECEIPTS -->
+    <div class="col-lg-3 col-md-6">
+
+      <div class="stats-card">
+
+        <div class="stats-icon green">
+          <i class="bi bi-receipt"></i>
+        </div>
+
+        <div>
+          <p>Receipts Issued</p>
+          <h3>{{ receipts_count }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- CUSTOMERS -->
+    <div class="col-lg-3 col-md-6">
+
+      <div class="stats-card">
+
+        <div class="stats-icon orange">
+          <i class="bi bi-people-fill"></i>
+        </div>
+
+        <div>
+          <p>Customers</p>
+          <h3>{{ customers_today }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- LOW STOCK -->
+    <div class="col-lg-3 col-md-6">
+
+      <div class="stats-card">
+
+        <div class="stats-icon red">
+          <i class="bi bi-exclamation-triangle"></i>
+        </div>
+
+        <div>
+          <p>Low Stock</p>
+          <h3>{{ low_stock }}</h3>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+<!-- MAIN GRID -->
+<div class="row g-4 align-items-start">
+
+  <!-- LEFT SIDE -->
+  <div class="col-lg-8">
+
+    <!-- RECENT SALES -->
+    <div class="dashboard-card mb-4">
+
+      <div class="card-header-custom">
+
+        <div>
+          <h5>Recent Sales</h5>
+          <p>Latest customer transactions</p>
+        </div>
+
+        <a href="{% url 'accountssales' %}" class="view-all-btn">
+          View All
+        </a>
+
+      </div>
+
+      <div class="table-responsive">
+
+        <table class="table modern-table align-middle">
+
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Receipt</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            {% for sale in sales %}
+
+            <tr>
+
+              <td>
+                <div class="user-info">
+
+                  <div class="avatar {% cycle 'blue' 'green' 'orange' 'purple' %}">
+                    {{ sale.customer_name|slice:":1"|upper }}
+                  </div>
+
+                  <div>
+                    <strong>{{ sale.customer_name }}</strong><br>
+                    <small>{{ sale.customer_phone }}</small>
+                  </div>
+
+                </div>
+              </td>
+
+              <td>
+                <span class="receipt-pill">
+                  #{{ sale.salereceipt.receipt_number }}
+                </span>
+              </td>
+
+              <td>
+                UGX {{ sale.grand_total }}
+              </td>
+
+              <td>
+                {{ sale.date|date:"d M Y" }}
+              </td>
+
+              <td>
+                <span class="status-badge success">
+                  Completed
+                </span>
+              </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+              <td colspan="5" class="text-center py-5">
+                No recent sales found
+              </td>
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+    <!-- AVAILABLE STOCK -->
+    <div class="dashboard-card">
+
+      <div class="card-header-custom">
+
+        <div>
+          <h5>Available Stock</h5>
+          <p>Current stock levels in store</p>
+        </div>
+
+      </div>
+
+      <div class="table-responsive">
+
+        <table class="table modern-table align-middle">
+
+          <thead>
+
+            <tr>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Quantity</th>
+              <th>Unit</th>
+              <th>Status</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {% for stock in stocks %}
+
+            <tr>
+
+              <td>
+                <strong>{{ stock.product_name }}</strong>
+              </td>
+
+              <td>
+                {{ stock.category }}
+              </td>
+
+              <td>
+                {{ stock.quantity }}
+              </td>
+
+              <td>
+                {{ stock.unit }}
+              </td>
+
+              <td>
+
+                {% if stock.quantity <= 10 %}
+
+                <span class="status-badge danger">
+                  Low Stock
+                </span>
+
+                {% else %}
+
+                <span class="status-badge success">
+                  Available
+                </span>
+
+                {% endif %}
+
+              </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+              <td colspan="5" class="text-center py-5">
+                No stock available
+              </td>
+
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDE -->
+  <div class="col-lg-4">
+
+    <!-- QUICK ACTION -->
+    <div class="dashboard-card mb-4">
+
+      <div class="card-header-custom">
+
+        <div>
+          <h5>Quick Action</h5>
+          <p>Main shortcut</p>
+        </div>
+
+      </div>
+
+      <div class="quick-actions-grid one-action">
+
+        <a href="{% url 'accountssales-reg' %}" class="quick-action">
+          <i class="bi bi-plus-circle"></i>
+          Add Sale
+        </a>
+
+      </div>
+
+    </div>
+
+    <!-- LOW STOCK ALERTS -->
+    <div class="dashboard-card">
+
+      <div class="card-header-custom">
+
+        <div>
+          <h5>Low Stock Alerts</h5>
+          <p>Products running low</p>
+        </div>
+
+      </div>
+
+      <div class="activity-list">
+
+        {% for stock in low_stock_items %}
+
+        <div class="activity-item">
+
+          <div class="activity-dot red"></div>
+
+          <div>
+            <strong>{{ stock.product_name }}</strong><br>
+            <small>{{ stock.quantity }} {{ stock.unit }} remaining</small>
+          </div>
+
+        </div>
+
+        {% empty %}
+
+        <p>No low stock alerts</p>
+
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{% endblock %}

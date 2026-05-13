@@ -20,6 +20,13 @@ def generate_receipt_number():
     # Example: 7 → "0008"
     return f"RCPT-2026-{last_number+1:04d}"
 
+def generate_goods_receipt_number():
+    last_receipt = GoodsReceipt.objects.order_by("id").last()
+    if not last_receipt:
+        return "NYONDO-0001"
+    last_number = int(last_receipt.receipt_number.split("-")[-1])
+    return f"NYONDO-{last_number+1:04d}"
+
 
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=100)
@@ -151,22 +158,44 @@ class DepositReceipt(models.Model):
 
 
 class GoodsCollection(models.Model):
-    participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name="collections")
-    product = models.CharField(max_length=100)   # e.g. "CEM II N", "Iron Bar 12mm", "Gauge 28 Red"
+    participant = models.ForeignKey(
+        Participant,
+        on_delete=models.CASCADE,
+        related_name="collections"
+    )
+    stock = models.ForeignKey(  # ✅ link to Stock instead of plain product name
+        Stock,
+        on_delete=models.CASCADE,
+        related_name="collections",
+        null=True
+    )
     quantity = models.PositiveIntegerField()
     date_collected = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.participant.name} - {self.product} ({self.quantity})"
+        return f"{self.participant.name} - {self.stock.product_name} ({self.quantity})"
     
+    def get_total_price(self):
+        # ✅ multiply unit price by quantity
+        return self.stock.unit_price * self.quantity
+
+    def get_total_price(self):
+        return self.stock.unit_price * self.quantity
+    
+
+
 class GoodsReceipt(models.Model):
-    collection = models.OneToOneField("GoodsCollection", on_delete=models.CASCADE, related_name="receipt")
+    collection = models.OneToOneField(
+        GoodsCollection,
+        on_delete=models.CASCADE,
+        related_name="receipt"  # ✅ makes it accessible as collection.receipt
+    )
     receipt_number = models.CharField(max_length=20, unique=True)
     date_issued = models.DateTimeField(auto_now_add=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
-        return f"Receipt {self.receipt_number} for {self.collection.participant.name}"
-
+        return self.receipt_number
 class Activity(models.Model):
     title = models.CharField(max_length=255)
     color = models.CharField(max_length=20, default="blue")

@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}
+Store Manager Dashboard
+{% endblock %}
+
+{% block content %}
+
+<!-- PAGE HEADER -->
+<div class="dashboard-header mb-4">
+
+  <div>
+    <h2>Store Manager Dashboard</h2>
+    <p>Monitor stock, suppliers and overall store performance.</p>
+  </div>
+
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="row g-4 mb-4">
+
+  <!-- TOTAL QUANTITY -->
+  <div class="col-lg-3 col-md-6">
+
+    <div class="stats-card">
+
+      <div class="stats-icon blue">
+        <i class="bi bi-box-seam"></i>
+      </div>
+
+      <div>
+        <p>Total Quantity</p>
+        <h3>{{ total_quantity }}</h3>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- STOCK VALUE -->
+  <div class="col-lg-3 col-md-6">
+
+    <div class="stats-card">
+
+      <div class="stats-icon green">
+        <i class="bi bi-cash-stack"></i>
+      </div>
+
+      <div>
+        <p>Total Stock Value</p>
+        <h3>UGX {{ total_stock_value }}</h3>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- CREDIT SUPPLIES -->
+  <div class="col-lg-3 col-md-6">
+
+    <div class="stats-card">
+
+      <div class="stats-icon orange">
+        <i class="bi bi-credit-card"></i>
+      </div>
+
+      <div>
+        <p>Credit Supplies</p>
+        <h3>{{ credit_supplies }}</h3>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PROFIT -->
+  <div class="col-lg-3 col-md-6">
+
+    <div class="stats-card">
+
+      <div class="stats-icon red">
+        <i class="bi bi-graph-up-arrow"></i>
+      </div>
+
+      <div>
+        <p>Profit Margin</p>
+        <h3>UGX {{ profit_margin }}</h3>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- TOP GRID -->
+<div class="row g-4 mb-4 align-items-stretch">
+
+  <!-- STOCK ALERTS -->
+  <div class="col-lg-6">
+
+    <div class="dashboard-card h-100">
+
+      <div class="card-header-custom">
+
+        <div>
+          <h5>Stock Alerts</h5>
+          <p>Low and out of stock products</p>
+        </div>
+
+      </div>
+
+      <div class="activity-list">
+
+        <!-- LOW STOCK -->
+        {% for stock in low_stock_items %}
+
+        <div class="activity-item">
+
+          <div class="activity-dot orange"></div>
+
+          <div>
+            <strong>{{ stock.product_name }}</strong><br>
+            <small>
+              {{ stock.quantity }} {{ stock.unit }} remaining
+            </small>
+          </div>
+
+        </div>
+
+        {% endfor %}
+
+        <!-- OUT OF STOCK -->
+        {% for stock in out_of_stock_items %}
+
+        <div class="activity-item">
+
+          <div class="activity-dot red"></div>
+
+          <div>
+            <strong>{{ stock.product_name }}</strong><br>
+            <small>Out of stock</small>
+          </div>
+
+        </div>
+
+        {% endfor %}
+
+        {% if not low_stock_items and not out_of_stock_items %}
+
+        <p>No stock alerts available</p>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RECENT SUPPLIERS -->
+  <div class="col-lg-6">
+
+    <div class="dashboard-card h-100">
+
+      <div class="card-header-custom">
+
+        <div>
+          <h5>Recent Suppliers</h5>
+          <p>Latest supplier registrations</p>
+        </div>
+
+      </div>
+
+      <div class="supplier-list">
+
+        {% for supplier in suppliers %}
+
+        <div class="activity-item">
+
+          <div class="activity-dot blue"></div>
+
+          <div>
+            <strong>{{ supplier.supplier_name }}</strong><br>
+            <small>{{ supplier.contact_number }}</small>
+          </div>
+
+        </div>
+
+        {% empty %}
+
+        <p>No suppliers found</p>
+
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+{% endblock %}

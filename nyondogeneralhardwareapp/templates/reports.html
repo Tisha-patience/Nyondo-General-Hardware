@@ -16,15 +16,7 @@ Nyondo Reports Dashboard
       <p>Monitor business performance, sales, revenue and inventory insights.</p>
     </div>
 
-    <div class="reports-actions">
-  <a href="{% url 'export_report_pdf' %}?report_type={{ report_type }}&from_date={{ from_date }}&to_date={{ to_date }}" class="btn btn-export">
-    <i class="bi bi-download"></i> Export PDF
-  </a>
-
-  <a href="{% url 'export_report_excel' %}?report_type={{ report_type }}&from_date={{ from_date }}&to_date={{ to_date }}" class="btn btn-export">
-    <i class="bi bi-file-earmark-excel"></i> Export Excel
-  </a>
-</div>
+   
 
 
   </div>
@@ -151,78 +143,56 @@ Nyondo Reports Dashboard
 
     <div class="table-responsive">
 
-      <table class="table modern-report-table align-middle">
-
-        <thead>
-          <tr>
-            <th>Customer</th>
-            <th>Date</th>
-            <th>Items</th>
-            <th>Amount</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          {% for sale in sales %}
-
-          <tr>
-
-            <td>
-              <div class="user-info">
-
-                <div class="avatar {% cycle 'blue' 'green' 'orange' 'purple' %}">
-                  {{ sale.customer_name|slice:":1"|upper }}
-                </div>
-
-                <div>
-                  <strong>{{ sale.customer_name }}</strong><br>
-                  <small>{{ sale.customer_phone }}</small>
-                </div>
-
-              </div>
-            </td>
-
-            <td>
-              {{ sale.date|date:"d M Y" }}
-            </td>
-
-            <td>
-  {% for item in sale.items.all %}
-    {{ item.stock.product_name }} ({{ item.quantity }})<br>
-  {% endfor %}
-</td>
-            <td>
-              UGX {{ sale.grand_total }}
-            </td>
-
-            <td>
-              <span class="status-badge success">
-                Completed
-              </span>
-            </td>
-
-          </tr>
-
-          {% empty %}
-
-          <tr>
-            <td colspan="5" class="text-center py-5">
-              No reports available
-            </td>
-          </tr>
-
-          {% endfor %}
-
-        </tbody>
-
-      </table>
-
+      {% if report_type == "Sales Report" %}
+  <h5>Sales Report</h5>
+  <table class="table">
+    <thead><tr><th>Customer</th><th>Date</th><th>Amount</th></tr></thead>
+    <tbody>
+      {% for sale in data %}
+      <tr>
+        <td>{{ sale.customer_name }}</td>
+        <td>{{ sale.date|date:"d M Y" }}</td>
+        <td>UGX {{ sale.grand_total }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% elif report_type == "Revenue Report" %}
+  <h5>Revenue Report</h5>
+  <p>Total Deposits: UGX {{ data.deposits_total }}</p>
+  <p>Total Sales: UGX {{ data.sales_total }}</p>
+  <p><strong>Total Revenue: UGX {{ data.deposits_total|add:data.sales_total }}</strong></p>
+{% elif report_type == "Stock Report" %}
+  <h5>Stock Report</h5>
+  <table class="table">
+    <thead><tr><th>Product</th><th>Quantity</th><th>Price</th></tr></thead>
+    <tbody>
+      {% for stock in data %}
+      <tr>
+        <td>{{ stock.product_name }}</td>
+        <td>{{ stock.quantity }}</td>
+        <td>UGX {{ stock.price }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% elif report_type == "Customer Report" %}
+  <h5>Customer Report</h5>
+  <table class="table">
+    <thead><tr><th>Name</th><th>Phone</th><th>Total Deposits</th></tr></thead>
+    <tbody>
+      {% for customer in data %}
+      <tr>
+        <td>{{ customer.name }}</td>
+        <td>{{ customer.phone }}</td>
+        <td>UGX {{ customer.total_deposits }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
     </div>
 
-  </div>
-
+  </div>    
 </main>
-
 {% endblock %}
