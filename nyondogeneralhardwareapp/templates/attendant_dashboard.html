@@ -1,5 +1,6 @@
-{% extends "base_attendant.html" %}
 
+{% extends "base_attendant.html" %}
+{% load humanize %}
 {% block title %}
 Sales Attendant Dashboard
 {% endblock %}
@@ -11,12 +12,12 @@ Sales Attendant Dashboard
   <!-- PAGE HEADER -->
   <div class="dashboard-header mb-4">
 
-    <div>
+    <div style="margin-left: 20px;">
       <h2>Sales Attendant Dashboard</h2>
       <p>Record sales, issue receipts and monitor stock availability.</p>
     </div>
 
-    <a href="{% url 'accountssales-reg' %}" class="btn-main">
+    <a href="{% url 'accountssales-reg' %}" class="btn-main" style="margin-right: 50px;">
       <i class="bi bi-plus-circle"></i>
       New Sale
     </a>
@@ -29,15 +30,15 @@ Sales Attendant Dashboard
     <!-- SALES -->
     <div class="col-lg-3 col-md-6">
 
-      <div class="stats-card">
+      <div class="stats-card" style="margin-left: 20px;">
 
         <div class="stats-icon blue">
           <i class="bi bi-cash-stack"></i>
         </div>
 
-        <div>
+        <div style="margin-left: 20px;">
           <p>Today's Sales</p>
-          <h3>UGX {{ today_sales }}</h3>
+          <h3>UGX {{ today_sales | intcomma }}</h3>
         </div>
 
       </div>
@@ -163,7 +164,7 @@ Sales Attendant Dashboard
               </td>
 
               <td>
-                UGX {{ sale.grand_total }}
+                UGX {{ sale.grand_total | intcomma }}
               </td>
 
               <td>

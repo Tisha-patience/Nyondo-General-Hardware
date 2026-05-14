@@ -1,25 +1,21 @@
 {% extends "base.html" %}
 
 {% block sidebar %}
-<ul class="nav flex-column">
 
   <!-- Dashboard -->
-  <li class="nav-item">
+ 
     <a class="nav-link {% if request.resolver_match.url_name == 'attendant_dashboard' %}active{% endif %}" 
        href="{% url 'attendant_dashboard' %}">
-      <i class="bi bi-speedometer2"></i> Dashboard
+      <i class="bi bi-grid-fill"></i> Dashboard
     </a>
-  </li>
-
+ 
   <!-- Sales -->
-  <li class="nav-item">
+  
     <a class="nav-link {% if request.resolver_match.url_name == 'accountssales' %}active{% endif %}" 
        href="{% url 'accountssales' %}">
       <i class="bi bi-cash-stack"></i> Sales
     </a>
-  </li>
-
-</ul>
+  
 {% endblock %}
 
 {% block sidebar_footer %}

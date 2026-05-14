@@ -165,7 +165,7 @@ def manager_dashboard(request):
 
 
 def logout(request):
-    messages.info(request, "You have been logged out.")
+    messages.info(request, "Logged out successfully.")
     return redirect("login")
 
 

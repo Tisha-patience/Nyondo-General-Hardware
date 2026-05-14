@@ -1,4 +1,5 @@
 {% extends "baseForm.html" %}
+{% load humanize %}
 {% block title %}
     View Sale
 {% endblock %}
@@ -6,8 +7,8 @@
 <h2>Sale Details</h2>
 <p><strong>Customer:</strong> {{ sale.customer_name }} ({{ sale.customer_phone }})</p>
 <p><strong>Distance:</strong> {{ sale.distance_km }} km</p>
-<p><strong>Transport Cost:</strong> {{ sale.transport_cost }}</p>
-<p><strong>Grand Total:</strong> {{ sale.grand_total }}</p>
+<p><strong>Transport Cost:</strong> {{ sale.transport_cost | intcomma }}</p>
+<p><strong>Grand Total:</strong> {{ sale.grand_total | intcomma }}</p>
 
 <h3>Products</h3>
 <table class="table table-striped">
@@ -23,8 +24,8 @@
       <td>{{ item.stock.specification }}</td>
       <td>{{ item.quantity }}</td>
       <td>{{ item.unit }}</td>
-      <td>{{ item.unit_price }}</td>
-      <td>{{ item.total_price }}</td>
+      <td>{{ item.unit_price | intcomma }}</td>
+      <td>{{ item.total_price | intcomma }}</td>
     </tr>
     {% endfor %}
   </tbody>

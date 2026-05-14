@@ -1,3 +1,4 @@
+{% load humanize %}
 {% extends 'baseForm.html' %} {% block title %} Customer Profile {% endblock %}
 {% block content %}
 <div class="container mt-4">
@@ -48,7 +49,7 @@
           {% for deposit in deposits %}
           <tr>
             <td>{{ deposit.product }}</td>
-            <td>UGX {{ deposit.amount_paid }}</td>
+            <td>UGX {{ deposit.amount_paid | intcomma }}</td>
             <td>{{ deposit.payment_method }}</td>
             <td>{{ deposit.date_registered|date:"Y-m-d" }}</td>
             <td>
@@ -106,19 +107,21 @@
           <tr>
             <th>Product</th>
             <th>Quantity</th>
+            <th>Total Amount</th>
             <th>Date</th>
           </tr>
         </thead>
         <tbody>
           {% for c in collections %}
           <tr>
-            <td>{{ c.product }}</td>
+            <td>{{ c.stock.product_name }}</td>
             <td>{{ c.quantity }}</td>
+            <td>UGX {{ c.get_total_price | intcomma }}</td>
             <td>{{ c.date_collected|date:"Y-m-d H:i" }}</td>
           </tr>
           {% empty %}
           <tr>
-            <td colspan="3">No goods collected yet.</td>
+            <td colspan="4">No goods collected yet.</td>
           </tr>
           {% endfor %}
         </tbody>

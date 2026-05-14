@@ -55,85 +55,81 @@
 
   <div class="sidebar-menu flex-grow-1">
 {% block sidebar %}
-  <!-- DASHBOARD -->
+  
 
-    <a
-      class="nav-link {% if request.path == '/accounts/dashboard/' %}active{% endif %}"
-      href="{% url 'accountsdashboard' %}"
-    >
-
-      <i class="bi bi-grid-fill"></i>
-
-      <span>Dashboard</span>
-
+{% if role == "Sales Attendant" %}
+  <!-- Dashboard -->
+  
+    <a class="nav-link {% if request.resolver_match.url_name == 'attendant_dashboard' %}active{% endif %}" 
+       href="{% url 'attendant_dashboard' %}">
+      <i class="bi bi-grid-fill"></i> Dashboard
     </a>
+ 
 
-    <!-- SALES -->
-
-    <a
-      class="nav-link {% if request.path == '/accounts/sales/' %}active{% endif %}"
-      href="{% url 'accountssales' %}"
-    >
-
-      <i class="bi bi-cart3"></i>
-
-      <span>Sales</span>
-
+  <!-- Sales (visible for all roles) -->
+  
+    <a class="nav-link {% if request.resolver_match.url_name == 'accountssales' %}active{% endif %}" 
+       href="{% url 'accountssales' %}">
+      <i class="bi bi-cash-stack"></i> Sales
     </a>
-
-    <!-- SUPPLIERS -->
-
-    <a
-      class="nav-link {% if request.path == '/accounts/supplier/' %}active{% endif %}"
-      href="{% url 'accountssupplier' %}"
-    >
-
-      <i class="bi bi-truck"></i>
-
-      <span>Suppliers</span>
-
+  
+{% endif %}
+  <!-- Manager-only links -->
+  {% if role == "Store Manager" %}
+     
+    <a class="nav-link {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" 
+       href="{% url 'manager_dashboard' %}">
+      <i class="bi bi-grid-fill"></i> Dashboard
     </a>
-
-    <!-- STOCK -->
-
-    <a
-      class="nav-link {% if request.path == '/accounts/stock/' %}active{% endif %}"
-      href="{% url 'accountsstock' %}"
-    >
-
-      <i class="bi bi-box-seam-fill"></i>
-
-      <span>Stock</span>
-
-    </a>
-
-    <!-- DEPOSIT -->
-
-    <a
-      class="nav-link {% if request.path == '/accounts/customer-deposit/' %}active{% endif %}"
-      href="{% url 'accountscustomer-deposit' %}"
-    >
-
-      <i class="bi bi-cash-stack"></i>
-
-      <span>Deposit Scheme</span>
-
-    </a>
-
-    <!-- REPORTS -->
-
-    <a
-      class="nav-link {% if request.path == '/accounts/reports/' %}active{% endif %}"
-      href="{% url 'accountsreports' %}"
-    >
-
-      <i class="bi bi-bar-chart-line-fill"></i>
-
-      <span>Reports</span>
-
-    </a>
-{% endblock %}
+ 
     
+      <a class="nav-link {% if request.resolver_match.url_name == 'accountsstock' %}active{% endif %}" 
+         href="{% url 'accountsstock' %}">
+        <i class="bi bi-box-seam"></i> Stock
+      </a>
+   
+  {% endif %}
+
+  <!-- Admin-only links -->
+  {% if role == "System Admin" %}
+ 
+      <a class="nav-link {% if request.resolver_match.url_name == 'accountsdashboard' %}active{% endif %}" 
+         href="{% url 'accountsdashboard' %}">
+        <i class="bi bi-grid-fill"></i> Dashboard
+      </a>
+   
+    
+    <a class="nav-link {% if request.resolver_match.url_name == 'accountssales' %}active{% endif %}" 
+       href="{% url 'accountssales' %}">
+      <i class="bi bi-cash-stack"></i> Sales
+    </a>
+  
+      <a class="nav-link {% if request.resolver_match.url_name == 'accountsstock' %}active{% endif %}" 
+         href="{% url 'accountsstock' %}">
+        <i class="bi bi-box-seam"></i> Stock
+      </a>
+    
+      <a class="nav-link {% if request.resolver_match.url_name == 'accountssupplier' %}active{% endif %}" 
+         href="{% url 'accountssupplier' %}">
+        <i class="bi bi-people"></i> Suppliers
+      </a>
+    
+      <a class="nav-link {% if request.resolver_match.url_name == 'accountscustomer-deposit' %}active{% endif %}" 
+         href="{% url 'accountscustomer-deposit' %}">
+        <i class="bi bi-wallet2"></i> Deposit Scheme
+      </a>
+
+   
+      <a class="nav-link {% if request.resolver_match.url_name == 'accountsreports' %}active{% endif %}" 
+         href="{% url 'accountsreports' %}">
+        <i class="bi bi-bar-chart"></i> Reports
+      </a>
+    
+  {% endif %}
+
+</ul>
+{% endblock %}
+
 
   </div>
 
@@ -184,6 +180,17 @@
 
  <!-- Main Content -->
     <div class="col">
+      {% if messages %}
+  <div class="mb-3">
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm border-0" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
         {% block content %}
           
         {% endblock %}
@@ -199,7 +206,23 @@
     
     </div>
 
-       
+       <div aria-live="polite" aria-atomic="true" class="position-relative">
+  <div class="toast-container position-fixed top-0 end-0 p-3">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="toast align-items-center text-bg-{{ message.tags }} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ message }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+</div>
+
 
 
 <script
@@ -212,6 +235,16 @@
       integrity="sha384-G/EV+4j2dNv+tEPo3++6LCgdCROaejBqfUeNjuKAiuXbjrxilcCdDz6ZAVfHWe1Y"
       crossorigin="anonymous"
     ></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toastElList = [].slice.call(document.querySelectorAll('.toast'))
+    const toastList = toastElList.map(function (toastEl) {
+      return new bootstrap.Toast(toastEl, { delay: 3000 }) // auto-hide after 3s
+    })
+    toastList.forEach(toast => toast.show())
+  })
+</script>
 
 
     </body>

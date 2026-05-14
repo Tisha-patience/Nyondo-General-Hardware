@@ -1,5 +1,7 @@
 {% extends "base_manager.html" %}
 
+{% load humanize %}
+
 {% block title %}
 Store Manager Dashboard
 {% endblock %}
@@ -84,7 +86,7 @@ Store Manager Dashboard
 
       <div>
         <p>Profit Margin</p>
-        <h3>UGX {{ profit_margin }}</h3>
+        <h3>UGX {{ profit_margin | intcomma }}</h3>
       </div>
 
     </div>

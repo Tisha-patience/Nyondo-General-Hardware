@@ -1,4 +1,6 @@
+
 {% extends 'baseForm.html' %}
+{% load humanize %}
 {% block title %}
     Delete Deposit
 {% endblock %}
@@ -11,7 +13,7 @@
   <ul>
     <li><strong>Customer:</strong> {{ deposit.participant.name }}</li>
     <li><strong>Product:</strong> {{ deposit.product }}</li>
-    <li><strong>Amount:</strong> UGX {{ deposit.amount_paid }}</li>
+    <li><strong>Amount:</strong> UGX {{ deposit.amount_paid | intcomma }}</li>
     <li><strong>Date:</strong> {{ deposit.date_registered|date:"Y-m-d H:i" }}</li>
   </ul>
 

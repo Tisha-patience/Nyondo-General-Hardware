@@ -1,4 +1,5 @@
 {% extends 'baseForm.html' %} 
+{% load humanize %}
 {% block title %}
   Nyondo Deposit Scheme | Temporary Receipt
 {% endblock %}
@@ -15,7 +16,7 @@
       <p><strong>NIN:</strong> {{ deposit.participant.nin }}</p>
       <p><strong>Phone:</strong> {{ deposit.participant.phone }}</p>
       <p><strong>Product:</strong> {{ deposit.product }}</p>
-      <p><strong>Amount Paid:</strong> UGX {{ deposit.amount_paid }}</p>
+      <p><strong>Amount Paid:</strong> UGX {{ deposit.amount_paid | intcomma }}</p>
       <p><strong>Payment Method:</strong> {{ deposit.payment_method }}</p>
       <p>
         <strong>Date:</strong> {{ deposit.date_registered|date:"Y-m-d H:i" }}
