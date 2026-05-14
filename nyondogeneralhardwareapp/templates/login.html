@@ -149,13 +149,9 @@
 
         <!-- FORM -->
 
-        <form action="/" method="post">
+        <form action="{% url 'login' %}" method="post">
 
           {% csrf_token %}
-
-          
-         
-          
 
           <!-- USERNAME -->
 

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+<ul class="nav flex-column">
+
+  <!-- Dashboard -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'attendant_dashboard' %}active{% endif %}" 
+       href="{% url 'attendant_dashboard' %}">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+  </li>
+
+  <!-- Sales -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'accountssales' %}active{% endif %}" 
+       href="{% url 'accountssales' %}">
+      <i class="bi bi-cash-stack"></i> Sales
+    </a>
+  </li>
+
+</ul>
+{% endblock %}
+
+{% block sidebar_footer %}
+<div class="admin-card">
+  <div class="admin-avatar">{{ request.user.username|slice:":1"|upper }}</div>
+  <div>
+    <h6>{{ request.user.get_full_name|default:request.user.username }}</h6>
+    <small>{{ role }}</small>
+  </div>
+</div>
+{% endblock %}
+

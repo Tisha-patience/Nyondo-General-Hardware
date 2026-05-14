@@ -7,16 +7,44 @@ from reportlab.lib.pagesizes import A4
 from django.db.models import Sum
 from django.db.models import ProtectedError
 from django.db import transaction
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required, user_passes_test
 from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity
 
 # Create your views here.
 def index(request):
     return render(request, 'index.html')
 
-def login(request):
-    
-    return render(request, 'login.html')
 
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get("username")
+        password = request.POST.get("password")
+
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)  # logs the user in
+            return redirect("login_redirect")  # send them to role-based dashboard
+        else:
+            return render(request, "login.html", {"error": "Invalid credentials"})
+
+    return render(request, "login.html")
+
+
+def login_redirect(request):
+    user = request.user
+    if user.is_superuser:
+        return redirect("accountsdashboard")
+    elif user.groups.filter(name="Store Manager").exists():
+        return redirect("manager_dashboard")
+    elif user.groups.filter(name="Sales Attendant").exists():
+        return redirect("attendant_dashboard")
+    else:
+        return redirect("index")
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def dashboard(request):
     total_customers = Participant.objects.count()
     deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
@@ -42,6 +70,105 @@ def dashboard(request):
         "activities": activities,
     }
     return render(request, "dashboard.html", context)
+
+
+def is_attendant(user):
+    return user.groups.filter(name="Sales Attendant").exists()
+
+@login_required
+@user_passes_test(is_attendant)
+def attendant_dashboard(request):
+    today = now().date()
+
+    # Today's sales total
+    today_sales = Sale.objects.filter(date__date=today).aggregate(
+        Sum("grand_total")
+    )["grand_total__sum"] or 0
+
+    # Receipts issued today (GoodsCollection with receipts)
+    receipts_count = GoodsCollection.objects.filter(
+        date_collected__date=today,
+        receipt__isnull=False
+    ).count()
+
+    # Customers served today
+    customers_today = Sale.objects.filter(date__date=today).values("customer_name").distinct().count()
+
+    # Low stock count
+    low_stock = Stock.objects.filter(quantity__lte=10, quantity__gt=0).count()
+
+    # Low stock items list
+    low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
+
+    # Recent sales
+    sales = Sale.objects.order_by("-date")[:10]
+
+    # All stock
+    stocks = Stock.objects.all()
+
+    context = {
+        "today_sales": today_sales,
+        "receipts_count": receipts_count,
+        "customers_today": customers_today,
+        "low_stock": low_stock,
+        "low_stock_items": low_stock_items,
+        "sales": sales,
+        "stocks": stocks,
+    }
+    return render(request, "attendant_dashboard.html", context)
+
+def is_manager(user):
+    return user.groups.filter(name="Store Manager").exists() or user.is_superuser
+
+@login_required
+@user_passes_test(is_manager)
+def manager_dashboard(request):
+    today = now().date()
+
+    # Summary cards
+    total_quantity = Stock.objects.aggregate(Sum("quantity"))["quantity__sum"] or 0
+    total_stock_value = Stock.objects.aggregate(
+        total_value=Sum(F("quantity") * F("unit_price"))
+    )["total_value"] or 0
+    credit_supplies = Stock.objects.filter(payment_mode="Credit").count()
+
+    sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
+    stock_cost_total = Stock.objects.aggregate(
+        total_cost=Sum(F("quantity") * F("unit_cost"))
+    )["total_cost"] or 0
+    profit_margin = sales_total - (stock_cost_total or 0)
+
+    # Stock levels
+    low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
+    out_of_stock_items = Stock.objects.filter(quantity=0)
+    available_items = Stock.objects.filter(quantity__gt=10)
+
+    # Editable stock table
+    stocks = Stock.objects.all()
+
+    # Recent suppliers
+    suppliers = Supplier.objects.order_by("-id")[:5]
+
+    context = {
+        "today": today,
+        "total_quantity": total_quantity,
+        "total_stock_value": total_stock_value,
+        "credit_supplies": credit_supplies,
+        "profit_margin": profit_margin,
+        "stocks": stocks,
+        "suppliers": suppliers,
+        "low_stock_items": low_stock_items,
+        "out_of_stock_items": out_of_stock_items,
+        "available_items": available_items,
+    }
+    return render(request, "store_dashboard.html", context)   
+
+
+def logout(request):
+    messages.info(request, "You have been logged out.")
+    return redirect("login")
+
+
 def sales(request):
     # Fetch all sales and their related items in one go
     sales = Sale.objects.all()
@@ -595,101 +722,3 @@ def supplier_delete(request, pk, slug):
 
         return redirect("accountssupplier")  # back to supplier list
     return render(request, "supplier_delete.html", {"supplier": supplier})
-
-def attendant_dashboard(request):
-    today = now().date()
-
-    # Today's sales total
-    today_sales = Sale.objects.filter(date__date=today).aggregate(
-        Sum("grand_total")
-    )["grand_total__sum"] or 0
-
-    # Receipts issued today (GoodsCollection with receipts)
-    receipts_count = GoodsCollection.objects.filter(
-        date_collected__date=today,
-        receipt__isnull=False
-    ).count()
-
-    # Customers served today
-    customers_today = Sale.objects.filter(date__date=today).values("customer_name").distinct().count()
-
-    # Low stock count
-    low_stock = Stock.objects.filter(quantity__lte=10, quantity__gt=0).count()
-
-    # Low stock items list
-    low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
-
-    # Recent sales
-    sales = Sale.objects.order_by("-date")[:10]
-
-    # All stock
-    stocks = Stock.objects.all()
-
-    context = {
-        "today_sales": today_sales,
-        "receipts_count": receipts_count,
-        "customers_today": customers_today,
-        "low_stock": low_stock,
-        "low_stock_items": low_stock_items,
-        "sales": sales,
-        "stocks": stocks,
-    }
-    return render(request, "attendant_dashboard.html", context)
-
-def manager_dashboard(request):
-    today = now().date()
-
-    # Summary cards
-    total_quantity = Stock.objects.aggregate(Sum("quantity"))["quantity__sum"] or 0
-    total_stock_value = Stock.objects.aggregate(
-        total_value=Sum(F("quantity") * F("unit_price"))
-    )["total_value"] or 0
-    credit_supplies = Stock.objects.filter(payment_mode="Credit").count()
-
-    sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
-    stock_cost_total = Stock.objects.aggregate(
-        total_cost=Sum(F("quantity") * F("unit_cost"))
-    )["total_cost"] or 0
-    profit_margin = sales_total - (stock_cost_total or 0)
-
-    # Stock levels
-    low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
-    out_of_stock_items = Stock.objects.filter(quantity=0)
-    available_items = Stock.objects.filter(quantity__gt=10)
-
-    # Editable stock table
-    stocks = Stock.objects.all()
-
-    # Recent suppliers
-    suppliers = Supplier.objects.order_by("-id")[:5]
-
-    context = {
-        "total_quantity": total_quantity,
-        "total_stock_value": total_stock_value,
-        "credit_supplies": credit_supplies,
-        "profit_margin": profit_margin,
-        "stocks": stocks,
-        "suppliers": suppliers,
-        "low_stock_items": low_stock_items,
-        "out_of_stock_items": out_of_stock_items,
-        "available_items": available_items,
-    }
-    return render(request, "store_dashboard.html", context)   
-
-def login(request):
-    if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            
-    
-
-    return render(request, "login.html")
-
-def logout(request):
-    logout(request)
-    messages.info(request, "You have been logged out.")
-    return redirect("login")

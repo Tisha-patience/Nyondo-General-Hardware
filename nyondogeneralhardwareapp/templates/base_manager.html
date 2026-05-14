@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block sidebar %}
+<ul class="nav flex-column">
+
+  <!-- Manager Dashboard -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'manager_dashboard' %}active{% endif %}" 
+       href="{% url 'manager_dashboard' %}">
+      <i class="bi bi-speedometer2"></i> Dashboard
+    </a>
+  </li>
+
+  <!-- Stock -->
+  <li class="nav-item">
+    <a class="nav-link {% if request.resolver_match.url_name == 'accountsstock' %}active{% endif %}" 
+       href="{% url 'accountsstock' %}">
+      <i class="bi bi-box-seam-fill"></i> Stock
+    </a>
+  </li>
+
+</ul>
+{% endblock %}
+{% block sidebar_footer %}
+<div class="admin-card">
+  <div class="admin-avatar">{{ request.user.username|slice:":1"|upper }}</div>
+  <div>
+    <h6>{{ request.user.get_full_name|default:request.user.username }}</h6>
+    <small>{{ role }}</small>
+  </div>
+</div>
+{% endblock %}
+

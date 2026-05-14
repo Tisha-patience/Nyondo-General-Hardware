@@ -21,7 +21,9 @@ from nyondogeneralhardwareapp import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path('login/', views.login, name='login'),
+    path('login/', views.login_view, name='login'),
+    path('login-redirect/', views.login_redirect, name='login_redirect'),
+    path('logout/', views.logout, name='logout'),
     # Central Accounts/Admin hub
     path('accounts/dashboard/', views.dashboard, name='accountsdashboard'),
     path('accounts/sales/', views.sales, name='accountssales'),
