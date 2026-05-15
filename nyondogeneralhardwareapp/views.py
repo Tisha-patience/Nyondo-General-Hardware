@@ -9,7 +9,7 @@ from django.db.models import ProtectedError
 from django.db import transaction
 from decimal import Decimal
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test,permission_required
 from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity, SupplierCredit, SupplierPayment
 
 # Create your views here.
@@ -266,6 +266,7 @@ def sale_edit(request, pk):
 
     return render(request, "sale_edit.html", {"sale": sale})
 
+@permission_required('nyondogeneralhardwareapp.delete_sale', raise_exception=True)
 def sale_delete(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     if request.method == "POST":
@@ -522,6 +523,7 @@ def stock_edit(request,pk):
 
     return render(request, 'stock-edit.html', {"stock":stock})
 
+@permission_required('nyondogeneralhardwareapp.delete_stock', raise_exception=True)
 def stock_delete(request ,pk):
     stock = get_object_or_404(Stock, pk=pk)
     if request.method == "POST":

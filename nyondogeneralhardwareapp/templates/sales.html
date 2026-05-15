@@ -101,6 +101,7 @@
                 </a>
 
                 <!-- Delete -->
+                 {% if perms.nyondogeneralhardwareapp.delete_sale %}
                 <a
                   href="{% url 'sale_delete' sale.id  %}"
                   class="btn btn-sm"
@@ -108,6 +109,7 @@
                 >
                   <i class="bi bi-trash"></i>
                 </a>
+                {% endif %}
                 </div>
             </td>
           </tr>

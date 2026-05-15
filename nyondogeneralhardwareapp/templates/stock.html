@@ -274,6 +274,7 @@ STOCK TABLE
                             </a>
 
                             <!-- DELETE -->
+                             {% if perms.nyondogeneralhardwareapp.delete_stock %}
                             <a
                                 href="{% url 'stock_delete' stock.id %}"
                                 class="btn btn-sm btn-danger"
@@ -283,6 +284,7 @@ STOCK TABLE
                                 <i class="bi bi-trash"></i>
 
                             </a>
+                            {% endif %}
 
                         </div>
 
