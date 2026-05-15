@@ -135,8 +135,16 @@ Nyondo Reports Dashboard
     <div class="card-header-custom mb-4">
 
       <div>
-        <h5>Sales Report</h5>
+        <h5>{{ report_type }}</h5>
+      {% if report_type == "Sales Report" %}
         <p>Latest generated sales records</p>
+      {% elif report_type == "Revenue Report" %}
+        <p>Summary of deposits and sales totals</p>
+      {% elif report_type == "Stock Report" %}
+        <p>Current stock levels and prices</p>
+      {% elif report_type == "Customer Report" %}
+        <p>Customer details and deposits overview</p>
+      {% endif %}
       </div>
 
     </div>

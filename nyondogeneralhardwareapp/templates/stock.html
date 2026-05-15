@@ -1,134 +1,423 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% load humanize %}
+
 {% block title %}
-  Nyondo Stock
+Nyondo Stock
 {% endblock %}
+
 {% block content %}
-<div class="col">
-  <h5 class="mt-4 px-2">Welcome to Nyondo Stock Hardware</h5>
 
-  <div class="table-responsive">
-    <div class="dashboard-table-card">
-      <div class="card-body">
-        <h1 class="card-title text-center">Stock Inventory</h1>
-        <hr />
+<!-- PAGE HEADER -->
+<div class="dashboard-header mb-4">
 
-        <table class="table modern-table align-middle">
-          <thead class="custom-header">
-            <tr>
-              <th>Product</th>
-              <th>Specification</th>
-              <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Status</th>
-              <th>Payment Mode</th>
-              <th>Credit Terms</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for stock in stocks %}
-            <tr>
-              <td>{{ stock.product_name }}</td>
-              <td>{{ stock.specification }}</td>
-              <td>
-                {% if stock.quantity <= 10 %}
-                <!-- <span class="badge bg-danger" -->
-                  Low ({{ stock.quantity }} {{ stock.unit }})</span
-                >
-                {% else %}
-                <!-- <span class="badge bg-success" -->
-                  {{ stock.quantity }} {{ stock.unit }}</span
-                >
-                {% endif %}
-              </td>
-              <td>UGX {{ stock.unit_price | intcomma }}</td>
-              <td>
-              {% if stock.quantity == 0 %}
-  <span class="badge status pending-status">
-    <i class="bi bi-x-circle"></i> Out of stock
-  </span>
-{% elif stock.quantity <= 10 %}
-  <span class="badge badge-light-warning">
-    <i class="bi bi-exclamation-triangle"></i> Low stock
-  </span>
-{% else %}
-  <span class="badge status active-status">
-    <i class="bi bi-check-circle"></i> Available
-  </span>
-{% endif %}
-</td>
+    <div>
+        <h2>Stock Inventory</h2>
+        <p>
+            Manage products, stock levels, suppliers and inventory tracking.
+        </p>
+    </div>
 
-              <td>
-                {% if stock.payment_mode == "Cash" %}
-                <span class="badge bg-success">Cash</span>
-                {% else %}
-                <span class="badge bg-warning text-dark">Credit</span>
-                {% endif %}
-              </td>
-              <td>
-                {% if stock.credit_terms %} {{ stock.credit_terms }} {% else %}
-                — {% endif %}
-              </td>
+    <a href="{% url 'accountsstock-reg' %}" class="btn-main">
+        <i class="bi bi-plus-circle"></i>
+        Register Stock
+    </a>
 
-              <td>
-                <!-- View -->
-                <a
-                  href="{% url 'stock_view' stock.id %}"
-                  class="btn btn-sm"
-                  title="View"
-                >
-                  <i class="bi bi-eye"></i>
-                </a>
+</div>
 
-                <!-- Edit -->
-                <a
-                  href="{% url 'stock_edit' stock.id  %}"
-                  class="btn btn-sm"
-                  title="Edit"
-                >
-                  <i class="bi bi-pencil"></i>
-                </a>
+<!-- =========================
+SUMMARY CARDS
+========================= -->
 
-                <!-- Delete -->
-                <a
-                  href="{% url 'stock_delete' stock.id  %}"
-                  class="btn btn-sm"
-                  title="Delete"
-                >
-                  <i class="bi bi-trash"></i>
-                </a>
-              </td>
-            </tr>
-            {% empty %}
-            <tr>
-              <td colspan="6" class="text-center text-muted">
-                No stock records found.
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-          <!-- <tfoot class="table-light">
-            <tr>
-              <th>Total</th>
+<div class="row g-4 mb-4">
 
-              <th id="totalQuantity">370</th>
-              <th id="totalValue">10,500,000</th>
-              <th id="totalSalesValue">7,500,000</th>
-              <th colspan="4"></th>
-            </tr>
-          </tfoot> -->
-        </table>
+    <div class="col-lg-3 col-md-6">
 
-        <div class="text-end mt-3">
+        <div class="stats-card">
+
+            <div class="stats-icon blue">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <div>
+                <p>Total Products</p>
+                <h3>{{ total_products }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon green">
+                <i class="bi bi-layers"></i>
+            </div>
+
+            <div>
+                <p>Total Quantity</p>
+                <h3>{{ total_quantity }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon orange">
+                <i class="bi bi-exclamation-triangle"></i>
+            </div>
+
+            <div>
+                <p>Low Stock Items</p>
+                <h3>{{ low_stock_count }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+
+        <div class="stats-card">
+
+            <div class="stats-icon red">
+                <i class="bi bi-cash-stack"></i>
+            </div>
+
+            <div>
+                <p>Total Stock Value</p>
+                <h3>UGX {{ total_stock_value|intcomma }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+STOCK TABLE
+========================= -->
+
+<div class="dashboard-card mb-4">
+
+    <div class="card-header-custom">
+
+        <div>
+            <h5 class="mb-3">Stock Inventory</h5>
+            <p>Current inventory records</p>
+        </div>
+
+    </div>
+<div class="text-end mt-3">
           <a href="{% url 'accountsstock-reg' %}" class="btn">
             <i class="bi bi-plus-circle me-1"></i> Register New Stock
           </a>
         </div>
-        
-      </div>
+    <div class="table-responsive">
+
+        <table class="table modern-table align-middle">
+
+            <thead>
+
+                <tr>
+
+                    <th>Product</th>
+                    <th>Specification</th>
+                    <th>Supplier</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total Cost</th>
+                    <th>Status</th>
+                    <th>Payment</th>
+                    <th>Date Received</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for stock in stocks %}
+
+                <tr>
+
+                    <!-- PRODUCT -->
+                    <td>
+
+                        <strong>
+                            {{ stock.product_name }}
+                        </strong>
+
+                    </td>
+
+                    <!-- SPECIFICATION -->
+                    <td>
+                        {{ stock.specification }}
+                    </td>
+
+                    <!-- SUPPLIER -->
+                    <td>
+                        {{ stock.supplier.supplier_name }}
+                    </td>
+
+                    <!-- QUANTITY -->
+                    <td>
+
+                        {% if stock.quantity <= 10 %}
+
+                            <span class="text-danger fw-semibold">
+                                {{ stock.quantity }} {{ stock.unit }}
+                            </span>
+
+                        {% else %}
+
+                            <span class="text-success fw-semibold">
+                                {{ stock.quantity }} {{ stock.unit }}
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- UNIT PRICE -->
+                    <td>
+                        UGX {{ stock.unit_price|intcomma }}
+                    </td>
+
+                    <!-- TOTAL COST -->
+                    <td>
+                        UGX {{ stock.total_cost|intcomma }}
+                    </td>
+
+                    <!-- STATUS -->
+                    <td>
+
+                        {% if stock.quantity == 0 %}
+
+                            <span class="status-badge danger">
+                                Out of Stock
+                            </span>
+
+                        {% elif stock.quantity <= 10 %}
+
+                            <span class="status-badge warning">
+                                Low Stock
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge success">
+                                Available
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- PAYMENT MODE -->
+                    <td>
+
+                        {% if stock.payment_mode == "Cash" %}
+
+                            <span class="status-badge success">
+                                Cash
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-badge warning">
+                                Credit
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <!-- DATE -->
+                    <td>
+                        {{ stock.date_received }}
+                    </td>
+
+                    <!-- ACTIONS -->
+                    <td>
+
+                        <div class="d-flex gap-1">
+
+                            <!-- VIEW -->
+                            <a
+                                href="{% url 'stock_view' stock.id %}"
+                                class="btn btn-sm btn-info text-white"
+                                title="View"
+                            >
+
+                                <i class="bi bi-eye"></i>
+
+                            </a>
+
+                            <!-- EDIT -->
+                            <a
+                                href="{% url 'stock_edit' stock.id %}"
+                                class="btn btn-sm btn-warning text-white"
+                                title="Edit"
+                            >
+
+                                <i class="bi bi-pencil"></i>
+
+                            </a>
+
+                            <!-- DELETE -->
+                            <a
+                                href="{% url 'stock_delete' stock.id %}"
+                                class="btn btn-sm btn-danger"
+                                title="Delete"
+                            >
+
+                                <i class="bi bi-trash"></i>
+
+                            </a>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+
+                    <td colspan="10" class="text-center py-5">
+
+                        No stock records found
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
     </div>
 
-    {% endblock %}
-  </div>
 </div>
+
+<!-- =========================
+BOTTOM SECTION
+========================= -->
+
+<div class="row g-4">
+
+    <!-- LOW STOCK ALERTS -->
+    <div class="col-lg-6">
+
+        <div class="dashboard-card h-100">
+
+            <div class="card-header-custom">
+
+                <div>
+                    <h5 class="mb-3">Inventory Alerts</h5>
+                    <p>Products running low</p>
+                </div>
+
+            </div>
+
+            <div class="activity-list">
+
+                {% for stock in low_stock_items %}
+
+                <div class="activity-item">
+
+                    <div class="activity-dot red"></div>
+
+                    <div>
+
+                        <strong>
+                            {{ stock.product_name }}
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            {{ stock.quantity }} {{ stock.unit }} remaining
+                        </small>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <p>No low stock alerts</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RECENT STOCK -->
+    <div class="col-lg-6">
+
+        <div class="dashboard-card h-100">
+
+            <div class="card-header-custom">
+
+                <div>
+                    <h5 class="mb-3">Recently Added Stock</h5>
+                    <p>Latest inventory entries</p>
+                </div>
+
+            </div>
+
+            <div class="activity-list">
+
+                {% for stock in recent_stock %}
+
+                <div class="activity-item">
+
+                    <div class="activity-dot blue"></div>
+
+                    <div>
+
+                        <strong>
+                            {{ stock.product_name }}
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            Added on {{ stock.date_received }}
+                        </small>
+
+                    </div>
+
+                </div>
+
+                {% empty %}
+
+                <p>No recent stock records</p>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

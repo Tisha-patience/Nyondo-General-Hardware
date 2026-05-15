@@ -38,6 +38,7 @@ urlpatterns = [
     path("supplier/<int:pk>-<slug:slug>/view/", views.supplier_view, name="supplier_view"),
     path("supplier/<int:pk>-<slug:slug>/edit/", views.supplier_edit, name="supplier_edit"),
     path("supplier/<int:pk>-<slug:slug>/delete/", views.supplier_delete, name="supplier_delete"),
+    path("supplier/<int:pk>/<slug:slug>/pay/<int:credit_id>", views.pay_supplier, name="pay_supplier"),
     path('accounts/stock/', views.stock, name='accountsstock'),
     path("stock/<int:pk>/", views.stock_view, name="stock_view"),
     path("stock/<int:pk>/edit/", views.stock_edit, name="stock_edit"),

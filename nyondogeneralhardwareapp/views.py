@@ -7,9 +7,10 @@ from reportlab.lib.pagesizes import A4
 from django.db.models import Sum
 from django.db.models import ProtectedError
 from django.db import transaction
+from decimal import Decimal
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test
-from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity
+from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity, SupplierCredit, SupplierPayment
 
 # Create your views here.
 def index(request):
@@ -282,26 +283,55 @@ def sale_receipt(request, pk):
     return render(request, "sale_receipt.html", {"sale": sale})
 
 def supplier(request):
-     # Total suppliers
-    total_suppliers = Supplier.objects.count()
+    suppliers = Supplier.objects.all()
 
-    # Total supplies
-    total_supplies = Stock.objects.count()
+    credits = SupplierCredit.objects.select_related(
+        "supplier",
+        "stock"
+    )
 
-    # Cash suppliers (distinct suppliers who delivered stock on Cash)
-    cash_suppliers = Stock.objects.filter(payment_mode="Cash").values("supplier").distinct().count()
+    payments = SupplierPayment.objects.select_related(
+        "credit",
+        "credit__supplier"
+    ).order_by("-payment_date")
 
-    # Credit suppliers (distinct suppliers who delivered stock on Credit)
-    credit_suppliers = Stock.objects.filter(payment_mode="Credit").values("supplier").distinct().count()
+    stocks = Stock.objects.select_related(
+        "supplier"
+    ).order_by("-date_received")
+
+    pending_credits = SupplierCredit.objects.exclude(
+        status="Paid"
+    )
+
+    total_credit = SupplierCredit.objects.aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    total_paid = SupplierCredit.objects.aggregate(
+        total=Sum("amount_paid")
+    )["total"] or 0
+
+    outstanding_balance = SupplierCredit.objects.aggregate(
+        total=Sum("balance")
+    )["total"] or 0
 
     context = {
-        "total_suppliers": total_suppliers,
-        "cash_suppliers": cash_suppliers,
-        "credit_suppliers": credit_suppliers,
-        "total_supplies": total_supplies,
-        "suppliers": Supplier.objects.all(),
+        "suppliers": suppliers,
+        "credits": credits,
+        "payments": payments,
+        "stocks": stocks,
+        "pending_credits": pending_credits,
+        "total_credit": total_credit,
+        "total_paid": total_paid,
+        "outstanding_balance": outstanding_balance,
+        "suppliers_count": suppliers.count(),
     }
-    return render(request, "supplier.html", context)
+
+    return render(
+        request,
+        "supplier.html",
+        context
+    )
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib import messages
 from .models import Supplier
@@ -325,19 +355,28 @@ def activate_supplier(request, pk,slug):
 
 def stock(request):
     stocks = Stock.objects.all()
-     # Calculate status counts
-    available_count = stocks.filter(quantity__gt=10).count()
-    low_count = stocks.filter(quantity__gt=0, quantity__lte=10).count()
-    out_count = stocks.filter(quantity=0).count()
+
+    # Summary counts
+    total_products = stocks.count()
+    total_quantity = stocks.aggregate(total=Sum("quantity"))["total"] or 0
+    low_stock_count = stocks.filter(quantity__gt=0, quantity__lte=10).count()
+    total_stock_value = stocks.aggregate(total=Sum("total_cost"))["total"] or 0
+
+    # Inventory alerts
+    low_stock_items = stocks.filter(quantity__gt=0, quantity__lte=10)
+
+    # Recently added stock (last 5 entries)
+    recent_stock = stocks.order_by("-date_received")[:5]
 
     return render(request, "stock.html", {
         "stocks": stocks,
-        "available_count": available_count,
-        "low_count": low_count,
-        "out_count": out_count,
-        "total_count": stocks.count(),
+        "total_products": total_products,
+        "total_quantity": total_quantity,
+        "low_stock_count": low_stock_count,
+        "total_stock_value": total_stock_value,
+        "low_stock_items": low_stock_items,
+        "recent_stock": recent_stock,
     })
-   
 
 def reports(request):
     # Default summary stats
@@ -451,6 +490,20 @@ def supplier_edit(request, pk, slug):
 
     return render(request, 'supplier-edit.html', {"supplier":supplier})
 
+def pay_supplier(request, pk, slug, credit_id):
+    supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
+    credit = get_object_or_404(SupplierCredit, id=credit_id, supplier=supplier)
+
+    if request.method == "POST":
+        amount = Decimal(request.POST.get("amount"))
+        notes = request.POST.get("notes")
+
+        SupplierPayment.objects.create(credit=credit, amount=amount, notes=notes)
+        messages.success(request, f"Payment of UGX {amount} recorded for {supplier.supplier_name}")
+        return redirect("accountssupplier")
+
+    return render(request, "pay_supplier.html", {"credit": credit, "supplier": supplier})
+
 
 def stock_edit(request,pk):
     stock = get_object_or_404(Stock, pk=pk)
@@ -499,45 +552,43 @@ def stock_reg(request):
         sent_specification = payload.get("specification")
         sent_supplier = payload.get("supplier")
         sent_payment_mode = payload.get("payment_mode")
-        sent_credit_terms= payload.get("credit_terms") if payload.get("payment_mode") == "Credit" else None,
-        sent_unit_cost = payload.get("unit_cost")
-        sent_unit_price = payload.get("unit_price")
-        sent_quantity = payload.get("quantity")
+        sent_credit_terms = payload.get("credit_terms") if sent_payment_mode == "Credit" else None
+        sent_unit_cost = Decimal(payload.get("unit_cost"))   # ✅ cast to Decimal
+        sent_unit_price = Decimal(payload.get("unit_price")) # ✅ cast to Decimal
+        sent_quantity = int(payload.get("quantity"))         # ✅ cast to int
         sent_unit = payload.get("unit")
         sent_date_received = payload.get("date")
 
         # ✅ fetch the Supplier object
         supplier = Supplier.objects.get(id=sent_supplier)
 
- # ✅ Block inactive suppliers
+        # ✅ Block inactive suppliers
         if not supplier.is_active:
             messages.error(request, "This supplier is deactivated. Choose another supplier.")
             return redirect("accountsstock-reg")
 
-        Stock.objects.create(
-            product_name = sent_product_name,
-            specification= sent_specification,
-            supplier= supplier,
-            payment_mode= sent_payment_mode,
-            credit_terms= sent_credit_terms,
-            unit_cost= sent_unit_cost,
-            unit_price= sent_unit_price,
-            quantity= sent_quantity,
-            unit=sent_unit, 
-            date_received= sent_date_received,
-
+        stock = Stock.objects.create(
+            product_name=sent_product_name,
+            specification=sent_specification,
+            supplier=supplier,
+            payment_mode=sent_payment_mode,
+            credit_terms=sent_credit_terms,
+            unit_cost=sent_unit_cost,
+            unit_price=sent_unit_price,
+            quantity=sent_quantity,
+            unit=sent_unit,
+            date_received=sent_date_received,
         )
-        Activity.objects.create(
-    title=f"Stock {stock.product_name} added",
-    color="orange"
-)
-        return redirect ('accountsstock')
 
+        Activity.objects.create(
+            title=f"Stock {stock.product_name} added",
+            color="orange"
+        )
+
+        return redirect("accountsstock")
 
     suppliers = Supplier.objects.filter(is_active=True)
-
-    return render(request, 'stock-reg.html', {"suppliers": suppliers})
-
+    return render(request, "stock-reg.html", {"suppliers": suppliers})
 def customer_deposit(request):
      participants = Participant.objects.all()
      for p in participants:
