@@ -121,35 +121,7 @@ footer{
   color: #344955;
 }
 
-/* =========================
-   DROPDOWNS
-========================= */
 
-.dropdown-toggle{
-  text-decoration: none;
-}
-
-.toggle-arrow::after{
-  font-size: 0.7rem;
-  vertical-align: middle;
-  margin-left: 2px;
-}
-
-.dropdown-menu{
-  background: #fff;
-  border-radius: 12px;
-  border: none;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-.dropdown-item{
-  transition: 0.3s ease;
-}
-
-.dropdown-item:hover{
-  background-color: #344955;
-  color: #fff;
-}
 
 /* =========================
    IMAGES

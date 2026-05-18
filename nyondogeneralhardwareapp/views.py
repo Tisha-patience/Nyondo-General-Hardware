@@ -47,7 +47,18 @@ def login_redirect(request):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def dashboard(request):
-    total_customers = Participant.objects.count()
+    # All registered participants
+    participant_count = Participant.objects.count()
+
+    # Unique customers from sales (by phone)
+    sale_customers = Sale.objects.values_list("customer_phone", flat=True).distinct()
+    sale_customer_count = sale_customers.count()
+
+    # Combine both sets (avoid double-counting)
+    total_customers = Participant.objects.values_list("nin", flat=True).union(
+        Sale.objects.values_list("customer_phone", flat=True)
+    ).count()
+
     deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
     sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
     total_revenue = deposits_total + sales_total
@@ -214,7 +225,7 @@ def sales_reg(request):
         for i in range(len(stock_ids)):
             stock_item = get_object_or_404(Stock, pk=stock_ids[i])
             qty = int(quantities[i])
-            price = float(unit_prices[i])
+            price = float(stock_item.unit_price)  # Use price from stock for consistency
             total = qty * price
 
             # ✅ Safety check: prevent overselling
@@ -249,22 +260,33 @@ def sale_view(request, pk):
 
 def sale_edit(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
+    sale_item = sale.items.first()  # assuming one item per sale
+    stocks = Stock.objects.all()
+
     if request.method == "POST":
-        # Manual update from form fields
+        # Update Sale fields
         sale.customer_name = request.POST.get("customer_name")
         sale.customer_phone = request.POST.get("customer_phone")
-        sale.product = request.POST.get("product")
-        sale.quantity = request.POST.get("quantity")
-        sale.unit = request.POST.get("unit")
-        sale.total_price = request.POST.get("total_price")
-        sale.distance_km = request.POST.get("distance_km")
-        sale.transport_cost = request.POST.get("transport_cost")
-        
+         # Check if product or quantity was changed
+        stock_id = request.POST.get("stock_id")
+        quantity = int(request.POST.get("quantity") or sale_item.quantity)
+
+        if str(sale_item.stock.id) != stock_id or sale_item.quantity != quantity:
+            # Product or quantity changed → update SaleItem
+            stock_item = get_object_or_404(Stock, pk=stock_id)
+
+            sale_item.stock = stock_item
+            sale_item.quantity = quantity
+            sale_item.unit = stock_item.unit
+            sale_item.unit_price = stock_item.unit_price
+            sale_item.save()
+
+        # Update Sale totals
         sale.save()
         messages.success(request, "Sale updated successfully.")
         return redirect("accountssales")
 
-    return render(request, "sale_edit.html", {"sale": sale})
+    return render(request, "sale_edit.html", {"sale": sale, "sale_item": sale_item, "stocks": stocks})
 
 @permission_required('nyondogeneralhardwareapp.delete_sale', raise_exception=True)
 def sale_delete(request, pk):
@@ -592,14 +614,19 @@ def stock_reg(request):
     suppliers = Supplier.objects.filter(is_active=True)
     return render(request, "stock-reg.html", {"suppliers": suppliers})
 def customer_deposit(request):
-     participants = Participant.objects.all()
-     for p in participants:
+    participants = Participant.objects.all()
+    for p in participants:
         # Total deposits
-        p.total_deposits = p.deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+        p.total_deposits = p.deposits.aggregate(
+            total=Sum("amount_paid")
+        )["total"] or 0
+
         # Latest payment method
         latest = p.deposits.order_by("-date_registered").first()
         p.latest_method = latest.payment_method if latest else "—"
-        return render(request, "customer-deposit.html", {"participants": participants})
+
+    # render AFTER the loop, not inside
+    return render(request, "customer-deposit.html", {"participants": participants})
      
 def participant_delete(request, pk):
     participant = get_object_or_404(Participant, pk=pk)
@@ -756,9 +783,33 @@ def deposit_receipt(request, pk):
     deposit = get_object_or_404(Deposit, pk=pk)
     return render(request, "deposit-receipt-detail.html", {"deposit": deposit})
 
-def supplier_view(request, pk, slug ):
-    supplier = get_object_or_404(Supplier, pk=pk,slug=slug)
-    return render(request, "supplier_view.html", {"supplier": supplier})
+def supplier_view(request, pk, slug):
+    supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
+
+    # Credits for this supplier
+    credits = SupplierCredit.objects.filter(supplier=supplier).select_related("stock")
+
+    # Totals
+    total_credit = credits.aggregate(total=Sum("total_amount"))["total"] or 0
+    total_paid = credits.aggregate(total=Sum("amount_paid"))["total"] or 0
+    outstanding_balance = credits.aggregate(total=Sum("balance"))["total"] or 0
+
+    # Payments for this supplier
+    payments = SupplierPayment.objects.filter(credit__supplier=supplier).order_by("-payment_date")
+
+    # Stock supplied by this supplier
+    stocks = Stock.objects.filter(supplier=supplier).order_by("-date_received")
+
+    context = {
+        "supplier": supplier,
+        "credits": credits,
+        "payments": payments,
+        "stocks": stocks,
+        "total_credit": total_credit,
+        "total_paid": total_paid,
+        "outstanding_balance": outstanding_balance,
+    }
+    return render(request, "supplier_view.html", context)
     
 def supplier_delete(request, pk, slug):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)

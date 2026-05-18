@@ -69,7 +69,9 @@ class Stock(models.Model):
     credit_terms = models.CharField(max_length=50, blank=True, null=True)  # e.g., "30 days", "Cash on Delivery"
     total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date_received = models.DateField()
-
+    def save(self, *args, **kwargs):
+        self.total_cost = self.quantity * self.unit_cost
+        super().save(*args, **kwargs)
    
 class SupplierCredit(models.Model):
 
@@ -220,25 +222,32 @@ class SaleItem(models.Model):
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
     total_price = models.DecimalField(max_digits=12, decimal_places=2)
     def save(self, *args, **kwargs):
-
         if not self.pk:
+            # New SaleItem → reduce stock
+            if self.stock.quantity < self.quantity:
+                raise ValueError("Not enough stock available")
+            self.stock.quantity -= self.quantity
+        else:
+            # Editing existing SaleItem → adjust stock difference
+            old_item = SaleItem.objects.get(pk=self.pk)
+            difference = self.quantity - old_item.quantity
 
-         if self.stock.quantity < self.quantity:
-            raise ValueError("Not enough stock available")
+            if difference > 0:  # increasing quantity
+                if self.stock.quantity < difference:
+                    raise ValueError("Not enough stock available")
+                self.stock.quantity -= difference
+            elif difference < 0:  # decreasing quantity
+                self.stock.quantity += abs(difference)
+            # if difference == 0 → no change, stock untouched
 
-        self.stock.quantity -= self.quantity
         self.stock.save()
 
+        # Always enforce unit, price, total from stock
         self.unit = self.stock.unit
-
         self.unit_price = self.stock.unit_price
-
-        self.total_price = (
-        self.quantity * self.unit_price
-    )
+        self.total_price = self.quantity * self.unit_price
 
         super().save(*args, **kwargs)
-
 @property
 def profit(self):
 
@@ -262,7 +271,7 @@ class SaleReceipt(models.Model):
 
 class Participant(models.Model):
     name = models.CharField(max_length=100)
-    nin = models.CharField(max_length=20, unique=True, validators=[validate_ugandan_national_id])  # National ID with validation
+    nin = models.CharField(max_length=14, unique=True, validators=[validate_ugandan_national_id])  # National ID with validation
     phone = models.CharField(max_length=15, validators=[validate_phone_number])
     registered_on = models.DateTimeField(default=timezone.now)
 
@@ -287,13 +296,20 @@ class DepositReceipt(models.Model):
     issued_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
+        # Generate receipt number if not already set
         if not self.receipt_number:
+            # Get the last receipt from the database, ordered by ID
             last_receipt = DepositReceipt.objects.order_by("id").last()
+            # If no receipts exist, start with the first one
             if not last_receipt:
+                # Format: DEP-2026-0001, where 2026 is the year and 0001 is the sequential number
                 self.receipt_number = "DEP-2026-0001"
             else:
+                # Extract the last sequential number, increment it, and format the new receipt number
                 last_number = int(last_receipt.receipt_number.split("-")[-1])
+                # Format the new receipt number with leading zeros (e.g., 0002, 0003, etc.)
                 self.receipt_number = f"DEP-2026-{last_number+1:04d}"
+                # This will ensure that the receipt numbers are sequential and unique, even if some receipts are deleted later on.
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -328,7 +344,7 @@ class GoodsReceipt(models.Model):
     collection = models.OneToOneField(
         GoodsCollection,
         on_delete=models.CASCADE,
-        related_name="receipt"  # ✅ makes it accessible as collection.receipt
+        related_name="receipt"  #  makes it accessible as collection.receipt
     )
     receipt_number = models.CharField(max_length=20, unique=True)
     date_issued = models.DateTimeField(auto_now_add=True)
@@ -349,6 +365,8 @@ class GoodsReceipt(models.Model):
 
     def __str__(self):
         return self.receipt_number
+    
+
 class Activity(models.Model):
     title = models.CharField(max_length=255)
     color = models.CharField(max_length=20, default="blue")

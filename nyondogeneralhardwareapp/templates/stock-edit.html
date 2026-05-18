@@ -1,69 +1,94 @@
-{% extends "baseForm.html" %}
-{% block title %}
-  Edit Stock
-{% endblock %}
+{% extends "baseForm.html" %} {% block title %} Edit Stock {% endblock %} 
 {% block content %}
 <div class="container mt-4">
-  <div class="card shadow mx-auto" style="max-width: 600px;  border: 5px solid  #0ABAB5">
+  <div
+    class="card shadow mx-auto"
+    style="max-width: 600px; border: 5px solid #0abab5"
+  >
     <div class="card-body">
       <h2 class="text-center">Edit Stock</h2>
       <hr />
       <form method="post">
-        {% csrf_token %}
+  {% csrf_token %}
 
-        <!-- Quantity -->
-        <div class="mb-3">
-          <label class="form-label">Quantity</label>
-          <input type="number" name="quantity" class="form-control" value="{{ stock.quantity }}" required />
-        </div>
+  <div class="row">
+    <!-- Product Name -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Product Name</label>
+      <input type="text" name="product_name" class="form-control" value="{{ stock.product_name }}" required />
+    </div>
 
-        <!-- Unit Cost -->
-        <div class="mb-3">
-          <label class="form-label">Unit Cost (UGX)</label>
-          <input type="number" name="unit_cost" class="form-control" value="{{ stock.unit_cost }}" required />
-        </div>
+    <!-- Specification -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Specification</label>
+      <input type="text" name="specification" class="form-control" value="{{ stock.specification }}" />
+    </div>
+  </div>
 
-        <!-- Unit Price -->
-        <div class="mb-3">
-          <label class="form-label">Unit Price (UGX)</label>
-          <input type="number" name="unit_price" class="form-control" value="{{ stock.unit_price }}" required />
-        </div>
+  <div class="row">
+    <!-- Unit -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Unit</label>
+      <input type="text" name="unit" class="form-control" value="{{ stock.unit }}" />
+    </div>
 
-        <!-- Payment Mode -->
-        <div class="mb-3">
-          <label class="form-label">Payment Mode</label>
-          <select name="payment_mode" class="form-select" required>
-            <option value="Cash" {% if stock.payment_mode == "Cash" %}selected{% endif %}>Cash</option>
-            <option value="Credit" {% if stock.payment_mode == "Credit" %}selected{% endif %}>Credit</option>
-          </select>
-        </div>
+    <!-- Quantity -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Quantity</label>
+      <input type="number" name="quantity" class="form-control" value="{{ stock.quantity }}" required />
+    </div>
+  </div>
 
-        <!-- Credit Terms (only relevant if Credit) -->
-        <div class="mb-3">
-          <label class="form-label">Credit Terms</label>
-          <input type="text" name="credit_terms" class="form-control" value="{{ stock.credit_terms }}" />
-        </div>
+  <div class="row">
+    <!-- Unit Cost -->
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Unit Cost (UGX)</label>
+      <input type="number" name="unit_cost" class="form-control" value="{{ stock.unit_cost }}" required />
+    </div>
 
-        <!-- Date Received -->
-        <div class="mb-3">
-          <label class="form-label">Date Received</label>
-          <input type="date" name="date_received" class="form-control" value="{{ stock.date_received|date:'Y-m-d' }}" />
-        </div>
+    <!-- Unit Price -->
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Unit Price (UGX)</label>
+      <input type="number" name="unit_price" class="form-control" value="{{ stock.unit_price }}" required />
+    </div>
 
-        
+    <!-- Payment Mode -->
+    <div class="col-md-4 mb-3">
+      <label class="form-label">Payment Mode</label>
+      <select name="payment_mode" class="form-select" required>
+        <option value="Cash" {% if stock.payment_mode == "Cash" %}selected{% endif %}>Cash</option>
+        <option value="Credit" {% if stock.payment_mode == "Credit" %}selected{% endif %}>Credit</option>
+      </select>
+    </div>
+  </div>
 
-        <!-- Buttons -->
-        <div class="row">
-          <div class="col">
-            <button type="submit" class="btn btn-success">Save Changes</button>
-          </div>
-          <div class="col text-end">
-            <a href="{% url 'accountsstock' %}" class="btn btn-secondary">
-              <i class="bi bi-arrow-left me-1"></i> Back
-            </a>
-          </div>
-        </div>
-      </form>
+  <div class="row">
+    <!-- Credit Terms -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Credit Terms</label>
+      <input type="text" name="credit_terms" class="form-control" value="{{ stock.credit_terms }}" />
+    </div>
+
+    <!-- Date Received -->
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Date Received</label>
+      <input type="date" name="date_received" class="form-control" value="{{ stock.date_received|date:'Y-m-d' }}" />
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="row">
+    <div class="col">
+      <button type="submit" class="btn btn-success">Save Changes</button>
+    </div>
+    <div class="col text-end">
+      <a href="{% url 'accountsstock' %}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back
+      </a>
+    </div>
+  </div>
+</form>
+
     </div>
   </div>
 </div>

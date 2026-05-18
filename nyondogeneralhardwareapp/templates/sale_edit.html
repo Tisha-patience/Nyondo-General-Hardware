@@ -1,53 +1,103 @@
-{% extends "baseForm.html" %}
-{% block title %}
-  Edit Sale
-{% endblock %}
+{% extends "baseForm.html" %} {% block title %} Edit Sale {% endblock %} 
 {% block content %}
 <div class="container mt-4">
-  <div class="card shadow mx-auto" style="max-width: 600px;  border: 5px solid  #0ABAB5">
+  <div
+    class="card shadow mx-auto"
+    style="max-width: 600px; border: 5px solid #0abab5"
+  >
     <div class="card-body">
-<h2>Edit Sale</h2>
-<form method="post">
-  {% csrf_token %}
-  <div class="form-group">
-    <label>Customer Name</label>
-    <input type="text" name="customer_name" value="{{ sale.customer_name }}" class="form-control">
-  </div>
-  <div class="form-group">
-    <label>Customer Phone</label>
-    <input type="text" name="customer_phone" value="{{ sale.customer_phone }}" class="form-control">
-  </div>
-  <div>
+      <h2>Edit Sale</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+          <label>Customer Name</label>
+          <input
+            type="text"
+            name="customer_name"
+            value="{{ sale.customer_name }}"
+            class="form-control"
+          />
+        </div>
+        <div class="form-group">
+          <label>Customer Phone</label>
+          <input
+            type="text"
+            name="customer_phone"
+            value="{{ sale.customer_phone }}"
+            class="form-control"
+          />
+        </div>
+
         <div class="row mb-3">
           <div class="col">
-             <label for="name" class="form-label">Product Name</label>
-            <select class="form-select" id="name" name="product" required>
-              <option value="Cement">Cement</option>
-              <option value="Iron Bars">Iron Bars</option>
-              <option value="Nails">Nails</option>
-              <option value="Wheelbarrows">Wheelbarrows</option>
-              <option value="Wire Mesh">Wire Mesh</option>
-              <option value="Barbed Wire">Barbed Wire</option>
-              <option value="Iron Sheets">Iron Sheets</option>
+            <label for="name" class="form-label">Product Name</label>
+
+            <select name="stock_id" class="form-select stock-select" required>
+              {% for stock in stocks %}
+              <option
+                value="{{ stock.id }}"
+                data-unit-price="{{ stock.unit_price }}"
+                {%
+                if
+                sale_item.stock.id=""
+                ="stock.id"
+                %}selected{%
+                endif
+                %}
+              >
+                {{ stock.product_name }} ({{ stock.specification }}) - {{
+                stock.quantity }} {{ stock.unit }} available
+              </option>
+              {% endfor %}
             </select>
           </div>
-  <div class="form-group">
-    <label>Distance (km)</label>
-    <input type="number" name="distance_km" value="{{ sale.distance_km }}" class="form-control">
-  </div>
 
-  <div class="row mt-3">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Quantity</label>
+            <input
+              type="number"
+              name="quantity"
+              class="form-control"
+              value="{{ sale_item.quantity }}"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Unit</label>
+            <input
+              type="text"
+              name="unit"
+              class="form-control"
+              value="{{ sale_item.unit }}"
+            />
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Unit Price (UGX)</label>
+            <input
+              type="number"
+              name="unit_price"
+              class="form-control"
+              value="{{ sale_item.unit_price }}"
+              readonly
+            />
+          </div>
+        </div>
+
+        <div class="row mt-3">
           <div class="col">
             <button type="submit" class="btn btn-success">Save Changes</button>
           </div>
-  <div class="col text-end">
+          <div class="col text-end">
             <a href="{% url 'accountssales' %}" class="btn btn-secondary">
               <i class="bi bi-arrow-left me-1"></i> Back
             </a>
           </div>
-          </div>
-</form>
-</div>
-</div>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

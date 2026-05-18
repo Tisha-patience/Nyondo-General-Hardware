@@ -60,7 +60,7 @@ body{
   top: -120px;
   left: -100px;
 
-  animation: floatGlow 8s ease-in-out infinite;
+  /* animation: floatGlow 8s ease-in-out infinite; */
 }
 
 .glow-2{
@@ -73,7 +73,7 @@ body{
   bottom: -100px;
   right: -80px;
 
-  animation: floatGlow 10s ease-in-out infinite alternate;
+  /* animation: floatGlow 10s ease-in-out infinite alternate; */
 }
 
 @keyframes floatGlow{
@@ -162,13 +162,13 @@ body{
 
 @keyframes shine{
 
-  from{
+  /* from{
     left: -100%;
   }
 
   to{
     left: 100%;
-  }
+  } */
 }
 
 /* =========================
@@ -190,7 +190,7 @@ body{
   filter:
     drop-shadow(0 8px 25px rgba(0,0,0,0.25));
 
-  animation: floatLogo 4s ease-in-out infinite;
+  /* animation: floatLogo 4s ease-in-out infinite; */
 }
 
 @keyframes floatLogo{
@@ -246,7 +246,7 @@ body{
 
   font-weight: 800;
 
-  line-height: 1.2;
+  /* line-height: 1.2; */
 
   margin-bottom: 18px;
 }

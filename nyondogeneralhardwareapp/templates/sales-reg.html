@@ -31,9 +31,9 @@
   <div class="row item-row">
     <div class="col-md-4 ">
     <label style="margin-bottom: 7px;">Product</label>
-    <select name="stock_id" class="form-control">
+    <select name="stock_id" class="form-control stock-select" required>
       {% for stock in stocks %}
-        <option value="{{ stock.id }}">
+        <option value="{{ stock.id }}" data-unit-price="{{ stock.unit_price }}">
           {{ stock.product_name }} ({{ stock.specification }}) - {{ stock.quantity }} {{ stock.unit }} available
         </option>
       {% endfor %}
@@ -50,7 +50,7 @@
     </div>
     <div class="col-md-2">
       <label class="form-label">Unit Price</label>
-      <input type="number" step="0.01" name="unit_price" class="form-control" required>
+      <input type="number" step="0.01" name="unit_price" class="form-control" readonly>
     </div>
     <div class="col-md-1 d-flex align-items-end">
       <button type="button" class="btn btn-sm remove-item w-100">
@@ -123,6 +123,21 @@ document.addEventListener("DOMContentLoaded", function() {
       }
     }
   });
+});
+document.addEventListener("DOMContentLoaded", function() {
+  const container = document.getElementById("items-container");
+
+  // When product changes, update unit price
+  container.addEventListener("change", function(e) {
+    if (e.target.classList.contains("stock-select")) {
+      const selectedOption = e.target.options[e.target.selectedIndex];
+      const unitPrice = selectedOption.getAttribute("data-unit-price");
+      const row = e.target.closest(".item-row");
+      row.querySelector("input[name='unit_price']").value = unitPrice;
+    }
+  });
+
+  
 });
 </script>
 {% endblock %}
