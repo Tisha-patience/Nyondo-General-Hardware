@@ -36,20 +36,8 @@
       <textarea name="address" id="address" class="form-control">{{ supplier.address }}</textarea>
     </div>
 
-    <div class="mb-3">
-      <label for="payment_terms" class="form-label">Payment Terms</label>
-      <select name="payment_terms" id="payment_terms" class="form-select">
-        <option value="Cash" {% if supplier.payment_terms == "Cash" %}selected{% endif %}>Cash</option>
-        <option value="Credit" {% if supplier.payment_terms == "Credit" %}selected{% endif %}>Credit</option>
-      </select>
-    </div>
 
-    <div class="mb-3">
-      <label for="credit_terms" class="form-label">Credit Terms</label>
-      <input type="text" name="credit_terms" id="credit_terms"
-             class="form-control" value="{{ supplier.credit_terms }}">
-    </div>
-
+    
     <button type="submit" class="btn ">
       <i class="bi bi-save"></i>
     </button>

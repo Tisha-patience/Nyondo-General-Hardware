@@ -8,6 +8,11 @@
     <div class="card-body">
       <h2 class="text-center">Register New Supplier</h2>
       <hr />
+      {% if general_error %}
+      <div class="alert alert-danger">
+        {{ general_error }}
+      </div>
+      {% endif %}
       <form action="/accounts/supplierReg/" method="post">
         {% csrf_token %}
         <!-- Supplier Info -->
@@ -19,10 +24,20 @@
                    placeholder="Enter supplier name" required />
           </div>
           <div class="col-md-6">
-            <label class="form-label">Contact Number</label>
-            <input type="text" name="contact_number" class="form-control"
-                   placeholder="Enter phone number" required />
-          </div>
+    <label class="form-label">Contact Number</label>
+    <input type="text" name="contact_number"
+           class="form-control {% if errors.contact_number %}is-invalid{% endif %}"
+           value="{{ data.contact_number|default:'' }}"
+           placeholder="Enter phone number" required>
+    {% if errors.contact_number %}
+      <div class="invalid-feedback">
+        {% for error in errors.contact_number %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
         </div>
         <!-- Email + Address in one row -->
         <div class="row mb-3">
@@ -38,15 +53,7 @@
           </div>
         </div>
 
-        <!-- Payment Terms -->
-        <div class="mb-3">
-          <label class="form-label">Payment Terms</label>
-          <select class="form-select"  name="payment_terms"  required>
-            <option selected disabled>Choose terms</option>
-            <option value="Cash">Cash</option>
-            <option value="Credit">Credit</option>
-          </select>
-        </div>
+        
 
         
         <hr />

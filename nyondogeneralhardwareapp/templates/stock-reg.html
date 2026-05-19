@@ -188,7 +188,7 @@
 <!-- Row 2: Quantity + Unit -->
 <div class="row">
   <div class="col-md-6 mb-3">
-    <label for="quantity" class="form-label {{if errors.quantity}}is-invalid{{endif}}">Quantity</label>
+    <label for="quantity" class="form-label {% if errors.quantity %}is-invalid{% endif %}">Quantity</label>
     <input
       type="number"
       class="form-control {% if errors.quantity %}is-invalid{% endif %}"

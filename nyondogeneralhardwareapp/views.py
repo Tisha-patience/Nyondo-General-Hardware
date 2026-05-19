@@ -184,7 +184,7 @@ def logout(request):
 
 def sales(request):
     # Fetch all sales and their related items in one go
-    sales = Sale.objects.all()
+    sales = Sale.objects.all().order_by('-date')
 
     # Total number of sales
     total_sales = sales.count()
@@ -324,7 +324,7 @@ def sale_receipt(request, pk):
     return render(request, "sale_receipt.html", {"sale": sale})
 
 def supplier(request):
-    suppliers = Supplier.objects.all()
+    suppliers = Supplier.objects.all().order_by("-date_added")
 
     credits = SupplierCredit.objects.select_related(
         "supplier",
@@ -395,7 +395,7 @@ def activate_supplier(request, pk,slug):
 
 
 def stock(request):
-    stocks = Stock.objects.all()
+    stocks = Stock.objects.all().order_by("-date_received")
 
     # Summary counts
     total_products = stocks.count()
@@ -485,28 +485,39 @@ def generate_report(request):
 
 
 def supplier_reg(request):
-     if request.method == "POST":
+    if request.method == "POST":
         payload = request.POST
-        # Supplier fields
-        sent_supplier_name = payload.get("supplier_name")
-        sent_contact_number = payload.get("contact_number")
-        sent_address = payload.get("address")
-        sent_email = payload.get("email")
-        
-        Supplier.objects.create(
-            supplier_name= sent_supplier_name,
-            contact_number= sent_contact_number,
-            address= sent_address,
-            email= sent_email,
-           
-        )
-        Activity.objects.create(
-    title=f"Supplier {supplier.supplier_name} added",
-    color="orange"
-)
-        return redirect ('accountssupplier')
-     
-     return render(request, 'supplierReg.html')
+        try:
+            with transaction.atomic():
+                supplier = Supplier.objects.create(
+                    supplier_name=payload.get("supplier_name"),
+                    contact_number=payload.get("contact_number"),
+                    address=payload.get("address"),
+                    email=payload.get("email"),
+                )
+
+                Activity.objects.create(
+                    title=f"Supplier {supplier.supplier_name} added",
+                    color="orange"
+                )
+
+                return redirect("accountssupplier")
+
+        except ValidationError as e:
+            # Field-specific errors
+            return render(request, "supplierReg.html", {
+                "errors": e.message_dict,
+                "data": payload,
+            })
+
+        except Exception as e:
+            # General error
+            return render(request, "supplierReg.html", {
+                "general_error": str(e),
+                "data": payload,
+            })
+
+    return render(request, "supplierReg.html")
 
 
 def back(request):
@@ -590,39 +601,26 @@ def stock_view(request, pk):
 def stock_reg(request):
     if request.method == "POST":
         payload = request.POST
-        sent_product_name = payload.get("product_name")
-        sent_specification = payload.get("specification")
-        sent_supplier = payload.get("supplier")
-        sent_payment_mode = payload.get("payment_mode")
-        sent_credit_terms = payload.get("credit_terms") if sent_payment_mode == "Credit" else None
-        sent_unit_cost = Decimal(payload.get("unit_cost"))   # ✅ cast to Decimal
-        sent_unit_price = Decimal(payload.get("unit_price")) # ✅ cast to Decimal
-        sent_quantity = int(payload.get("quantity"))         # ✅ cast to int
-        sent_unit = payload.get("unit")
-        sent_date_received = payload.get("date")
-
-        # ✅ fetch the Supplier object
-        supplier = Supplier.objects.get(id=sent_supplier)
-
-        # ✅ Block inactive suppliers
-        if not supplier.is_active:
-            messages.error(request, "This supplier is deactivated. Choose another supplier.")
-            return redirect("accountsstock-reg")
-        
-
-
         try:
+            sent_supplier = payload.get("supplier")
+            supplier = Supplier.objects.get(id=sent_supplier)
+
+            # ✅ Block inactive suppliers
+            if not supplier.is_active:
+                messages.error(request, "This supplier is deactivated. Choose another supplier.")
+                return redirect("accountsstock-reg")
+
             stock = Stock.objects.create(
-                sent_product_name=request.POST.get("product_name"),
-                sent_specification=request.POST.get("specification"),
-                supplier_id=request.POST.get("supplier"),
-                payment_mode=request.POST.get("payment_mode"),
-                credit_terms=request.POST.get("credit_terms"),
-                unit_cost=request.POST.get("unit_cost"),
-                unit_price=request.POST.get("unit_price"),
-                quantity=request.POST.get("quantity"),
-                unit=request.POST.get("unit"),
-                date_received=request.POST.get("date"),
+                product_name=payload.get("product_name"),
+                specification=payload.get("specification"),
+                supplier=supplier,  # ✅ use the Supplier object
+                payment_mode=payload.get("payment_mode"),
+                credit_terms=payload.get("credit_terms") if payload.get("payment_mode") == "Credit" else None,
+                unit_cost=Decimal(payload.get("unit_cost")),
+                unit_price=Decimal(payload.get("unit_price")),
+                quantity=int(payload.get("quantity")),
+                unit=payload.get("unit"),
+                date_received=payload.get("date"),
             )
 
             Activity.objects.create(
@@ -647,13 +645,13 @@ def stock_reg(request):
                 "data": request.POST,
                 "suppliers": suppliers
             })
-                    
+
     suppliers = Supplier.objects.filter(is_active=True)
     return render(request, "stock-reg.html", {"suppliers": suppliers})
 
 
 def customer_deposit(request):
-    participants = Participant.objects.all()
+    participants = Participant.objects.all().order_by("-registered_on")
     for p in participants:
         # Total deposits
         p.total_deposits = p.deposits.aggregate(
