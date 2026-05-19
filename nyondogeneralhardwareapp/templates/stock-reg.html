@@ -10,6 +10,7 @@
  
       <h1 class="card-title text-center">Register New Stock</h1>
       <hr />
+      <!-- General Error Message -->
       {% if general_error %}
       <div class="alert alert-danger">
         {{ general_error }}
@@ -100,7 +101,7 @@
           <div class="col-md-6 mb-3">
   <label for="supplier" class="form-label">Supplier</label>
   <select
-    class="form-select {% if errors.supplier %}is-invalid{% endif %}"
+    class="form-select {% if errors.supplier %}is-invalid{% endif %}" 
     id="supplier"
     name="supplier"
   >

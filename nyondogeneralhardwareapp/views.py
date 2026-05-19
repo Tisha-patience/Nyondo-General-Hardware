@@ -439,37 +439,54 @@ def reports(request):
 
     return render(request, 'reports.html', context)
 
+# This view handles generating different types of reports based on user input
+# It accepts GET parameters for report type and date range, then queries the database accordingly
+# Finally, it renders the same template with the report data
 def generate_report(request):
+    # Get parameters from the request
     report_type = request.GET.get("report_type")
+    # Parse(parse means convert) dates safely (returns None if invalid)
     from_date = parse_date(request.GET.get("from_date"))
     to_date = parse_date(request.GET.get("to_date"))
 
     data = None
-
+# Depending on the report type, we query different models and apply date filters if provided
     if report_type == "Sales Report":
+        # Start with all sales, then filter by date if from_date/to_date are provided
         qs = Sale.objects.all()
+        # Apply date filters if provided
         if from_date: qs = qs.filter(date__gte=from_date)
         if to_date: qs = qs.filter(date__lte=to_date)
+        # Order by most recent first
         data = qs.order_by("-date")
 
+# For revenue report, we calculate total deposits and sales in the given date range, then sum them up for total revenue
     elif report_type == "Revenue Report":
+        # Start with all deposits and sales, then filter by date if from_date/to_date are provided
         deposits = Deposit.objects.all()
         sales = Sale.objects.all()
+        # Apply date filters if provided
         if from_date:
             deposits = deposits.filter(date_registered__gte=from_date)
             sales = sales.filter(date__gte=from_date)
         if to_date:
             deposits = deposits.filter(date_registered__lte=to_date)
             sales = sales.filter(date__lte=to_date)
+            # Calculate totals
+            # We use aggregate to sum up the amount_paid for deposits and grand_total for sales, 
+            # handling the case where there are no records (returns None) by using or 0
         data = {
             "deposits_total": deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0,
             "sales_total": sales.aggregate(Sum("grand_total"))["grand_total__sum"] or 0,
         }
 
+# For stock report, we simply fetch all stock records, but we could also apply date filters if needed
     elif report_type == "Stock Report":
         data = Stock.objects.all()
 
+# For customer report, we annotate each participant with their total deposits and order by that amount to see who the top customers are
     elif report_type == "Customer Report":
+        # Annotate each participant with the sum of their deposits and order by that total in descending order
         data = Participant.objects.annotate(
             total_deposits=Sum("deposits__amount_paid")
         ).order_by("-total_deposits")
@@ -483,11 +500,17 @@ def generate_report(request):
 
 
 
-
+# Supplier registration view with error handling and activity logging
 def supplier_reg(request):
     if request.method == "POST":
         payload = request.POST
+        # Using a transaction to ensure atomicity - either all operations succeed or none do
+        # This is important because we are creating a supplier and logging an activity, and we don't want one to succeed without the other
+        # We also catch ValidationError separately to handle field-specific errors, 
+        # and a general Exception catch for any other unforeseen issues
         try:
+            # django's transaction.atomic() ensures that if any part of the block fails (like a validation error),
+            #  the entire transaction will be rolled back, preventing partial data from being saved
             with transaction.atomic():
                 supplier = Supplier.objects.create(
                     supplier_name=payload.get("supplier_name"),
@@ -495,26 +518,30 @@ def supplier_reg(request):
                     address=payload.get("address"),
                     email=payload.get("email"),
                 )
-
+# After successfully creating the supplier, we log this activity. 
+# If the supplier creation fails due to validation errors, the activity log will not be created, 
+# and the error will be handled in the except block.
                 Activity.objects.create(
                     title=f"Supplier {supplier.supplier_name} added",
                     color="orange"
                 )
 
                 return redirect("accountssupplier")
-
-        except ValidationError as e:
+# ValidationError is raised when model validation fails (like missing required fields or invalid formats).
+        except ValidationError as e: # This will catch any validation errors raised by the Supplier model's clean() method or field validators.
             # Field-specific errors
             return render(request, "supplierReg.html", {
-                "errors": e.message_dict,
-                "data": payload,
+                "errors": e.message_dict, # This will contain a dictionary of field names to error messages, which can be displayed next to the relevant form fields in the template.
+                "data": payload, # This allows us to pre-fill the form with the data the user had entered, so they don't have to retype everything after a validation error.
             })
 
-        except Exception as e:
+# The general Exception catch is a safety net for any other types of errors that might occur 
+# (like database errors, or unexpected issues in the code).
+        except Exception as e: # This will catch any other exceptions that are not ValidationErrors, such as database errors, connection issues, or any unforeseen bugs in the code.
             # General error
             return render(request, "supplierReg.html", {
-                "general_error": str(e),
-                "data": payload,
+                "general_error": str(e), # This will contain a string representation of the error, which can be displayed at the top of the form as a general error message.
+                "data": payload, # Again, we pass the original data back to pre-fill the form, so the user doesn't lose their input even if an unexpected error occurs.
             })
 
     return render(request, "supplierReg.html")
@@ -542,14 +569,21 @@ def supplier_edit(request, pk, slug):
 
     return render(request, 'supplier-edit.html', {"supplier":supplier})
 
+# This view handles recording a payment made to a supplier for a specific credit.
 def pay_supplier(request, pk, slug, credit_id):
+    # First, we fetch the supplier and the specific credit record using the provided IDs.
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     credit = get_object_or_404(SupplierCredit, id=credit_id, supplier=supplier)
 
+# If the request method is POST, it means the form has been submitted with payment details. 
+# We then extract the amount and notes from the form data.
     if request.method == "POST":
         amount = Decimal(request.POST.get("amount"))
         notes = request.POST.get("notes")
 
+# We create a new SupplierPayment record linked to the specific credit, 
+# which will automatically update the amount paid and balance in the SupplierCredit model
+# (assuming the model's save() method handles this logic).
         SupplierPayment.objects.create(credit=credit, amount=amount, notes=notes)
         messages.success(request, f"Payment of UGX {amount} recorded for {supplier.supplier_name}")
         return redirect("accountssupplier")
@@ -574,6 +608,10 @@ def stock_edit(request,pk):
 
     return render(request, 'stock-edit.html', {"stock":stock})
 
+# This view handles the deletion of a stock record. It first fetches the stock item by its primary key (ID). 
+# If the request method is POST, it means the user has confirmed the deletion,
+#  and we proceed to delete the record. After deletion, we log this activity and show a success message.
+#  If the request method is GET, we render a confirmation page asking the user to confirm the deletion.
 @permission_required('nyondogeneralhardwareapp.delete_stock', raise_exception=True)
 def stock_delete(request ,pk):
     stock = get_object_or_404(Stock, pk=pk)
@@ -598,22 +636,29 @@ def stock_view(request, pk):
     return render(request, "stock_view.html", {"stock": stock})
 
 
+# This view handles the registration of new stock items. It processes the form submission, validates the input,
+#  and creates a new Stock record.
 def stock_reg(request):
     if request.method == "POST":
         payload = request.POST
+        # We use a try-except block to handle potential validation errors when creating the Stock record,
         try:
             sent_supplier = payload.get("supplier")
             supplier = Supplier.objects.get(id=sent_supplier)
 
-            # ✅ Block inactive suppliers
+# Before creating the stock record, we check if the selected supplier is active. 
+# If the supplier is deactivated, we show an error message and redirect back to the stock registration page 
+# without saving the stock record.
+            # Block inactive suppliers
             if not supplier.is_active:
                 messages.error(request, "This supplier is deactivated. Choose another supplier.")
                 return redirect("accountsstock-reg")
 
+# If the supplier is active, we proceed to create the Stock record with the provided details.
             stock = Stock.objects.create(
                 product_name=payload.get("product_name"),
                 specification=payload.get("specification"),
-                supplier=supplier,  # ✅ use the Supplier object
+                supplier=supplier,  # use the Supplier object
                 payment_mode=payload.get("payment_mode"),
                 credit_terms=payload.get("credit_terms") if payload.get("payment_mode") == "Credit" else None,
                 unit_cost=Decimal(payload.get("unit_cost")),
@@ -622,7 +667,8 @@ def stock_reg(request):
                 unit=payload.get("unit"),
                 date_received=payload.get("date"),
             )
-
+# After successfully creating the stock record, we log this activity. If the creation fails due to validation errors, 
+# the activity log will not be created, and the error will be handled in the except block.
             Activity.objects.create(
                 title=f"Stock {stock.product_name} added",
                 color="orange"
@@ -630,18 +676,20 @@ def stock_reg(request):
 
             return redirect("accountsstock")
 
-        except ValidationError as e:
+# We catch ValidationError separately to handle field-specific errors, and a general Exception catch for any other unforeseen issues.
+        except ValidationError as e: # This will catch any validation errors raised by the Stock model's clean() method or field validators.
+            # Field-specific errors
             suppliers = Supplier.objects.filter(is_active=True)
             return render(request, "stock-reg.html", {
-                "errors": e.message_dict,
-                "data": request.POST,
+                "errors": e.message_dict, # This will contain a dictionary of field names to error messages, which can be displayed next to the relevant form fields in the template.
+                "data": request.POST, # This allows us to pre-fill the form with the data the user had entered, so they don't have to retype everything after a validation error.
                 "suppliers": suppliers
             })
 
         except Exception as e:
             suppliers = Supplier.objects.filter(is_active=True)
             return render(request, "stock-reg.html", {
-                "general_error": str(e),
+                "general_error": str(e), # This will contain a string representation of the error, which can be displayed at the top of the form as a general error message.
                 "data": request.POST,
                 "suppliers": suppliers
             })
@@ -649,22 +697,29 @@ def stock_reg(request):
     suppliers = Supplier.objects.filter(is_active=True)
     return render(request, "stock-reg.html", {"suppliers": suppliers})
 
-
+# This view displays a list of customers (participants) along with their total deposits and latest payment method.
 def customer_deposit(request):
+    # Fetch all participants and annotate with total deposits and latest payment method
     participants = Participant.objects.all().order_by("-registered_on")
+    # We loop through each participant to calculate their total deposits and latest payment method.
     for p in participants:
         # Total deposits
+        # We use aggregate to sum up the amount_paid for all deposits related to this participant.
         p.total_deposits = p.deposits.aggregate(
+            # If there are no deposits, the sum will return None, so we use or 0 to default to 0 in that case.
             total=Sum("amount_paid")
         )["total"] or 0
 
         # Latest payment method
+        # We order the deposits by date_registered in descending order and take the first one to get the latest deposit.
         latest = p.deposits.order_by("-date_registered").first()
+        # If there is a latest deposit, we take its payment_method; otherwise, we use "—" to indicate no payments.
         p.latest_method = latest.payment_method if latest else "—"
 
     # render AFTER the loop, not inside
     return render(request, "customer-deposit.html", {"participants": participants})
      
+# This view handles the deletion of a participant (customer). It first fetches the participant by its primary key (ID).     
 def participant_delete(request, pk):
     participant = get_object_or_404(Participant, pk=pk)
 
@@ -675,10 +730,16 @@ def participant_delete(request, pk):
 
     return render(request, "participant_delete.html", {"participant": participant})
 
+# This view handles the registration of a new customer (participant) along with their initial deposit. 
+# It processes the form submission, validates the input, creates a new Participant record, 
+# and then creates a related Deposit record for their first payment. 
+# We also log this activity and handle any potential validation errors or general exceptions that may occur during the process.
 def customer_reg(request):
     if request.method == "POST":
+        # We use a try-except block to handle potential validation errors when creating the Participant and Deposit records,
+        # and to catch any other unforeseen issues that might arise during the process.
         try:
-            
+            # First, we create the Participant record with the provided details from the form.
             participant = Participant.objects.create(
                 name=request.POST.get("name"),
                 nin=request.POST.get("nin"),
@@ -686,7 +747,8 @@ def customer_reg(request):
                 registered_on=request.POST.get("date"),
             )
 
-            
+            # We then create a related Deposit record for this participant,
+            #  using the participant object we just created to link the deposit to the correct participant.
             deposit = Deposit.objects.create(
                 participant=participant,
                 product=request.POST.get("product"),
@@ -694,7 +756,8 @@ def customer_reg(request):
                 payment_method=request.POST.get("payment_method"),
                 date_registered=request.POST.get("date"),
             )
-
+# After successfully creating the participant and their initial deposit, 
+# a message is displayed to confirm the successful enrollment, and we log this activity.
             messages.success(
                 request,
                 f"{participant.name} enrolled successfully with first deposit."
@@ -702,6 +765,9 @@ def customer_reg(request):
 
             return redirect("deposit_receipt", pk=deposit.pk)
 
+# If there are any validation errors (like missing required fields or invalid formats), 
+# we catch the ValidationError and pass the specific field errors back to the template, 
+# along with the original form data to pre-fill the form.
         except ValidationError as e:
             return render(request, "customer-reg.html", {
                 "errors": e.message_dict,
@@ -716,6 +782,9 @@ def customer_reg(request):
 
     return render(request, "customer-reg.html")
 
+
+# This view displays the profile of a customer (participant), 
+# including their total deposits, collections, and eligibility for goods based on their deposit balance.
 def customer_profile(request, pk):
     participant = get_object_or_404(Participant, pk=pk)
     # Fetch all deposits and collections for this participant
@@ -724,6 +793,7 @@ def customer_profile(request, pk):
     collections = participant.collections.order_by("-date_collected")
 
     # thresholds (unit prices)
+    # We define a dictionary of products and their corresponding price thresholds.
     thresholds = {
         "CEM II N (bag)": 50000,
         "CEM III N (bag)": 70000,
@@ -736,10 +806,17 @@ def customer_profile(request, pk):
     }
 
     # eligibility calculation
+    # We calculate how many units of each product the participant is eligible for based on 
+    # their total deposit balance and the price thresholds defined above.
     eligibility = {}
+    # We loop through each product and its price in the thresholds dictionary.
     for product, price in thresholds.items():
+        # We calculate the eligibility by dividing the total balance by the price of the product,
+        # but only if the total balance is greater than or equal to the price. 
+        # If the total balance is less than the price, the eligibility is set to 0.
         eligibility[product] = total_balance // price if total_balance >= price else 0
 
+# Finally, we pass all the relevant data to the template context and render the customer profile page.
     context = {
         "participant": participant,
         "deposits": deposits,
@@ -749,9 +826,14 @@ def customer_profile(request, pk):
     }
     return render(request, "customer_profile.html", context)
 
+
+# This view handles adding a new deposit payment for an existing participant. 
+# It processes the form submission, validates the input, creates a new Deposit record linked to the participant, 
+# and then redirects to the receipt page for that deposit. We also log this activity.
 def deposit_add_payment(request, participant_id):
     participant = get_object_or_404(Participant, pk=participant_id)
-
+# If the request method is POST, it means the form has been submitted with the new deposit details.
+#  We then create a new Deposit record linked to the participant using the provided form data.
     if request.method == "POST":
         deposit = Deposit.objects.create(
             participant=participant,
@@ -764,15 +846,15 @@ def deposit_add_payment(request, participant_id):
     title=f"Deposit added for {participant.name}",
     color="green"
 )
-        # ✅ Redirect to receipt page after saving
+        # Redirect to receipt page after saving
         return redirect("deposit_receipt", pk=deposit.pk)
 
-    # ✅ Render the form template
+    #Render the form template
     return render(request, "deposit_add_payment.html", {"participant": participant})
 
 def goods_receipt(request, pk):
     collection = get_object_or_404(GoodsCollection, pk=pk)
-    receipt = collection.receipt   # ✅ correct reverse relation
+    receipt = collection.receipt   #correct reverse relation
     return render(request, "goods_receipt.html", {
         "collection": collection,
         "receipt": receipt,
@@ -787,11 +869,11 @@ def pick_goods(request, participant_id, product=None, quantity=None):
             product=request.POST.get("product"),
             quantity=int(request.POST.get("quantity")),
         )
-        # ✅ Redirect straight to final receipt
+        # Redirect straight to final receipt
         return redirect("goods_receipt", pk=collection.pk)
         
 
-    # ✅ Pass product and quantity to template for prefill
+    # Pass product and quantity to template for prefill
     return render(
         request,
         "goodsCollection_form.html",
