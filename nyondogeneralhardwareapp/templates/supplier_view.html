@@ -16,9 +16,9 @@
       <!-- CREDIT SUMMARY -->
       <hr>
       <h5>Credit Summary</h5>
-      <p><strong>Total Credit:</strong> UGX {{ total_credit|intcomma }}</p>
-      <p><strong>Total Paid:</strong> UGX {{ total_paid|intcomma }}</p>
-      <p><strong>Outstanding Balance:</strong> UGX {{ outstanding_balance|intcomma }}</p>
+      <p><strong>Total Credit:</strong> UGX {{ total_credit|floatformat:"0"| intcomma }}</p>
+      <p><strong>Total Paid:</strong> UGX {{ total_paid|floatformat:"0"| intcomma }}</p>
+      <p><strong>Outstanding Balance:</strong> UGX {{ outstanding_balance|floatformat:"0"| intcomma }}</p>
 
       <!-- PAYMENT HISTORY -->
       <hr>
@@ -30,7 +30,7 @@
         <tbody>
           {% for payment in payments %}
             <tr>
-              <td>UGX {{ payment.amount|intcomma }}</td>
+              <td>UGX {{ payment.amount|floatformat:"0"| intcomma }}</td>
               <td>{{ payment.payment_date|date:"d M Y" }}</td>
             </tr>
           {% empty %}
@@ -51,7 +51,7 @@
             <tr>
               <td>{{ stock.product_name }}</td>
               <td>{{ stock.quantity }} {{ stock.unit }}</td>
-              <td>UGX {{ stock.total_cost|intcomma }}</td>
+              <td>UGX {{ stock.total_cost|floatformat:"0"| intcomma }}</td>
               <td>
                 {% if stock.payment_mode == "Credit" %}
                   <span class="badge bg-warning text-dark">Credit</span>

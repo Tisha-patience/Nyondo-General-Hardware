@@ -84,7 +84,7 @@
               <td>{{ participant.registered_on|date:"Y-m-d H:i" }}</td>
               <td>
                 <span class="badge bg-success"
-                  >UGX {{ participant.total_deposits | intcomma }}</span
+                  >UGX {{ participant.total_deposits |floatformat:"0"| intcomma }}</span
                 >
               </td>
               <td>

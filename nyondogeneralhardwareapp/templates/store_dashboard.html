@@ -50,7 +50,7 @@ Store Manager Dashboard
 
       <div>
         <p>Total Stock Value</p>
-        <h3>UGX {{ total_stock_value }}</h3>
+        <h3>UGX {{ total_stock_value|floatformat:"0"| intcomma }}</h3>
       </div>
 
     </div>
@@ -68,7 +68,7 @@ Store Manager Dashboard
 
       <div>
         <p>Credit Supplies</p>
-        <h3>{{ credit_supplies }}</h3>
+        <h3>UGX {{ credit_supplies|floatformat:"0"| intcomma }}</h3>
       </div>
 
     </div>
@@ -86,7 +86,7 @@ Store Manager Dashboard
 
       <div>
         <p>Profit Margin</p>
-        <h3>UGX {{ profit_margin | intcomma }}</h3>
+        <h3>UGX {{ profit_margin |floatformat:"0"| intcomma }}</h3>
       </div>
 
     </div>

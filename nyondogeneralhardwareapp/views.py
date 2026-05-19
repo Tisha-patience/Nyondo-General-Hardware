@@ -8,6 +8,7 @@ from django.db.models import Sum
 from django.db.models import ProtectedError
 from django.db import transaction
 from decimal import Decimal
+from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required, user_passes_test,permission_required
 from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity, SupplierCredit, SupplierPayment
@@ -199,60 +200,77 @@ def sales(request):
     return render(request, "sales.html", context)
 
 def sales_reg(request):
-    
     if request.method == "POST":
-        with transaction.atomic():
-        # Create Sale record
-            distance = request.POST.get("distance_km")
-            sale = Sale.objects.create(
-               customer_name=request.POST.get("customer_name"),
-               customer_phone=request.POST.get("customer_phone"),
-               distance_km=int(distance) if distance else 0
-        )
-            Activity.objects.create(
-    title=f"New sale recorded (UGX {sale.grand_total})",
-    color="blue"
-)
-        
-        # Collect multiple items
-         # Collect items
-        stock_ids = request.POST.getlist("stock_id")
-        quantities = request.POST.getlist("quantity") # e.g. ["10", "5", "2"]
-        units = request.POST.getlist("unit") # e.g. ["bags", "pieces", "kg"]
-        unit_prices = request.POST.getlist("unit_price") # e.g. ["30000", "50000", "2000"]
+        try:
+            with transaction.atomic():
+                # Create Sale record
+                distance = request.POST.get("distance_km")
+                sale = Sale.objects.create(
+                    customer_name=request.POST.get("customer_name"),
+                    customer_phone=request.POST.get("customer_phone"),
+                    distance_km=int(distance) if distance else 0
+                )
 
-        # Loop through items
-        for i in range(len(stock_ids)):
-            stock_item = get_object_or_404(Stock, pk=stock_ids[i])
-            qty = int(quantities[i])
-            price = float(stock_item.unit_price)  # Use price from stock for consistency
-            total = qty * price
+                Activity.objects.create(
+                    title=f"New sale recorded (UGX {sale.grand_total})",
+                    color="blue"
+                )
 
-            # ✅ Safety check: prevent overselling
-            if stock_item.quantity < qty:
-                raise ValueError(f"Not enough stock for {stock_item.product_name}")
+                # Collect multiple items
+                stock_ids = request.POST.getlist("stock_id")
+                quantities = request.POST.getlist("quantity")
+                units = request.POST.getlist("unit")
+                unit_prices = request.POST.getlist("unit_price")
 
-            SaleItem.objects.create(
-                sale=sale,
-                stock = stock_item,
-                quantity=qty,
-                unit=units[i],
-                unit_price=price,
-                total_price=total,
-            )
-             # Reduce stock
-            stock_item.quantity -= qty
-            stock_item.save()
+                for i in range(len(stock_ids)):
+                    stock_item = get_object_or_404(Stock, pk=stock_ids[i])
+                    qty = int(quantities[i])
+                    price = float(stock_item.unit_price)
+                    total = qty * price
 
-        # Update transport + grand total
-        sale.save()
+                    # ✅ Safety check: prevent overselling
+                    if stock_item.quantity < qty:
+                        raise ValidationError({
+                            "quantity": [f"Not enough stock for {stock_item.product_name}"]
+                        })
 
-        return redirect("sale_receipt", pk=sale.pk)
+                    SaleItem.objects.create(
+                        sale=sale,
+                        stock=stock_item,
+                        quantity=qty,
+                        unit=units[i],
+                        unit_price=price,
+                        total_price=total,
+                    )
+                    stock_item.quantity -= qty
+                    stock_item.save()
+
+                # Update transport + grand total
+                sale.save()
+
+                return redirect("sale_receipt", pk=sale.pk)
+
+        except ValidationError as e:
+            # Pass field-specific errors back
+            stocks = Stock.objects.all()
+            return render(request, "sales-reg.html", {
+                "errors": e.message_dict,
+                "data": request.POST,
+                "stocks": stocks
+            })
+
+        except Exception as e:
+            # Pass general error back
+            stocks = Stock.objects.all()
+            return render(request, "sales-reg.html", {
+                "general_error": str(e),
+                "data": request.POST,
+                "stocks": stocks
+            })
 
     stocks = Stock.objects.all()
-    return render(request, 'sales-reg.html', {"stocks": stocks})
-
-
+    return render(request, "sales-reg.html", {"stocks": stocks})
+    
 
 def sale_view(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
@@ -590,29 +608,50 @@ def stock_reg(request):
         if not supplier.is_active:
             messages.error(request, "This supplier is deactivated. Choose another supplier.")
             return redirect("accountsstock-reg")
+        
 
-        stock = Stock.objects.create(
-            product_name=sent_product_name,
-            specification=sent_specification,
-            supplier=supplier,
-            payment_mode=sent_payment_mode,
-            credit_terms=sent_credit_terms,
-            unit_cost=sent_unit_cost,
-            unit_price=sent_unit_price,
-            quantity=sent_quantity,
-            unit=sent_unit,
-            date_received=sent_date_received,
-        )
 
-        Activity.objects.create(
-            title=f"Stock {stock.product_name} added",
-            color="orange"
-        )
+        try:
+            stock = Stock.objects.create(
+                sent_product_name=request.POST.get("product_name"),
+                sent_specification=request.POST.get("specification"),
+                supplier_id=request.POST.get("supplier"),
+                payment_mode=request.POST.get("payment_mode"),
+                credit_terms=request.POST.get("credit_terms"),
+                unit_cost=request.POST.get("unit_cost"),
+                unit_price=request.POST.get("unit_price"),
+                quantity=request.POST.get("quantity"),
+                unit=request.POST.get("unit"),
+                date_received=request.POST.get("date"),
+            )
 
-        return redirect("accountsstock")
+            Activity.objects.create(
+                title=f"Stock {stock.product_name} added",
+                color="orange"
+            )
 
+            return redirect("accountsstock")
+
+        except ValidationError as e:
+            suppliers = Supplier.objects.filter(is_active=True)
+            return render(request, "stock-reg.html", {
+                "errors": e.message_dict,
+                "data": request.POST,
+                "suppliers": suppliers
+            })
+
+        except Exception as e:
+            suppliers = Supplier.objects.filter(is_active=True)
+            return render(request, "stock-reg.html", {
+                "general_error": str(e),
+                "data": request.POST,
+                "suppliers": suppliers
+            })
+                    
     suppliers = Supplier.objects.filter(is_active=True)
     return render(request, "stock-reg.html", {"suppliers": suppliers})
+
+
 def customer_deposit(request):
     participants = Participant.objects.all()
     for p in participants:
@@ -640,28 +679,44 @@ def participant_delete(request, pk):
 
 def customer_reg(request):
     if request.method == "POST":
-        # Create participant
-        participant = Participant.objects.create(
-            name=request.POST.get("name"),
-            nin=request.POST.get("nin"),
-            phone=request.POST.get("number"),
-            registered_on=request.POST.get("date"),
-        )
+        try:
+            
+            participant = Participant.objects.create(
+                name=request.POST.get("name"),
+                nin=request.POST.get("nin"),
+                phone=request.POST.get("phone"),
+                registered_on=request.POST.get("date"),
+            )
 
-        # Create first deposit linked to participant
-        deposit = Deposit.objects.create(
-            participant=participant,
-            product=request.POST.get("product"),
-            amount_paid=request.POST.get("amount_paid"),
-            payment_method=request.POST.get("payment_method"),
-            date_registered=request.POST.get("date"),
-        )
+            
+            deposit = Deposit.objects.create(
+                participant=participant,
+                product=request.POST.get("product"),
+                amount_paid=request.POST.get("amount_paid"),
+                payment_method=request.POST.get("payment_method"),
+                date_registered=request.POST.get("date"),
+            )
 
-        messages.success(request, f"{participant.name} enrolled successfully with first deposit.")
-        # ✅ Redirect straight to receipt page
-        return redirect("deposit_receipt", pk=deposit.pk)
+            messages.success(
+                request,
+                f"{participant.name} enrolled successfully with first deposit."
+            )
 
-    return render(request, 'customer-reg.html')
+            return redirect("deposit_receipt", pk=deposit.pk)
+
+        except ValidationError as e:
+            return render(request, "customer-reg.html", {
+                "errors": e.message_dict,
+                "data": request.POST
+            })
+
+        except Exception as e:
+            return render(request, "customer-reg.html", {
+                "general_error": str(e),
+                "data": request.POST
+            })
+
+    return render(request, "customer-reg.html")
 
 def customer_profile(request, pk):
     participant = get_object_or_404(Participant, pk=pk)

@@ -1,4 +1,5 @@
 {% extends "base.html" %} {% block title %} Supplier Credit Management {%endblock %} 
+{% load humanize %} 
 {% block content %}
 
 <!-- PAGE HEADER -->
@@ -34,7 +35,7 @@ SUMMARY CARDS
 
       <div>
         <p>Total Credit</p>
-        <h3>UGX {{ total_credit }}</h3>
+        <h3>UGX {{ total_credit|floatformat:"0"| intcomma }}</h3>
       </div>
     </div>
   </div>
@@ -47,7 +48,7 @@ SUMMARY CARDS
 
       <div>
         <p>Total Paid</p>
-        <h3>UGX {{ total_paid }}</h3>
+        <h3>UGX {{ total_paid|floatformat:"0"| intcomma }}</h3>
       </div>
     </div>
   </div>
@@ -60,7 +61,7 @@ SUMMARY CARDS
 
       <div>
         <p>Outstanding Balance</p>
-        <h3>UGX {{ outstanding_balance }}</h3>
+        <h3>UGX {{ outstanding_balance|floatformat:"0"| intcomma }}</h3>
       </div>
     </div>
   </div>
@@ -104,11 +105,11 @@ TOP SECTION
 
               <td>{{ credit.stock.product_name }}</td>
 
-              <td>UGX {{ credit.total_amount }}</td>
+              <td>UGX {{ credit.total_amount|floatformat:"0"| intcomma }}</td>
 
-              <td>UGX {{ credit.amount_paid }}</td>
+              <td>UGX {{ credit.amount_paid|floatformat:"0"| intcomma }}</td>
 
-              <td>UGX {{ credit.balance }}</td>
+              <td>UGX {{ credit.balance|floatformat:"0"| intcomma  }}</td>
 
               <td>
                 {% if credit.status == "Paid" %}
@@ -220,7 +221,7 @@ TOP SECTION
 
             <br />
 
-            <small> Balance: UGX {{ credit.balance }} </small>
+            <small> Balance: UGX {{ credit.balance|floatformat:"0"| intcomma  }} </small>
           </div>
         </div>
 
@@ -264,7 +265,7 @@ BOTTOM TABLES SIDE BY SIDE
             <tr>
               <td>{{ payment.credit.supplier.supplier_name }}</td>
 
-              <td>UGX {{ payment.amount }}</td>
+              <td>UGX {{ payment.amount|floatformat:"0"| intcomma }}</td>
 
               <td>{{ payment.payment_date }}</td>
             </tr>
@@ -314,7 +315,7 @@ BOTTOM TABLES SIDE BY SIDE
 
               <td>{{ stock.quantity }} {{ stock.unit }}</td>
 
-              <td>UGX {{ stock.total_cost }}</td>
+              <td>UGX {{ stock.total_cost|floatformat:"0"| intcomma }}</td>
 
               <td>
                 {% if stock.payment_mode == "Credit" %}

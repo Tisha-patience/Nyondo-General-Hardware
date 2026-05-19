@@ -9,7 +9,7 @@
       <p><strong>NIN:</strong> {{ participant.nin }}</p>
       <p><strong>Phone:</strong> {{ participant.phone }}</p>
       <hr />
-      <h4>Total Balance: UGX {{ total_balance }}</h4>
+      <h4>Total Balance: UGX {{ total_balance |floatformat:"0"| intcomma }}</h4>
       <a
         href="{% url 'deposit_add_payment' participant.pk %}"
         class="btn btn-success mt-2"
@@ -50,7 +50,7 @@
           {% for deposit in deposits %}
           <tr>
             <td>{{ deposit.product }}</td>
-            <td>UGX {{ deposit.amount_paid | intcomma }}</td>
+            <td>UGX {{ deposit.amount_paid |floatformat:"0"| intcomma }}</td>
             <td>{{ deposit.payment_method }}</td>
             <td>{{ deposit.date_registered|date:"Y-m-d" }}</td>
             <td>
@@ -117,7 +117,7 @@
           <tr>
             <td>{{ c.stock.product_name }}</td>
             <td>{{ c.quantity }}</td>
-            <td>UGX {{ c.get_total_price | intcomma }}</td>
+            <td>UGX {{ c.get_total_price |floatformat:"0"| intcomma }}</td>
             <td>{{ c.date_collected|date:"Y-m-d H:i" }}</td>
           </tr>
           {% empty %}

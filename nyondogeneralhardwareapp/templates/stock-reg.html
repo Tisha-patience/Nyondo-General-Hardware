@@ -10,6 +10,11 @@
  
       <h1 class="card-title text-center">Register New Stock</h1>
       <hr />
+      {% if general_error %}
+      <div class="alert alert-danger">
+        {{ general_error }}
+      </div>
+      {% endif %}
       <form action="/accounts/stock-reg/" method="post">
         {% csrf_token %}
         <!-- Items -->
@@ -93,13 +98,28 @@
         <div class="row">
           <!-- Supplier -->
           <div class="col-md-6 mb-3">
-            <label for="supplier" class="form-label">Supplier</label>
-            <select class="form-select" id="supplier" name="supplier">
-              {% for supplier in suppliers %}
-              <option value="{{ supplier.id }}">{{ supplier.supplier_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
+  <label for="supplier" class="form-label">Supplier</label>
+  <select
+    class="form-select {% if errors.supplier %}is-invalid{% endif %}"
+    id="supplier"
+    name="supplier"
+  >
+    {% for supplier in suppliers %}
+      <option value="{{ supplier.id }}"
+        {% if data.supplier == supplier.id|stringformat:"s" %}selected{% endif %}>
+        {{ supplier.supplier_name }}
+      </option>
+    {% endfor %}
+  </select>
+  {% if errors.supplier %}
+    <div class="invalid-feedback">
+      {% for error in errors.supplier %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
 
           <!-- Mode of Payment -->
           <div class="col-md-6 mb-3">
@@ -124,41 +144,66 @@
         <!-- Row 1: Unit Cost + Unit Price -->
 <div class="row">
   <div class="col-md-6 mb-3">
-    <label for="unit_cost" class="form-label">Unit Cost</label>
-    <input
-      type="number"
-      step="0.01"
-      class="form-control"
-      id="unit_cost"
-      name="unit_cost"
-      required
-    />
-  </div>
+  <label for="unit_cost" class="form-label">Unit Cost</label>
+  <input
+    type="number"
+    step="0.01"
+    class="form-control {% if errors.unit_cost %}is-invalid{% endif %}"
+    id="unit_cost"
+    name="unit_cost"
+    value="{{ data.unit_cost|default:'' }}"
+    required
+  />
+  {% if errors.unit_cost %}
+    <div class="invalid-feedback">
+      {% for error in errors.unit_cost %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
 
   <div class="col-md-6 mb-3">
     <label for="unit_price" class="form-label">Unit Price</label>
     <input
       type="number"
       step="0.01"
-      class="form-control"
+      class="form-control {% if errors.unit_price %}is-invalid{% endif %}"
       id="unit_price"
       name="unit_price"
+      value="{{ data.unit_price|default:'' }}"
       required
     />
+    {% if errors.unit_price %}
+      <div class="invalid-feedback">
+        {% for error in errors.unit_price %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
 </div>
 
 <!-- Row 2: Quantity + Unit -->
 <div class="row">
   <div class="col-md-6 mb-3">
-    <label for="quantity" class="form-label">Quantity</label>
+    <label for="quantity" class="form-label {{if errors.quantity}}is-invalid{{endif}}">Quantity</label>
     <input
       type="number"
-      class="form-control"
+      class="form-control {% if errors.quantity %}is-invalid{% endif %}"
       id="quantity"
       name="quantity"
+      value="{{ data.quantity|default:'' }}"
       required
     />
+    {% if errors.quantity %}
+    <div class="invalid-feedback">
+      {% for error in errors.quantity %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
   </div>
 
   <div class="col-md-6 mb-3">

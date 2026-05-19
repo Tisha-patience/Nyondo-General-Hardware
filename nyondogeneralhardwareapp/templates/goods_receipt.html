@@ -42,15 +42,15 @@
           <tr>
             <td>{{ collection.stock.product_name }}</td>
             <td>{{ collection.quantity }}</td>
-            <td>UGX {{ collection.stock.unit_price | intcomma }}</td>
-            <td>UGX {{ receipt.total_amount | intcomma }}</td>
+            <td>UGX {{ collection.stock.unit_price |floatformat:"0"| intcomma }}</td>
+            <td>UGX {{ receipt.total_amount |floatformat:"0"| intcomma }}</td>
           </tr>
         </tbody>
       </table>
 
       <!-- Totals -->
       <hr>
-      <h4 class="text-end">Grand Total: UGX {{ collection.receipt.total_amount | intcomma }}</h4>
+      <h4 class="text-end">Grand Total: UGX {{ collection.receipt.total_amount |floatformat:"0"| intcomma }}</h4>
 
       <!-- Footer -->
       <p class="text-center mt-4">Thank you for your business!</p>

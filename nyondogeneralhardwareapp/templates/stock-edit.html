@@ -35,7 +35,7 @@
     <!-- Quantity -->
     <div class="col-md-6 mb-3">
       <label class="form-label">Quantity</label>
-      <input type="number" name="quantity" class="form-control" value="{{ stock.quantity }}" required />
+      <input type="number" name="quantity" class="form-control" min="0" value="{{ stock.quantity }}" required />
     </div>
   </div>
 
@@ -43,13 +43,13 @@
     <!-- Unit Cost -->
     <div class="col-md-4 mb-3">
       <label class="form-label">Unit Cost (UGX)</label>
-      <input type="number" name="unit_cost" class="form-control" value="{{ stock.unit_cost }}" required />
+      <input type="number" name="unit_cost" class="form-control" min="0" step="0.01" value="{{ stock.unit_cost }}" required />
     </div>
 
     <!-- Unit Price -->
     <div class="col-md-4 mb-3">
       <label class="form-label">Unit Price (UGX)</label>
-      <input type="number" name="unit_price" class="form-control" value="{{ stock.unit_price }}" required />
+      <input type="number" name="unit_price" class="form-control" min="0" step="0.01" value="{{ stock.unit_price }}" required />
     </div>
 
     <!-- Payment Mode -->

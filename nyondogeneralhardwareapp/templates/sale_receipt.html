@@ -44,8 +44,8 @@
             <td>{{ item.stock.specification }}</td>
             <td>{{ item.quantity }}</td>
             <td>{{ item.unit }}</td>
-            <td>{{ item.unit_price | intcomma }}</td>
-            <td>{{ item.total_price | intcomma }}</td>
+            <td>UGX {{ item.unit_price |floatformat:"0"| intcomma }}</td>
+            <td>UGX {{ item.total_price |floatformat:"0"| intcomma }}</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -57,8 +57,8 @@
           <strong>Delivery Distance:</strong> {{ sale.distance_km }} km
         </div>
         <div class="col-md-6 text-end">
-          <p><strong>Transport Cost:</strong> {{ sale.transport_cost | intcomma }}</p>
-          <p><strong>Grand Total:</strong> {{ sale.grand_total | intcomma }}</p>
+          <p><strong>Transport Cost:</strong> UGX {{ sale.transport_cost |floatformat:"0"| intcomma }}</p>
+          <p><strong>Grand Total:</strong> UGX {{ sale.grand_total |floatformat:"0"| intcomma }}</p>
         </div>
       </div>
 

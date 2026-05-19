@@ -22,7 +22,7 @@
         <div class="card text-center shadow-sm card-custom">
           <div class="card-body">
             <h6>Total Revenue</h6>
-            <h4 class="text-danger">{{ total_revenue | intcomma }}</h4>
+            <h4 class="text-danger">{{ total_revenue |floatformat:"0"| intcomma }}</h4>
           </div>
         </div>
       </div>
@@ -63,8 +63,8 @@
                 {% for item in sale.items.all %}
                   <li>
                     {{ item.stock.product_name }} ({{ item.stock.specification }}) —
-                    {{ item.quantity }} {{ item.unit }} × {{ item.unit_price }} =
-                    <strong>{{ item.total_price }}</strong>
+                    {{ item.quantity }} {{ item.unit }} × UGX {{ item.unit_price |floatformat:"0"| intcomma }} =
+                    <strong>UGX {{ item.total_price |floatformat:"0"| intcomma }}</strong>
                   </li>
                 {% endfor %}
               </ul>
@@ -73,10 +73,10 @@
               {% if sale.transport_cost == 0 %}
                 <span class="badge bg-success">Free</span>
               {% else %}
-                <span class="badge bg-warning text-dark">{{ sale.transport_cost | intcomma }}</span>
+                <span class="badge bg-warning text-dark">UGX {{ sale.transport_cost |floatformat:"0"| intcomma }}</span>
                 {% endif %}
             </td>
-            <td><strong>{{ sale.grand_total | intcomma }}</strong></td>
+            <td><strong>UGX {{ sale.grand_total |floatformat:"0"| intcomma }}</strong></td>
             <td>
             <div class="d-inline-flex gap-1">
               <a href="{% url 'sale_receipt' sale.id %}" class="btn btn-sm" title="View Receipt"> <i class="bi bi-file-text"></i>

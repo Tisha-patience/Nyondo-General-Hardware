@@ -1,11 +1,8 @@
 import re
+from django.core.validators import RegexValidator
 from django.core.exceptions import ValidationError
 
-def validate_phone_number(value):
-    # Must start with +256 and then 9 digits (total length 13)
-    pattern = r'^\+256\d{9}$'
-    if not re.match(pattern, value):
-        raise ValidationError('Phone number must start with +256 and contain 9 digits (e.g. +256760752349).')
+
     
 def validate_ugandan_national_id(national_id):
     # Male IDs must start with CM, Female IDs must start with CF

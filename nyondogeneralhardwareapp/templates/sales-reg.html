@@ -7,6 +7,12 @@
     <h1 class="card-title text-center">Sales Form</h1>
     <hr />
 
+    {% if general_error %}
+      <div class="alert alert-danger">
+        {{ general_error }}
+      </div>
+      {% endif %}
+
     <form method="post" action= "/accounts/sales-reg/">
       {% csrf_token %}
 
@@ -41,12 +47,26 @@
     </div>
 
     <div class="col-md-2">
-      <label class="form-label">Quantity</label>
-      <input type="number" name="quantity" class="form-control" required>
+      <label class="form-label {% if errors.quantity %}is-invalid{% endif %}">Quantity</label>
+      <input type="number" name="quantity" min="0" class="form-control" value="{{ data.quantity|default:'' }}" required>
+      {% if errors.quantity %}
+        <div class="invalid-feedback">
+          {% for error in errors.quantity %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
     <div class="col-md-2">
-      <label class="form-label">Unit</label>
-      <input type="text" name="unit" class="form-control" required>
+      <label class="form-label {% if errors.unit %}is-invalid{% endif %}">Unit</label>
+      <input type="text" name="unit" class="form-control" value="{{ data.unit|default:'' }}" required>
+      {% if errors.unit %}
+        <div class="invalid-feedback">
+          {% for error in errors.unit %}
+            {{ error }}
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
     <div class="col-md-2">
       <label class="form-label">Unit Price</label>
@@ -73,8 +93,15 @@
       <!-- Totals -->
       <div class="row mb-3">
         <div class="col-md-6">
-          <label class="form-label">Delivery Distance (km)</label>
-          <input type="number" name="distance_km" id="distance_km" class="form-control" min="0">
+          <label class="form-label {% if errors.distance_km %}is-invalid{% endif %}">Delivery Distance (km)</label>
+          <input type="number" name="distance_km" id="distance_km" class="form-control" min="0" value="{{ data.distance_km|default:'' }}">
+          {% if errors.distance_km %}
+            <div class="invalid-feedback">
+              {% for error in errors.distance_km %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         <div class="col-md-6">
           <label class="form-label">Transport Cost (UGX)</label>

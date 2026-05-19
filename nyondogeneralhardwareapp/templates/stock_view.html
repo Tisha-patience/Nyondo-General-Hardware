@@ -10,8 +10,8 @@
 <h4 class="card-title">{{ stock.product_name }}</h4>
       <p><strong>Specification:</strong> {{ stock.specification }}</p>
       <p><strong>Quantity:</strong> {{ stock.quantity }} {{ stock.unit }}</p>
-      <p><strong>Unit Cost:</strong> UGX {{ stock.unit_cost | intcomma }}</p>
-      <p><strong>Unit Price:</strong> UGX {{ stock.unit_price | intcomma }}</p>
+      <p><strong>Unit Cost:</strong> UGX {{ stock.unit_cost |floatformat:"0"| intcomma }}</p>
+      <p><strong>Unit Price:</strong> UGX {{ stock.unit_price |floatformat:"0"| intcomma }}</p>
       <p><strong>Supplier:</strong> {{ stock.supplier.supplier_name }}</p>
       <p><strong>Payment Mode:</strong> {{ stock.payment_mode }}</p>
       <p><strong>Credit Terms:</strong> {{ stock.credit_terms|default:"—" }}</p>

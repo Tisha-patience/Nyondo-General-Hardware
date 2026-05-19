@@ -26,7 +26,7 @@ Pay Supplier
                     <div>
                         <strong>{{ credit.supplier.supplier_name }}</strong><br>
                         <small>Product: {{ credit.stock.product_name }}</small><br>
-                        <small>Balance: UGX {{ credit.balance }}</small>
+                        <small>Balance: UGX {{ credit.balance |floatformat:"0"| intcomma }}</small>
                     </div>
                 </div>
             </div>
@@ -38,7 +38,7 @@ Pay Supplier
                 <!-- Payment Amount -->
                 <div class="mb-3">
                     <label class="form-label">Payment Amount</label>
-                    <input type="number" step="0.01" name="amount" class="form-control" required>
+                    <input type="number" step="0.01" name="amount" min="0" class="form-control" required>
                 </div>
 
                 <!-- Notes -->

@@ -1,8 +1,21 @@
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
-from .validators import validate_phone_number, validate_ugandan_national_id
+from .validators import validate_ugandan_national_id
+from django.core.validators import RegexValidator, ValidationError
+
+
 # Create your models here.
+validate_phone_number = RegexValidator(
+    regex=r'^\+256\d{9}$',
+    message='Phone number must start with +256 and contain 9 digits (e.g. +256760752349).'
+)
+
+
+
+def validate_positive(value):
+    if value < 0:
+        raise ValidationError("Quantity must be a positive number.")
 
 def generate_receipt_number():
     # 1. Get the last receipt saved in the database, ordered by ID
@@ -43,11 +56,15 @@ class Supplier(models.Model):
                 counter += 1
             self.slug = slug
         super().save(*args, **kwargs)            
-    contact_number = models.CharField(max_length=15, blank=True, validators=[validate_phone_number])    # Contact phone number
+    contact_number = models.CharField(max_length=9, blank=True, validators=[validate_phone_number])    # Contact phone number
     address = models.TextField(blank=True)                 # Physical or mailing address
     email = models.EmailField(blank=True)                  # Optional email contact
     date_added = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)   
+
+    def save(self, *args, **kwargs):
+        self.full_clean()     # Runs validators
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.supplier_name 
@@ -56,10 +73,10 @@ class Supplier(models.Model):
 class Stock(models.Model):
     product_name = models.CharField(max_length=100)
     specification = models.CharField(max_length=100)
-    quantity = models.PositiveIntegerField()
+    quantity = models.IntegerField(validators=[validate_positive])
     unit = models.CharField(max_length=20, blank=True)  # e.g. "bags"
-    unit_cost = models.DecimalField(max_digits=10, decimal_places=2)   # Buying price
-    unit_price =  models.DecimalField(max_digits=10, decimal_places=2)
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[validate_positive])   # Buying price
+    unit_price =  models.DecimalField(max_digits=10, decimal_places=2, validators=[validate_positive])  # Selling price
     supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
     payment_mode = models.CharField(
         max_length=10,
@@ -70,9 +87,11 @@ class Stock(models.Model):
     total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date_received = models.DateField()
     def save(self, *args, **kwargs):
+        # ✅ Run validators before saving
+        self.full_clean()
         self.total_cost = self.quantity * self.unit_cost
         super().save(*args, **kwargs)
-   
+
 class SupplierCredit(models.Model):
 
     supplier = models.ForeignKey(
@@ -87,7 +106,8 @@ class SupplierCredit(models.Model):
 
     total_amount = models.DecimalField(
         max_digits=12,
-        decimal_places=2
+        decimal_places=2,
+        validators=[validate_positive]
     )
 
     amount_paid = models.DecimalField(
@@ -149,7 +169,8 @@ class SupplierPayment(models.Model):
 
     amount = models.DecimalField(
         max_digits=12,
-        decimal_places=2
+        decimal_places=2,
+        validators=[validate_positive]
     )
 
     payment_date = models.DateField(
@@ -187,7 +208,7 @@ class Sale(models.Model):
 
     customer_name = models.CharField(max_length=100)
     customer_phone = models.CharField(max_length=15, validators=[validate_phone_number])
-    distance_km = models.PositiveIntegerField(default=0)
+    distance_km = models.IntegerField(default=0, validators=[validate_positive])
     transport_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     grand_total = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date = models.DateTimeField(auto_now_add=True)
@@ -217,9 +238,9 @@ class Sale(models.Model):
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, related_name="items", on_delete=models.CASCADE)
     stock = models.ForeignKey(Stock, on_delete=models.PROTECT)
-    quantity = models.PositiveIntegerField()
+    quantity = models.IntegerField(validators=[validate_positive])
     unit = models.CharField(max_length=20)
-    unit_price = models.DecimalField(max_digits=12, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=12, decimal_places=2, validators=[validate_positive])
     total_price = models.DecimalField(max_digits=12, decimal_places=2)
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -272,8 +293,12 @@ class SaleReceipt(models.Model):
 class Participant(models.Model):
     name = models.CharField(max_length=100)
     nin = models.CharField(max_length=14, unique=True, validators=[validate_ugandan_national_id])  # National ID with validation
-    phone = models.CharField(max_length=15, validators=[validate_phone_number])
+    phone = models.CharField(max_length=13, validators=[validate_phone_number])
     registered_on = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()     # Runs validators
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} ({self.nin})"
@@ -282,7 +307,7 @@ class Participant(models.Model):
 class Deposit(models.Model):
     participant = models.ForeignKey(Participant, on_delete=models.CASCADE, related_name="deposits")
     product = models.CharField(max_length=100)
-    amount_paid = models.DecimalField(max_digits=12, decimal_places=2)
+    amount_paid = models.DecimalField(max_digits=12, decimal_places=2, validators=[validate_positive])
     payment_method = models.CharField(max_length=50, default="Cash")
     date_registered = models.DateTimeField(default=timezone.now)
 
@@ -328,7 +353,7 @@ class GoodsCollection(models.Model):
         related_name="collections",
         null=True
     )
-    quantity = models.PositiveIntegerField()
+    quantity = models.IntegerField(validators=[validate_positive])
     date_collected = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

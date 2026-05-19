@@ -69,7 +69,7 @@ Nyondo Reports Dashboard
 
         <div>
           <p>Total Revenue</p>
-          <h3>UGX {{ total_revenue  | intcomma }}</h3>
+          <h3>UGX {{ total_revenue  |floatformat:"0"| intcomma }}</h3>
         </div>
 
       </div>
@@ -86,7 +86,7 @@ Nyondo Reports Dashboard
 
         <div>
           <p>Total Sales</p>
-          <h3>{{ total_sales | intcomma }}</h3>
+          <h3>{{ total_sales |floatformat:"0"| intcomma }}</h3>
         </div>
 
       </div>
@@ -103,7 +103,7 @@ Nyondo Reports Dashboard
 
         <div>
           <p>Stock Remaining</p>
-          <h3>{{ stock_remaining }}</h3>
+          <h3>{{ stock_remaining |floatformat:"0"| intcomma }}</h3>
         </div>
 
       </div>
@@ -120,7 +120,7 @@ Nyondo Reports Dashboard
 
         <div>
           <p>Customers</p>
-          <h3>{{ total_customers }}</h3>
+          <h3>{{ total_customers |floatformat:"0"| intcomma }}</h3>
         </div>
 
       </div>
@@ -160,16 +160,16 @@ Nyondo Reports Dashboard
       <tr>
         <td>{{ sale.customer_name }}</td>
         <td>{{ sale.date|date:"d M Y" }}</td>
-        <td>UGX {{ sale.grand_total | intcomma }}</td>
+        <td>UGX {{ sale.grand_total |floatformat:"0"| intcomma }}</td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
 {% elif report_type == "Revenue Report" %}
   <h5>Revenue Report</h5>
-  <p>Total Deposits: UGX {{ data.deposits_total | intcomma }}</p>
-  <p>Total Sales: UGX {{ data.sales_total | intcomma }}</p>
-  <p><strong>Total Revenue: UGX {{ data.deposits_total|add:data.sales_total | intcomma }}</strong></p>
+  <p>Total Deposits: UGX {{ data.deposits_total |floatformat:"0"| intcomma }}</p>
+  <p>Total Sales: UGX {{ data.sales_total |floatformat:"0"| intcomma }}</p>
+  <p><strong>Total Revenue: UGX {{ data.deposits_total|add:data.sales_total |floatformat:"0"| intcomma }}</strong></p>
 {% elif report_type == "Stock Report" %}
   <h5>Stock Report</h5>
   <table class="table">
@@ -179,7 +179,7 @@ Nyondo Reports Dashboard
       <tr>
         <td>{{ stock.product_name }}</td>
         <td>{{ stock.quantity }}</td>
-        <td>UGX {{ stock.price | intcomma }}</td>
+        <td>UGX {{ stock.price |floatformat:"0"| intcomma }}</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -193,7 +193,7 @@ Nyondo Reports Dashboard
       <tr>
         <td>{{ customer.name }}</td>
         <td>{{ customer.phone }}</td>
-        <td>UGX {{ customer.total_deposits  | intcomma }}</td>
+        <td>UGX {{ customer.total_deposits  |floatformat:"0"| intcomma }}</td>
       </tr>
       {% endfor %}
     </tbody>

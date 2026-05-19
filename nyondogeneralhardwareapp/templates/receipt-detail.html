@@ -38,8 +38,8 @@
           <td>{{ item.specification }}</td>
           <td>{{ item.quantity }}</td>
           <td>{{ item.unit }}</td>
-          <td>{{ item.unit_price | intcomma }}</td>
-          <td>{{ item.total_price | intcomma }}</td>
+          <td>{{ item.unit_price |floatformat:"0"| intcomma }}</td>
+          <td>{{ item.total_price |floatformat:"0"| intcomma }}</td>
         </tr>
         {% endfor %}
       </tbody>
@@ -47,10 +47,10 @@
 
     <!-- Transport + Grand Total -->
     <p><strong>Delivery Distance:</strong> {{ receipt.sale.distance_km }} km</p>
-    <p><strong>Transport Cost:</strong> {{ receipt.sale.transport_cost | intcomma }} UGX</p>
+    <p><strong>Transport Cost:</strong> {{ receipt.sale.transport_cost |floatformat:"0"| intcomma }} UGX</p>
 
     <div class="alert alert-success text-center mt-3">
-      <h4><strong>Final Total: {{ receipt.sale.grand_total | intcomma }} UGX</strong></h4>
+      <h4><strong>Final Total: {{ receipt.sale.grand_total |floatformat:"0"| intcomma }} UGX</strong></h4>
     </div>
 
     <hr>

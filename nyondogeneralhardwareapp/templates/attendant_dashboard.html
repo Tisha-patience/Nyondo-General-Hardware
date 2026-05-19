@@ -38,7 +38,7 @@ Sales Attendant Dashboard
 
         <div style="margin-left: 20px;">
           <p>Today's Sales</p>
-          <h3>UGX {{ today_sales | intcomma }}</h3>
+          <h3>UGX {{ today_sales |floatformat:"0"| intcomma }}</h3>
         </div>
 
       </div>
@@ -164,7 +164,7 @@ Sales Attendant Dashboard
               </td>
 
               <td>
-                UGX {{ sale.grand_total | intcomma }}
+                UGX {{ sale.grand_total |floatformat:"0"| intcomma }}
               </td>
 
               <td>

@@ -40,7 +40,7 @@ Nyondo Admin Dashboard
 
         <div>
           <p>Total Revenue</p>
-          <h3>UGX {{ total_revenue | intcomma }}</h3>
+          <h3>UGX {{ total_revenue |floatformat:"0"| intcomma }}</h3>
         </div>
       </div>
     </div>
@@ -117,7 +117,7 @@ Nyondo Admin Dashboard
             </div>
           </td>
           <td>{{ participant.phone }}</td>
-          <td><strong>UGX {{ participant.total_deposits }}</strong></td>
+          <td><strong>UGX {{ participant.total_deposits |floatformat:"0"| intcomma }}</strong></td>
         </tr>
       {% empty %}
         <tr>

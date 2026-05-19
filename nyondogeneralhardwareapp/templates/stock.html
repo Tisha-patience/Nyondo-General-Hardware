@@ -91,7 +91,7 @@ SUMMARY CARDS
 
             <div>
                 <p>Total Stock Value</p>
-                <h3>UGX {{ total_stock_value|intcomma }}</h3>
+                <h3>UGX {{ total_stock_value|floatformat:"0"| intcomma }}</h3>
             </div>
 
         </div>
@@ -189,12 +189,12 @@ STOCK TABLE
 
                     <!-- UNIT PRICE -->
                     <td>
-                        UGX {{ stock.unit_price|intcomma }}
+                        UGX {{ stock.unit_price|floatformat:"0"| intcomma }}
                     </td>
 
                     <!-- TOTAL COST -->
                     <td>
-                        UGX {{ stock.total_cost|intcomma }}
+                        UGX {{ stock.total_cost|floatformat:"0"| intcomma }}
                     </td>
 
                     <!-- STATUS -->
