@@ -7,6 +7,12 @@
   >
     <div class="card-body">
       <h2>Edit Sale</h2>
+      {% if general_error %}
+      <div class="alert alert-danger">
+        {{ general_error }}
+      </div>
+      {% endif %}
+
       <form method="post">
         {% csrf_token %}
         <div class="form-group">

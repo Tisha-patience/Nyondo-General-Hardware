@@ -25,7 +25,14 @@
         </div>
         <div class="col-md-6">
           <label class="form-label">Phone Number</label>
-          <input type="text" name="customer_phone" class="form-control" required>
+          <input type="text" name="customer_phone" class="form-control {% if errors.customer_phone %}is-invalid{% endif %}"  value="{{ data.customer_phone|default:'' }}" required>
+          {% if errors.customer_phone %}
+    <div class="invalid-feedback">
+      {% for error in errors.customer_phone %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
         </div>
       </div>
 

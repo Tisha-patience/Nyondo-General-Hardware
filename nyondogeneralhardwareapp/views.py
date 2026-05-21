@@ -14,15 +14,20 @@ from django.contrib.auth.decorators import login_required, user_passes_test,perm
 from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity, SupplierCredit, SupplierPayment
 
 # Create your views here.
+
+# The index view simply renders the homepage of the application. 
+# It doesn't require any special permissions or data, so it's accessible to all users.
 def index(request):
     return render(request, 'index.html')
 
-
+# The login_view handles user authentication. It checks if the request method is POST (indicating a form submission),
 def login_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
-
+# It uses Django's built-in authenticate function to verify the credentials. 
+# If authentication is successful, it logs the user in and redirects them to a role-based dashboard.
+#  If authentication fails, it re-renders the login page with an error message.
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)  # logs the user in
@@ -33,7 +38,9 @@ def login_view(request):
     return render(request, "login.html")
 
 
+# This view checks the role of the logged-in user and redirects them to the appropriate dashboard based on their permissions.
 def login_redirect(request):
+    # We check if the user is a superuser, store manager, or sales attendant by checking their group memberships and permissions.
     user = request.user
     if user.is_superuser:
         return redirect("accountsdashboard")
@@ -44,26 +51,34 @@ def login_redirect(request):
     else:
         return redirect("index")
 
-
+# The dashboard view is restricted to superusers only. 
+# It aggregates various statistics about participants, sales, deposits, stock, and suppliers
+#  to display on the admin dashboard.
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def dashboard(request):
     # All registered participants
+    # We count the total number of participants in the system, 
+    # which represents the total number of customers who have registered.
     participant_count = Participant.objects.count()
 
     # Unique customers from sales (by phone)
+    # We fetch the distinct customer phone numbers from the Sale model to count how many unique customers have made purchases.
     sale_customers = Sale.objects.values_list("customer_phone", flat=True).distinct()
     sale_customer_count = sale_customers.count()
 
     # Combine both sets (avoid double-counting)
+    # We take the unique NINs from the Participant model and the unique customer phone numbers from the Sale model,
+    # combine them using union to get a set of all unique customers, and then count 
+    # the total number of unique customers across both models.
     total_customers = Participant.objects.values_list("nin", flat=True).union(
         Sale.objects.values_list("customer_phone", flat=True)
     ).count()
-
+# We calculate the total revenue by summing up all deposits and sales.
     deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
     sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
     total_revenue = deposits_total + sales_total
-
+# We count the total number of stock items and suppliers in the system to display on the dashboard.
     stock_items = Stock.objects.count()
     suppliers = Supplier.objects.count()
 
@@ -71,7 +86,7 @@ def dashboard(request):
     participants = Participant.objects.all()
     for p in participants:
         p.total_deposits = p.deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
-
+# We fetch the most recent activities (like sales, stock updates, etc.) to display on the dashboard activity feed.
     activities = Activity.objects.order_by("-timestamp")[:6]
 
     context = {
@@ -84,39 +99,55 @@ def dashboard(request):
     }
     return render(request, "dashboard.html", context)
 
-
+# This view is for sales attendants and displays key metrics relevant to their role, 
+# such as today's sales, receipts issued, customers served, low stock items, recent sales, and all stock items.
 def is_attendant(user):
     return user.groups.filter(name="Sales Attendant").exists()
-
+# The attendant_dashboard view is decorated with @login_required to ensure that only authenticated users can access it,
+# and @user_passes_test with the is_attendant function to restrict access to users who are in the "Sales Attendant" group.
+#  It aggregates various statistics about today's sales, receipts, customers, low stock items, and recent sales 
+# to display on the attendant dashboard.
 @login_required
-@user_passes_test(is_attendant)
+@user_passes_test(is_attendant) # Only users in the "Sales Attendant" group can access this view
 def attendant_dashboard(request):
-    today = now().date()
+    today = now().date() # We get the current date to filter today's sales and activities.
 
     # Today's sales total
+    # We filter the Sale records to get only those that were made today, 
+    # then we aggregate the sum of the grand_total field to get the total sales amount for today.
+    #  If there are no sales, we default to 0.
     today_sales = Sale.objects.filter(date__date=today).aggregate(
         Sum("grand_total")
     )["grand_total__sum"] or 0
 
     # Receipts issued today (GoodsCollection with receipts)
+    # We filter the GoodsCollection records to get only those that were collected today and have a receipt,
+    # then we count the number of such records.
     receipts_count = GoodsCollection.objects.filter(
         date_collected__date=today,
         receipt__isnull=False
     ).count()
 
     # Customers served today
+    # We filter the Sale records to get only those that were made today,
+    # then we count the distinct customer names.
     customers_today = Sale.objects.filter(date__date=today).values("customer_name").distinct().count()
 
     # Low stock count
+    # We filter the Stock records to get only those that have a quantity less than or equal to 10 but greater than 0
+    #  (indicating low stock but not out of stock),
     low_stock = Stock.objects.filter(quantity__lte=10, quantity__gt=0).count()
 
     # Low stock items list
+    # We fetch the actual Stock records that are low in stock (quantity <= 10 and > 0) to display on the dashboard.
     low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
 
     # Recent sales
+    # We fetch the most recent 10 sales records, ordered by date in descending order, to display on the dashboard.
     sales = Sale.objects.order_by("-date")[:10]
 
     # All stock
+    # We fetch all Stock records to display on the dashboard, which may be used for quick reference or management by the sales attendant.
     stocks = Stock.objects.all()
 
     context = {
@@ -130,36 +161,48 @@ def attendant_dashboard(request):
     }
     return render(request, "attendant_dashboard.html", context)
 
+
+# The manager_dashboard view is decorated with @login_required to ensure that only authenticated users can access it, 
+# and @user_passes_test with the is_manager function to restrict access to users who are in the "Store Manager" group or are superusers.
 def is_manager(user):
     return user.groups.filter(name="Store Manager").exists() or user.is_superuser
-
+# The manager_dashboard view aggregates various statistics about stock levels, sales, suppliers, and recent activities 
+# to display on the store manager dashboard. It provides a comprehensive overview of the store's operations for managerial oversight.
 @login_required
 @user_passes_test(is_manager)
 def manager_dashboard(request):
     today = now().date()
 
     # Summary cards
+    # We calculate the total quantity of stock available by summing up the quantity field across all Stock records.
+    # We also calculate the total stock value by summing up the product of quantity and unit_price for all Stock records.
     total_quantity = Stock.objects.aggregate(Sum("quantity"))["quantity__sum"] or 0
     total_stock_value = Stock.objects.aggregate(
-        total_value=Sum(F("quantity") * F("unit_price"))
+        total_value=Sum(F("quantity") * F("unit_price")) # We use F expressions to calculate the total value for each stock item by multiplying quantity and unit_price, and then we sum these values across all stock items to get the total stock value.
     )["total_value"] or 0
-    credit_supplies = Stock.objects.filter(payment_mode="Credit").count()
+    credit_supplies = Stock.objects.filter(payment_mode="Credit").count() # We count how many stock items were supplied on credit by filtering the Stock records where payment_mode is "Credit".
 
+# We calculate the profit margin by taking the total sales amount and subtracting the total cost of the stock.
     sales_total = Sale.objects.aggregate(Sum("grand_total"))["grand_total__sum"] or 0
     stock_cost_total = Stock.objects.aggregate(
-        total_cost=Sum(F("quantity") * F("unit_cost"))
+        total_cost=Sum(F("quantity") * F("unit_cost")) # Similar to total_stock_value, but we multiply quantity by unit_cost to get the total cost of the stock, and then sum it up across all stock items.
     )["total_cost"] or 0
     profit_margin = sales_total - (stock_cost_total or 0)
 
     # Stock levels
+    # We categorize stock items into three groups: low stock (quantity <= 10 and > 0), out of stock (quantity = 0), 
+    # and available (quantity > 10).
     low_stock_items = Stock.objects.filter(quantity__lte=10, quantity__gt=0)
     out_of_stock_items = Stock.objects.filter(quantity=0)
     available_items = Stock.objects.filter(quantity__gt=10)
 
     # Editable stock table
+    # We fetch all Stock records to display in an editable table on the dashboard, 
+    # allowing the manager to quickly view and manage stock items.
     stocks = Stock.objects.all()
 
     # Recent suppliers
+    # We fetch the most recent 5 suppliers, ordered by their ID in descending order, to display on the dashboard.
     suppliers = Supplier.objects.order_by("-id")[:5]
 
     context = {
@@ -176,20 +219,25 @@ def manager_dashboard(request):
     }
     return render(request, "store_dashboard.html", context)   
 
-
+# The logout view simply displays a message indicating that the user has been logged out successfully 
+# and then redirects them to the login page.
 def logout(request):
     messages.info(request, "Logged out successfully.")
     return redirect("login")
 
 
+# This view displays a list of all sales along with summary statistics such as total number of sales and total revenue generated.
 def sales(request):
     # Fetch all sales and their related items in one go
+    # We order the sales by date in descending order to show the most recent sales first.
     sales = Sale.objects.all().order_by('-date')
 
     # Total number of sales
+    # We simply count the number of Sale records to get the total number of sales made.
     total_sales = sales.count()
 
     # Total revenue = sum of grand totals (not sale.total_price, since that's per item)
+    # We sum up the grand_total field for all Sale records to calculate the total revenue generated from sales.
     total_revenue = sum(sale.grand_total for sale in sales)
 
     context = {
@@ -199,36 +247,59 @@ def sales(request):
     }
     return render(request, "sales.html", context)
 
+# This view handles the registration of a new sale. 
+# It processes the form submission, validates the input, creates a new Sale record along with related SaleItem records
+#  for each product sold, updates stock quantities, and logs the activity. 
+# It also includes error handling to manage validation errors and other exceptions that may occur during the process.
 def sales_reg(request):
     if request.method == "POST":
+        # We use a try-except block to handle potential validation errors when creating the Sale and SaleItem records,
+        # as well as any other unforeseen exceptions that may occur during the process. 
+        # This ensures that we can provide meaningful feedback to the user and maintain data integrity.
         try:
+            # We use a transaction to ensure that all database operations within the block are atomic. 
+            # Atomic means that either all operations succeed or none do. 
+            # This is crucial when we are creating a Sale record, multiple SaleItem records, 
+            # and updating stock quantities, as we want to avoid situations where some records are created while others fail,
+            # which could lead to data inconsistencies.
             with transaction.atomic():
                 # Create Sale record
+                # We create a new Sale record using the customer name, phone, and distance from the form data.
                 distance = request.POST.get("distance_km")
                 sale = Sale.objects.create(
                     customer_name=request.POST.get("customer_name"),
                     customer_phone=request.POST.get("customer_phone"),
                     distance_km=int(distance) if distance else 0
                 )
-
+# After successfully creating the Sale record, we log this activity. If the creation fails due to validation errors,
+# the activity log will not be created, and the error will be handled in the except block.
                 Activity.objects.create(
                     title=f"New sale recorded (UGX {sale.grand_total})",
                     color="blue"
                 )
 
                 # Collect multiple items
+                # We get the list of stock IDs, quantities, units, and unit prices from the form data.
+                # The form is designed to allow multiple items to be sold in one transaction, 
+                # so we use getlist to retrieve all values for these fields.
                 stock_ids = request.POST.getlist("stock_id")
                 quantities = request.POST.getlist("quantity")
                 units = request.POST.getlist("unit")
                 unit_prices = request.POST.getlist("unit_price")
 
-                for i in range(len(stock_ids)):
+# We loop through each item in the sale, create a SaleItem record for it, and update the corresponding Stock quantity.
+# We also perform a safety check to prevent overselling by ensuring that the stock quantity is sufficient for the requested quantity.
+                for i in range(len(stock_ids)): # We loop through the list of stock IDs (and corresponding quantities, units, and unit prices) to process each item in the sale.
                     stock_item = get_object_or_404(Stock, pk=stock_ids[i])
-                    qty = int(quantities[i])
+                    qty = int(quantities[i]) # We convert the quantity from the form (which is a string) to an integer for calculations and comparisons.
                     price = float(stock_item.unit_price)
                     total = qty * price
 
-                    # ✅ Safety check: prevent overselling
+                    #Safety check: prevent overselling
+                    # Before creating the SaleItem record and updating the stock quantity, 
+                    # we check if the requested quantity (qty) exceeds the available stock quantity (stock_item.quantity).
+                    #  If it does, we raise a ValidationError with a message indicating that there is not enough stock for that product.
+                    #  This prevents the system from allowing sales that cannot be fulfilled due to insufficient stock.
                     if stock_item.quantity < qty:
                         raise ValidationError({
                             "quantity": [f"Not enough stock for {stock_item.product_name}"]

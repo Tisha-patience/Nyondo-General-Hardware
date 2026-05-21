@@ -44,8 +44,21 @@ def generate_goods_receipt_number():
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True, blank=True)
+    contact_number = models.CharField(
+        max_length=13,
+        blank=True,
+        validators=[validate_phone_number]
+    )
+    address = models.TextField(blank=True)
+    email = models.EmailField(blank=True)
+    date_added = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
+        # Run validators
+        self.full_clean()
+
+        # Slug creation logic
         if not self.slug:
             base_slug = slugify(self.supplier_name)
             slug = base_slug
@@ -55,19 +68,11 @@ class Supplier(models.Model):
                 slug = f"{base_slug}-{counter}"
                 counter += 1
             self.slug = slug
-        super().save(*args, **kwargs)            
-    contact_number = models.CharField(max_length=9, blank=True, validators=[validate_phone_number])    # Contact phone number
-    address = models.TextField(blank=True)                 # Physical or mailing address
-    email = models.EmailField(blank=True)                  # Optional email contact
-    date_added = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)   
 
-    def save(self, *args, **kwargs):
-        self.full_clean()     # Runs validators
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.supplier_name 
+        return self.supplier_name
 
 
 class Stock(models.Model):
@@ -87,7 +92,7 @@ class Stock(models.Model):
     total_cost = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     date_received = models.DateField()
     def save(self, *args, **kwargs):
-        # ✅ Run validators before saving
+        #  Run validators before saving
         self.full_clean()
         self.total_cost = self.quantity * self.unit_cost
         super().save(*args, **kwargs)
@@ -222,18 +227,15 @@ class Sale(models.Model):
         return 30000
 
     def save(self, *args, **kwargs):
+        # Run validators first
+        self.full_clean()
 
         super().save(*args, **kwargs)
 
         self.transport_cost = self.calculate_transport()
         self.grand_total = self.total_amount() + self.transport_cost
 
-        super().save(
-            update_fields=[
-            "transport_cost",
-            "grand_total"
-            ]
-        )
+        super().save(update_fields=["transport_cost", "grand_total"])
 
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, related_name="items", on_delete=models.CASCADE)
@@ -242,6 +244,7 @@ class SaleItem(models.Model):
     unit = models.CharField(max_length=20)
     unit_price = models.DecimalField(max_digits=12, decimal_places=2, validators=[validate_positive])
     total_price = models.DecimalField(max_digits=12, decimal_places=2)
+
     def save(self, *args, **kwargs):
         if not self.pk:
             # New SaleItem → reduce stock
@@ -269,13 +272,13 @@ class SaleItem(models.Model):
         self.total_price = self.quantity * self.unit_price
 
         super().save(*args, **kwargs)
-@property
-def profit(self):
 
-    return (
-        self.stock.unit_price
-        - self.stock.unit_cost
-    ) * self.quantity
+    @property
+    def profit(self):
+        return (
+            self.stock.unit_price
+            - self.stock.unit_cost
+        ) * self.quantity
 
 
 class SaleReceipt(models.Model):
