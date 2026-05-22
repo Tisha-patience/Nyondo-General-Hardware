@@ -101,6 +101,9 @@
                 </a>
 
                 <!-- Delete -->
+                 <!-- We check if the user has the permission to delete a sale, and if they do, we display the delete button -->
+                  <!-- If the user doesn't have the permission, we don't display the delete button -->
+                  <!-- perms is a built-in template tag that checks if the user has a specific permission, and if they do, it returns True -->
                  {% if perms.nyondogeneralhardwareapp.delete_sale %}
                 <a
                   href="{% url 'sale_delete' sale.id  %}"
