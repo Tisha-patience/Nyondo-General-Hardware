@@ -1,0 +1,24 @@
+{% extends 'baseForm.html' %}
+{% load static %}
+{% block title %}
+Register User
+{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'register-user.css' %}" />
+{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+  <h2>Register New User</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <button type="submit" class="btn btn-primary">Register User</button>
+  </form>
+  <div>
+        <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    </div>
+</div>
+{% endblock %}

@@ -9,7 +9,7 @@ from django.db.models import ProtectedError
 from django.db import transaction
 from decimal import Decimal
 from django.core.exceptions import ValidationError
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test,permission_required
 from nyondogeneralhardwareapp.models import Stock, Supplier, Sale, SaleItem, Deposit, Participant, GoodsCollection, Activity, SupplierCredit, SupplierPayment
 
@@ -50,6 +50,11 @@ def login_redirect(request):
         return redirect("attendant_dashboard")
     else:
         return redirect("index")
+    
+def logout_view(request):
+    logout(request)
+    messages.info(request, "You have been logged out successfully.")
+    return redirect("login") 
 
 # The dashboard view is restricted to superusers only. 
 # It aggregates various statistics about participants, sales, deposits, stock, and suppliers
@@ -221,12 +226,12 @@ def manager_dashboard(request):
 
 # The logout view simply displays a message indicating that the user has been logged out successfully 
 # and then redirects them to the login page.
-def logout(request):
-    messages.info(request, "Logged out successfully.")
-    return redirect("login")
+
 
 
 # This view displays a list of all sales along with summary statistics such as total number of sales and total revenue generated.
+@login_required
+@user_passes_test(is_attendant)
 def sales(request):
     # Fetch all sales and their related items in one go
     # We order the sales by date in descending order to show the most recent sales first.
@@ -251,6 +256,8 @@ def sales(request):
 # It processes the form submission, validates the input, creates a new Sale record along with related SaleItem records
 #  for each product sold, updates stock quantities, and logs the activity. 
 # It also includes error handling to manage validation errors and other exceptions that may occur during the process.
+@login_required
+@user_passes_test(is_attendant)
 def sales_reg(request):
     if request.method == "POST":
         # We use a try-except block to handle potential validation errors when creating the Sale and SaleItem records,
@@ -342,11 +349,12 @@ def sales_reg(request):
     stocks = Stock.objects.all()
     return render(request, "sales-reg.html", {"stocks": stocks})
     
-
+@login_required
 def sale_view(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     return render(request, "sale_view.html", {"sale": sale})
 
+@login_required
 def sale_edit(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     sale_item = sale.items.first()  # assuming one item per sale
@@ -376,7 +384,7 @@ def sale_edit(request, pk):
         return redirect("accountssales")
 
     return render(request, "sale_edit.html", {"sale": sale, "sale_item": sale_item, "stocks": stocks})
-
+@login_required
 @permission_required('nyondogeneralhardwareapp.delete_sale', raise_exception=True)
 def sale_delete(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
@@ -394,6 +402,8 @@ def sale_receipt(request, pk):
     sale = get_object_or_404(Sale.objects.prefetch_related("items"), pk=pk)
     return render(request, "sale_receipt.html", {"sale": sale})
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def supplier(request):
     suppliers = Supplier.objects.all().order_by("-date_added")
 
@@ -464,7 +474,8 @@ def activate_supplier(request, pk,slug):
 
 
 
-
+@login_required
+@user_passes_test(is_manager)
 def stock(request):
     stocks = Stock.objects.all().order_by("-date_received")
 
@@ -489,7 +500,8 @@ def stock(request):
         "low_stock_items": low_stock_items,
         "recent_stock": recent_stock,
     })
-
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def reports(request):
     # Default summary stats
     deposits_total = Deposit.objects.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
@@ -513,6 +525,8 @@ def reports(request):
 # This view handles generating different types of reports based on user input
 # It accepts GET parameters for report type and date range, then queries the database accordingly
 # Finally, it renders the same template with the report data
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def generate_report(request):
     # Get parameters from the request
     report_type = request.GET.get("report_type")
@@ -572,6 +586,8 @@ def generate_report(request):
 
 
 # Supplier registration view with error handling and activity logging
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def supplier_reg(request):
     if request.method == "POST":
         payload = request.POST
@@ -623,6 +639,7 @@ def back(request):
 
 def receipt(request):
     return render(request, 'receipt.html')
+
 
 def supplier_edit(request, pk, slug):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
@@ -709,6 +726,8 @@ def stock_view(request, pk):
 
 # This view handles the registration of new stock items. It processes the form submission, validates the input,
 #  and creates a new Stock record.
+@login_required
+@user_passes_test(is_manager)
 def stock_reg(request):
     if request.method == "POST":
         payload = request.POST
@@ -769,6 +788,8 @@ def stock_reg(request):
     return render(request, "stock-reg.html", {"suppliers": suppliers})
 
 # This view displays a list of customers (participants) along with their total deposits and latest payment method.
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def customer_deposit(request):
     # Fetch all participants and annotate with total deposits and latest payment method
     participants = Participant.objects.all().order_by("-registered_on")
@@ -805,6 +826,9 @@ def participant_delete(request, pk):
 # It processes the form submission, validates the input, creates a new Participant record, 
 # and then creates a related Deposit record for their first payment. 
 # We also log this activity and handle any potential validation errors or general exceptions that may occur during the process.
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def customer_reg(request):
     if request.method == "POST":
         # We use a try-except block to handle potential validation errors when creating the Participant and Deposit records,
@@ -856,6 +880,7 @@ def customer_reg(request):
 
 # This view displays the profile of a customer (participant), 
 # including their total deposits, collections, and eligibility for goods based on their deposit balance.
+@login_required
 def customer_profile(request, pk):
     participant = get_object_or_404(Participant, pk=pk)
     # Fetch all deposits and collections for this participant
@@ -901,6 +926,7 @@ def customer_profile(request, pk):
 # This view handles adding a new deposit payment for an existing participant. 
 # It processes the form submission, validates the input, creates a new Deposit record linked to the participant, 
 # and then redirects to the receipt page for that deposit. We also log this activity.
+
 def deposit_add_payment(request, participant_id):
     participant = get_object_or_404(Participant, pk=participant_id)
 # If the request method is POST, it means the form has been submitted with the new deposit details.
@@ -989,6 +1015,8 @@ def deposit_receipt(request, pk):
     deposit = get_object_or_404(Deposit, pk=pk)
     return render(request, "deposit-receipt-detail.html", {"deposit": deposit})
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def supplier_view(request, pk, slug):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
 
@@ -1016,7 +1044,8 @@ def supplier_view(request, pk, slug):
         "outstanding_balance": outstanding_balance,
     }
     return render(request, "supplier_view.html", context)
-    
+
+
 def supplier_delete(request, pk, slug):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     if request.method == "POST":

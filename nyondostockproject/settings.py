@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'nyondogeneralhardwareapp',
     'django.contrib.humanize',
+    'user',
 ]
 
 MIDDLEWARE = [

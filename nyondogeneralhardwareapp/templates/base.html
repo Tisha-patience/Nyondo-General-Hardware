@@ -124,6 +124,12 @@
          href="{% url 'accountsreports' %}">
         <i class="bi bi-bar-chart"></i> Reports
       </a>
+
+      <a class="nav-link {% if request.resolver_match.url_name == 'register_user' %}active{% endif %}" 
+   href="{% url 'register_user' %}">
+  <i class="bi bi-person-plus"></i> Register User
+</a>
+
     
   {% endif %}
 
