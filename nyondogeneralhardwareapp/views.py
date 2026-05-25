@@ -22,18 +22,29 @@ def index(request):
 
 # The login_view handles user authentication. It checks if the request method is POST (indicating a form submission),
 def login_view(request):
+    context = {}
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
 # It uses Django's built-in authenticate function to verify the credentials. 
 # If authentication is successful, it logs the user in and redirects them to a role-based dashboard.
 #  If authentication fails, it re-renders the login page with an error message.
+        if not username or not password:
+            messages.error(request, "Both username and password are required.")
+            context["username_error"] = not username
+            context["password_error"] = not password
+            return render(request, "login.html", context)
+
         user = authenticate(request, username=username, password=password)
+
         if user is not None:
-            login(request, user)  # logs the user in
-            return redirect("login_redirect")  # send them to role-based dashboard
+            login(request, user)
+            return redirect("login_redirect")  # change to your dashboard URL name
         else:
-            return render(request, "login.html", {"error": "Invalid credentials"})
+            messages.error(request, "Invalid username or password.")
+            context["username_error"] = True
+            context["password_error"] = True
+            return render(request, "login.html", context)
 
     return render(request, "login.html")
 
@@ -231,7 +242,6 @@ def manager_dashboard(request):
 
 # This view displays a list of all sales along with summary statistics such as total number of sales and total revenue generated.
 @login_required
-@user_passes_test(is_attendant)
 def sales(request):
     # Fetch all sales and their related items in one go
     # We order the sales by date in descending order to show the most recent sales first.
@@ -257,7 +267,6 @@ def sales(request):
 #  for each product sold, updates stock quantities, and logs the activity. 
 # It also includes error handling to manage validation errors and other exceptions that may occur during the process.
 @login_required
-@user_passes_test(is_attendant)
 def sales_reg(request):
     if request.method == "POST":
         # We use a try-except block to handle potential validation errors when creating the Sale and SaleItem records,
