@@ -329,29 +329,29 @@ def sales_reg(request):
                         unit_price=price,
                         total_price=total,
                     )
-                    stock_item.quantity -= qty
+                    stock_item.quantity -= qty # Update the stock quantity, subtracting the quantity sold, to reflect the change in stock.
                     stock_item.save()
 
                 # Update transport + grand total
                 sale.save()
 
                 return redirect("sale_receipt", pk=sale.pk)
-
+# If the creation of the Sale record fails due to validation errors, we catch the ValidationError and pass it back to the template.
         except ValidationError as e:
             # Pass field-specific errors back
             stocks = Stock.objects.all()
             return render(request, "sales-reg.html", {
-                "errors": e.message_dict,
-                "data": request.POST,
+                "errors": e.message_dict, # e.message_dict contains field-specific validation errors
+                "data": request.POST, # Pass the form data back
                 "stocks": stocks
             })
-
+# If the creation of the Sale record fails for any other reason, we catch the Exception and pass it back to the template.
         except Exception as e:
             # Pass general error back
             stocks = Stock.objects.all()
             return render(request, "sales-reg.html", {
-                "general_error": str(e),
-                "data": request.POST,
+                "general_error": str(e), # Pass the general error message
+                "data": request.POST, # Pass the form data back
                 "stocks": stocks
             })
 
@@ -363,6 +363,8 @@ def sale_view(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
     return render(request, "sale_view.html", {"sale": sale})
 
+# We use the login_required decorator to ensure that only logged-in users can access this view.
+# This prevents unauthenticated users from accessing the view and potentially accessing sensitive data or functionality.
 @login_required
 def sale_edit(request, pk):
     sale = get_object_or_404(Sale, pk=pk)
@@ -393,6 +395,8 @@ def sale_edit(request, pk):
         return redirect("accountssales")
 
     return render(request, "sale_edit.html", {"sale": sale, "sale_item": sale_item, "stocks": stocks})
+
+# We use the login_required and permission_required decorators to ensure that only users with the 'delete_sale' permission can access this view.
 @login_required
 @permission_required('nyondogeneralhardwareapp.delete_sale', raise_exception=True)
 def sale_delete(request, pk):
