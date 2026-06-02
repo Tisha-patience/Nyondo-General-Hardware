@@ -1636,6 +1636,11 @@ hr{
   color: #991b1b;
 }
 
+.status-badge.warning{
+  background: #fff3cd;
+  color:  #92400e;
+}
+
 /* CARD HEADER */
 
 .card-header-custom{

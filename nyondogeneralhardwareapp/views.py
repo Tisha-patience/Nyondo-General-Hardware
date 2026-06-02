@@ -852,7 +852,7 @@ def customer_reg(request):
                 name=request.POST.get("name"),
                 nin=request.POST.get("nin"),
                 phone=request.POST.get("phone"),
-                registered_on=request.POST.get("date"),
+                
             )
 
             # We then create a related Deposit record for this participant,
@@ -862,7 +862,7 @@ def customer_reg(request):
                 product=request.POST.get("product"),
                 amount_paid=request.POST.get("amount_paid"),
                 payment_method=request.POST.get("payment_method"),
-                date_registered=request.POST.get("date"),
+                
             )
 # After successfully creating the participant and their initial deposit, 
 # a message is displayed to confirm the successful enrollment, and we log this activity.

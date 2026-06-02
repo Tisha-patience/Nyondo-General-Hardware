@@ -1,5 +1,6 @@
 
 {% extends "base.html" %} {% block title %} Nyondo Deposit Scheme {% endblock %}
+{% load tz %}
 {% load humanize %}
 {% block content %}
 <!-- Tabs -->
@@ -81,7 +82,7 @@
               </td>
               <td>{{ participant.nin }}</td>
               <td>{{ participant.phone }}</td>
-              <td>{{ participant.registered_on|date:"Y-m-d H:i" }}</td>
+              <td>{{ participant.registered_on|localtime|date:"Y-m-d H:i A" }}</td>
               <td>
                 <span class="badge bg-success"
                   >UGX {{ participant.total_deposits |floatformat:"0"| intcomma }}</span

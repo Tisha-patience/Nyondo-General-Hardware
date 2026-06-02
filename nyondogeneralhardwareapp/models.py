@@ -297,7 +297,7 @@ class Participant(models.Model):
     name = models.CharField(max_length=100)
     nin = models.CharField(max_length=14, unique=True, validators=[validate_ugandan_national_id])  # National ID with validation
     phone = models.CharField(max_length=13, validators=[validate_phone_number])
-    registered_on = models.DateTimeField(default=timezone.now)
+    registered_on = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
         self.full_clean()     # Runs validators
@@ -312,7 +312,7 @@ class Deposit(models.Model):
     product = models.CharField(max_length=100)
     amount_paid = models.DecimalField(max_digits=12, decimal_places=2, validators=[validate_positive])
     payment_method = models.CharField(max_length=50, default="Cash")
-    date_registered = models.DateTimeField(default=timezone.now)
+    date_registered = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.participant.name} - {self.product} ({self.amount_paid})"
