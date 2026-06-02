@@ -21,18 +21,25 @@
       <div class="row mb-3">
         <div class="col-md-6">
           <label class="form-label">Customer Name</label>
-          <input type="text" name="customer_name" class="form-control" required>
+          <input type="text" name="customer_name" class="form-control {% if errors.customer_name %}is-invalid{% endif %}" value="{{ data.customer_name|default:'' }}">
+          {% if errors.customer_name %}
+            <div class="invalid-feedback">
+              {% for error in errors.customer_name %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
         <div class="col-md-6">
           <label class="form-label">Phone Number</label>
-          <input type="text" name="customer_phone" class="form-control {% if errors.customer_phone %}is-invalid{% endif %}"  value="{{ data.customer_phone|default:'' }}" required>
+          <input type="text" name="customer_phone" class="form-control {% if errors.customer_phone %}is-invalid{% endif %}" value="{{ data.customer_phone|default:'' }}">
           {% if errors.customer_phone %}
-    <div class="invalid-feedback">
-      {% for error in errors.customer_phone %}
-        {{ error }}
-      {% endfor %}
-    </div>
-  {% endif %}
+            <div class="invalid-feedback">
+              {% for error in errors.customer_phone %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
       </div>
 
@@ -44,18 +51,25 @@
   <div class="row item-row">
     <div class="col-md-4 ">
     <label style="margin-bottom: 7px;">Product</label>
-    <select name="stock_id" class="form-control stock-select" required>
+    <select name="stock_id" class="form-control stock-select {% if errors.stock_id %}is-invalid{% endif %}">
       {% for stock in stocks %}
-        <option value="{{ stock.id }}" data-unit-price="{{ stock.unit_price }}">
+        <option value="{{ stock.id }}" data-unit-price="{{ stock.unit_price }}" {% if data.stock_id == stock.id|stringformat:"s" %}selected{% endif %}>
           {{ stock.product_name }} ({{ stock.specification }}) - {{ stock.quantity }} {{ stock.unit }} available
         </option>
       {% endfor %}
     </select>
+    {% if errors.stock_id %}
+      <div class="invalid-feedback">
+        {% for error in errors.stock_id %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
     </div>
 
     <div class="col-md-2">
-      <label class="form-label {% if errors.quantity %}is-invalid{% endif %}">Quantity</label>
-      <input type="number" name="quantity" min="0" class="form-control" value="{{ data.quantity|default:'' }}" required>
+      <label class="form-label">Quantity</label>
+      <input type="number" name="quantity" class="form-control {% if errors.quantity %}is-invalid{% endif %}" value="{{ data.quantity|default:'' }}">
       {% if errors.quantity %}
         <div class="invalid-feedback">
           {% for error in errors.quantity %}
@@ -65,8 +79,8 @@
       {% endif %}
     </div>
     <div class="col-md-2">
-      <label class="form-label {% if errors.unit %}is-invalid{% endif %}">Unit</label>
-      <input type="text" name="unit" class="form-control" value="{{ data.unit|default:'' }}" required>
+      <label class="form-label">Unit</label>
+      <input type="text" name="unit" class="form-control {% if errors.unit %}is-invalid{% endif %}" value="{{ data.unit|default:'' }}">
       {% if errors.unit %}
         <div class="invalid-feedback">
           {% for error in errors.unit %}
@@ -100,8 +114,8 @@
       <!-- Totals -->
       <div class="row mb-3">
         <div class="col-md-6">
-          <label class="form-label {% if errors.distance_km %}is-invalid{% endif %}">Delivery Distance (km)</label>
-          <input type="number" name="distance_km" id="distance_km" class="form-control" min="0" value="{{ data.distance_km|default:'' }}">
+          <label class="form-label">Delivery Distance (km)</label>
+          <input type="number" name="distance_km" id="distance_km" class="form-control {% if errors.distance_km %}is-invalid{% endif %}" value="{{ data.distance_km|default:'' }}">
           {% if errors.distance_km %}
             <div class="invalid-feedback">
               {% for error in errors.distance_km %}

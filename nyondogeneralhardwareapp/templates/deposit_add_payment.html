@@ -14,34 +14,54 @@
         <!-- Product -->
         <div class="mb-3">
           <label class="form-label">Product</label>
-          <select class="form-select" name="product" required>
-            <option selected disabled>Choose product</option>
-            <option value="cement">Cement</option>
-            <option value="ironSheets">Iron Sheets</option>
-            <option value="bars">Bars</option>
+          <select class="form-select {% if errors.product %}is-invalid{% endif %}" name="product">
+            <option disabled {% if not data.product %}selected{% endif %}>Choose product</option>
+            <option value="cement" {% if data.product == "cement" %}selected{% endif %}>Cement</option>
+            <option value="ironSheets" {% if data.product == "ironSheets" %}selected{% endif %}>Iron Sheets</option>
+            <option value="bars" {% if data.product == "bars" %}selected{% endif %}>Bars</option>
           </select>
+          {% if errors.product %}
+          <div class="text-danger mt-1">
+            {{ errors.product.0 }}
+          </div>
+          {% endif %}
         </div>
 
         <!-- Amount -->
         <div class="mb-3">
           <label class="form-label">Amount Paid</label>
-          <input type="number" name="amount_paid" class="form-control" required>
+          <input type="number" name="amount_paid" class="form-control {% if errors.amount_paid %}is-invalid{% endif %}" value="{{ data.amount_paid|default:'' }}">
+          {% if errors.amount_paid %}
+          <div class="text-danger mt-1">
+            {{ errors.amount_paid.0 }}
+          </div>
+          {% endif %}
         </div>
 
         <!-- Payment Method -->
         <div class="mb-3">
           <label class="form-label">Payment Method</label>
-          <select class="form-select" name="payment_method" required>
-            <option selected disabled>Choose method</option>
-            <option value="cash">Cash Deposit</option>
-            <option value="mobile">Mobile Money</option>
+          <select class="form-select {% if errors.payment_method %}is-invalid{% endif %}" name="payment_method">
+            <option disabled {% if not data.payment_method %}selected{% endif %}>Choose method</option>
+            <option value="cash" {% if data.payment_method == "cash" %}selected{% endif %}>Cash Deposit</option>
+            <option value="mobile" {% if data.payment_method == "mobile" %}selected{% endif %}>Mobile Money</option>
           </select>
+          {% if errors.payment_method %}
+          <div class="text-danger mt-1">
+            {{ errors.payment_method.0 }}
+          </div>
+          {% endif %}
         </div>
 
         <!-- Date -->
         <div class="mb-3">
           <label class="form-label">Date Registered</label>
-          <input type="date" name="date_registered" class="form-control" required>
+          <input type="date" name="date_registered" class="form-control {% if errors.date_registered %}is-invalid{% endif %}" value="{{ data.date_registered|default:'' }}">
+          {% if errors.date_registered %}
+          <div class="text-danger mt-1">
+            {{ errors.date_registered.0 }}
+          </div>
+          {% endif %}
         </div>
 
         <!-- Submit -->

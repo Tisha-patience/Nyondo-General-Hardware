@@ -42,7 +42,6 @@ Nyondo Deposit Form
             name="name"
             class="form-control {% if errors.name %}is-invalid{% endif %}"
             value="{{ data.name|default:'' }}"
-            required
           >
 
           {% if errors.name %}
@@ -64,7 +63,6 @@ Nyondo Deposit Form
             name="nin"
             class="form-control {% if errors.nin %}is-invalid{% endif %}"
             value="{{ data.nin|default:'' }}"
-            required
           >
 
           {% if errors.nin %}
@@ -85,7 +83,6 @@ Nyondo Deposit Form
               name="phone"
               class="form-control {% if errors.phone %}is-invalid{% endif %}"
               value="{{ data.phone|default:'' }}"
-              required
             >
           </div>
 
@@ -104,9 +101,8 @@ Nyondo Deposit Form
           </label>
 
           <select
-            class="form-select"
+            class="form-select {% if errors.product %}is-invalid{% endif %}"
             name="product"
-            required
           >
 
             <option disabled selected>
@@ -135,6 +131,11 @@ Nyondo Deposit Form
             </option>
 
           </select>
+          {% if errors.product %}
+          <div class="text-danger mt-1">
+            {{ errors.product.0 }}
+          </div>
+          {% endif %}
 
         </div>
 
@@ -147,10 +148,14 @@ Nyondo Deposit Form
           <input
             type="number"
             name="amount_paid"
-            class="form-control"
+            class="form-control {% if errors.amount_paid %}is-invalid{% endif %}"
             value="{{ data.amount_paid|default:'' }}"
-            required
           >
+          {% if errors.amount_paid %}
+          <div class="text-danger mt-1">
+            {{ errors.amount_paid.0 }}
+          </div>
+          {% endif %}
 
         </div>
 
@@ -161,9 +166,8 @@ Nyondo Deposit Form
           </label>
 
           <select
-            class="form-select"
+            class="form-select {% if errors.payment_method %}is-invalid{% endif %}"
             name="payment_method"
-            required
           >
 
             <option disabled selected>
@@ -185,6 +189,11 @@ Nyondo Deposit Form
             </option>
 
           </select>
+          {% if errors.payment_method %}
+          <div class="text-danger mt-1">
+            {{ errors.payment_method.0 }}
+          </div>
+          {% endif %}
 
         </div>
 
@@ -197,10 +206,14 @@ Nyondo Deposit Form
           <input
             type="date"
             name="date"
-            class="form-control"
+            class="form-control {% if errors.date %}is-invalid{% endif %}"
             value="{{ data.date|default:'' }}"
-            required
           >
+          {% if errors.date %}
+          <div class="text-danger mt-1">
+            {{ errors.date.0 }}
+          </div>
+          {% endif %}
 
         </div>
 
@@ -209,7 +222,6 @@ Nyondo Deposit Form
           <input
             class="form-check-input"
             type="checkbox"
-            required
           >
 
           <label class="form-check-label">

@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import A4
 from django.db.models import Sum
 from django.db.models import ProtectedError
 from django.db import transaction
-from decimal import Decimal
+from decimal import Decimal, InvalidOperation
 from django.core.exceptions import ValidationError
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required, user_passes_test,permission_required
@@ -22,31 +22,30 @@ def index(request):
 
 # The login_view handles user authentication. It checks if the request method is POST (indicating a form submission),
 def login_view(request):
-    context = {"username_error": False, "password_error": False}
+    context = {"errors": {}, "data": {"username": ""}}
     if request.method == "POST":
-        username = request.POST.get("username")
-        password = request.POST.get("password")
-# It uses Django's built-in authenticate function to verify the credentials. 
-# If authentication is successful, it logs the user in and redirects them to a role-based dashboard.
-#  If authentication fails, it re-renders the login page with an error message.
-        if not username or not password:
-            messages.error(request, "Both username and password are required.")
-            context["username_error"] = not username
-            context["password_error"] = not password
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "")
+        context["data"]["username"] = username
+
+        if not username:
+            context["errors"]["username"] = ["Username is required."]
+        if not password:
+            context["errors"]["password"] = ["Password is required."]
+
+        if context["errors"]:
             return render(request, "login.html", context)
 
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
             login(request, user)
-            return redirect("login_redirect")  # change to your dashboard URL name
+            return redirect("login_redirect")
         else:
-            messages.error(request, "Invalid username or password.")
-            context["username_error"] = True
-            context["password_error"] = True
+            context["errors"]["general"] = ["Invalid username or password."]
             return render(request, "login.html", context)
 
-    return render(request, "login.html")
+    return render(request, "login.html", context)
 
 
 # This view checks the role of the logged-in user and redirects them to the appropriate dashboard based on their permissions.
@@ -273,19 +272,96 @@ def sales_reg(request):
         # as well as any other unforeseen exceptions that may occur during the process. 
         # This ensures that we can provide meaningful feedback to the user and maintain data integrity.
         try:
-            # We use a transaction to ensure that all database operations within the block are atomic. 
-            # Atomic means that either all operations succeed or none do. 
-            # This is crucial when we are creating a Sale record, multiple SaleItem records, 
-            # and updating stock quantities, as we want to avoid situations where some records are created while others fail,
-            # which could lead to data inconsistencies.
+            data = request.POST
+            errors = {}
+
+            customer_name = data.get("customer_name", "").strip()
+            customer_phone = data.get("customer_phone", "").strip()
+            distance_str = data.get("distance_km", "").strip()
+            stock_ids = data.getlist("stock_id")
+            quantities = data.getlist("quantity")
+            units = data.getlist("unit")
+            unit_prices = data.getlist("unit_price")
+
+            if not customer_name:
+                errors["customer_name"] = ["Customer name is required."]
+
+            if not customer_phone:
+                errors["customer_phone"] = ["Phone number is required."]
+            
+            if distance_str == "":
+                errors["distance_km"] = ["Delivery distance is required."]
+            else:
+                try:
+                    distance_km = int(distance_str)
+                    if distance_km < 0:
+                        errors["distance_km"] = ["Delivery distance cannot be negative."]
+                except (ValueError, TypeError):
+                    errors["distance_km"] = ["Delivery distance must be a number."]
+
+            if not stock_ids:
+                errors["stock_id"] = ["Product selection is required."]
+            else:
+                for idx, stock_id in enumerate(stock_ids):
+                    if not stock_id or not stock_id.strip():
+                        errors.setdefault("stock_id", []).append(f"Product selection is required for item {idx + 1}.")
+                    elif not stock_id.isdigit():
+                        errors.setdefault("stock_id", []).append(f"Invalid product selected for item {idx + 1}.")
+
+            if not quantities:
+                errors["quantity"] = ["Quantity is required."]
+            else:
+                for idx, qty_str in enumerate(quantities):
+                    qty_value = qty_str.strip()
+                    if qty_value == "":
+                        errors.setdefault("quantity", []).append(f"Quantity is required for item {idx + 1}.")
+                    else:
+                        try:
+                            qty = int(qty_value)
+                            if qty <= 0:
+                                errors.setdefault("quantity", []).append(f"Quantity must be greater than zero for item {idx + 1}.")
+                        except (ValueError, TypeError):
+                            errors.setdefault("quantity", []).append(f"Quantity must be a number for item {idx + 1}.")
+
+            if not units:
+                errors["unit"] = ["Unit is required."]
+            else:
+                for idx, unit in enumerate(units):
+                    if not unit or not unit.strip():
+                        errors.setdefault("unit", []).append(f"Unit is required for item {idx + 1}.")
+
+            if not unit_prices:
+                errors["unit_price"] = ["Unit price is required."]
+            else:
+                for idx, price_str in enumerate(unit_prices):
+                    price_value = price_str.strip()
+                    if price_value == "":
+                        errors.setdefault("unit_price", []).append(f"Unit price is required for item {idx + 1}.")
+                    else:
+                        try:
+                            price = float(price_value)
+                            if price < 0:
+                                errors.setdefault("unit_price", []).append(f"Unit price cannot be negative for item {idx + 1}.")
+                        except (ValueError, TypeError):
+                            errors.setdefault("unit_price", []).append(f"Unit price must be a number for item {idx + 1}.")
+
+            if stock_ids and quantities and len(stock_ids) != len(quantities):
+                errors.setdefault("general", []).append("Each item must include a product and quantity.")
+            if stock_ids and units and len(stock_ids) != len(units):
+                errors.setdefault("general", []).append("Each item must include a product and unit.")
+            if stock_ids and unit_prices and len(stock_ids) != len(unit_prices):
+                errors.setdefault("general", []).append("Each item must include a product and unit price.")
+
+            if errors:
+                raise ValidationError(errors)
+
+            distance_km = int(distance_str) if distance_str else 0
+
             with transaction.atomic():
-                # Create Sale record
-                # We create a new Sale record using the customer name, phone, and distance from the form data.
-                distance = request.POST.get("distance_km")
                 sale = Sale.objects.create(
-                    customer_name=request.POST.get("customer_name"),
-                    customer_phone=request.POST.get("customer_phone"),
-                    distance_km=int(distance) if distance else 0
+                    customer_name=customer_name,
+                    customer_phone=customer_phone,
+                    distance_km=distance_km
                 )
 # After successfully creating the Sale record, we log this activity. If the creation fails due to validation errors,
 # the activity log will not be created, and the error will be handled in the except block.
@@ -298,16 +374,19 @@ def sales_reg(request):
                 # We get the list of stock IDs, quantities, units, and unit prices from the form data.
                 # The form is designed to allow multiple items to be sold in one transaction, 
                 # so we use getlist to retrieve all values for these fields.
-                stock_ids = request.POST.getlist("stock_id")
-                quantities = request.POST.getlist("quantity")
-                units = request.POST.getlist("unit")
-                unit_prices = request.POST.getlist("unit_price")
+                stock_ids = data.getlist("stock_id")
+                quantities = data.getlist("quantity")
+                units = data.getlist("unit")
+                unit_prices = data.getlist("unit_price")
 
 # We loop through each item in the sale, create a SaleItem record for it, and update the corresponding Stock quantity.
 # We also perform a safety check to prevent overselling by ensuring that the stock quantity is sufficient for the requested quantity.
-                for i in range(len(stock_ids)): # We loop through the list of stock IDs (and corresponding quantities, units, and unit prices) to process each item in the sale.
+                for i in range(len(stock_ids)):
                     stock_item = get_object_or_404(Stock, pk=stock_ids[i])
-                    qty = int(quantities[i]) # We convert the quantity from the form (which is a string) to an integer for calculations and comparisons.
+                    try:
+                        qty = int(quantities[i])
+                    except (ValueError, TypeError):
+                        raise ValidationError({"quantity": ["Quantity must be a number."]})
                     price = float(stock_item.unit_price)
                     total = qty * price
 
@@ -604,19 +683,35 @@ def generate_report(request):
 def supplier_reg(request):
     if request.method == "POST":
         payload = request.POST
-        # Using a transaction to ensure atomicity - either all operations succeed or none do
-        # This is important because we are creating a supplier and logging an activity, and we don't want one to succeed without the other
-        # We also catch ValidationError separately to handle field-specific errors, 
-        # and a general Exception catch for any other unforeseen issues
         try:
-            # django's transaction.atomic() ensures that if any part of the block fails (like a validation error),
-            #  the entire transaction will be rolled back, preventing partial data from being saved
+            errors = {}
+            supplier_name = payload.get("supplier_name", "").strip()
+            contact_number = payload.get("contact_number", "").strip()
+            email = payload.get("email", "").strip()
+            address = payload.get("address", "").strip()
+
+            if not supplier_name:
+                errors["supplier_name"] = ["Supplier name is required."]
+            if not contact_number:
+                errors["contact_number"] = ["Contact number is required."]
+            elif not contact_number.isdigit():
+                errors["contact_number"] = ["Contact number must contain only digits."]
+            if not email:
+                errors["email"] = ["Email is required."]
+            elif "@" not in email or "." not in email:
+                errors["email"] = ["Enter a valid email address."]
+            if not address:
+                errors["address"] = ["Address is required."]
+
+            if errors:
+                raise ValidationError(errors)
+
             with transaction.atomic():
                 supplier = Supplier.objects.create(
-                    supplier_name=payload.get("supplier_name"),
-                    contact_number=payload.get("contact_number"),
-                    address=payload.get("address"),
-                    email=payload.get("email"),
+                    supplier_name=supplier_name,
+                    contact_number=contact_number,
+                    address=address,
+                    email=email,
                 )
 # After successfully creating the supplier, we log this activity. 
 # If the supplier creation fails due to validation errors, the activity log will not be created, 
@@ -627,21 +722,15 @@ def supplier_reg(request):
                 )
 
                 return redirect("accountssupplier")
-# ValidationError is raised when model validation fails (like missing required fields or invalid formats).
-        except ValidationError as e: # This will catch any validation errors raised by the Supplier model's clean() method or field validators.
-            # Field-specific errors
+        except ValidationError as e:
             return render(request, "supplierReg.html", {
-                "errors": e.message_dict, # This will contain a dictionary of field names to error messages, which can be displayed next to the relevant form fields in the template.
-                "data": payload, # This allows us to pre-fill the form with the data the user had entered, so they don't have to retype everything after a validation error.
+                "errors": e.message_dict,
+                "data": payload,
             })
-
-# The general Exception catch is a safety net for any other types of errors that might occur 
-# (like database errors, or unexpected issues in the code).
-        except Exception as e: # This will catch any other exceptions that are not ValidationErrors, such as database errors, connection issues, or any unforeseen bugs in the code.
-            # General error
+        except Exception as e:
             return render(request, "supplierReg.html", {
-                "general_error": str(e), # This will contain a string representation of the error, which can be displayed at the top of the form as a general error message.
-                "data": payload, # Again, we pass the original data back to pre-fill the form, so the user doesn't lose their input even if an unexpected error occurs.
+                "general_error": str(e),
+                "data": payload,
             })
 
     return render(request, "supplierReg.html")
@@ -676,20 +765,37 @@ def pay_supplier(request, pk, slug, credit_id):
     supplier = get_object_or_404(Supplier, pk=pk, slug=slug)
     credit = get_object_or_404(SupplierCredit, id=credit_id, supplier=supplier)
 
-# If the request method is POST, it means the form has been submitted with payment details. 
-# We then extract the amount and notes from the form data.
     if request.method == "POST":
-        amount = Decimal(request.POST.get("amount"))
-        notes = request.POST.get("notes")
+        data = request.POST
+        errors = {}
+        amount_str = data.get("amount", "").strip()
+        notes = data.get("notes", "").strip()
 
-# We create a new SupplierPayment record linked to the specific credit, 
-# which will automatically update the amount paid and balance in the SupplierCredit model
-# (assuming the model's save() method handles this logic).
+        if amount_str == "":
+            errors["amount"] = ["Payment amount is required."]
+        else:
+            try:
+                amount = Decimal(amount_str)
+                if amount <= 0:
+                    errors["amount"] = ["Payment amount must be greater than zero."]
+                elif amount > credit.balance:
+                    errors["amount"] = ["Payment amount cannot exceed the remaining balance."]
+            except (ValueError, TypeError, InvalidOperation):
+                errors["amount"] = ["Payment amount must be a number."]
+
+        if errors:
+            return render(request, "pay_supplier.html", {
+                "credit": credit,
+                "supplier": supplier,
+                "errors": errors,
+                "data": data,
+            })
+
         SupplierPayment.objects.create(credit=credit, amount=amount, notes=notes)
         messages.success(request, f"Payment of UGX {amount} recorded for {supplier.supplier_name}")
         return redirect("accountssupplier")
 
-    return render(request, "pay_supplier.html", {"credit": credit, "supplier": supplier})
+    return render(request, "pay_supplier.html", {"credit": credit, "supplier": supplier, "data": {}})
 
 
 def stock_edit(request,pk):
@@ -744,31 +850,95 @@ def stock_view(request, pk):
 def stock_reg(request):
     if request.method == "POST":
         payload = request.POST
-        # We use a try-except block to handle potential validation errors when creating the Stock record,
         try:
-            sent_supplier = payload.get("supplier")
-            supplier = Supplier.objects.get(id=sent_supplier)
+            errors = {}
+            product_name = payload.get("product_name", "").strip()
+            specification = payload.get("specification", "").strip()
+            supplier_id = payload.get("supplier", "").strip()
+            payment_mode = payload.get("payment_mode", "").strip()
+            credit_terms = payload.get("credit_terms", "").strip()
+            unit_cost_str = payload.get("unit_cost", "").strip()
+            unit_price_str = payload.get("unit_price", "").strip()
+            quantity_str = payload.get("quantity", "").strip()
+            unit = payload.get("unit", "").strip()
+            date_received = payload.get("date", "").strip()
 
-# Before creating the stock record, we check if the selected supplier is active. 
-# If the supplier is deactivated, we show an error message and redirect back to the stock registration page 
-# without saving the stock record.
-            # Block inactive suppliers
-            if not supplier.is_active:
-                messages.error(request, "This supplier is deactivated. Choose another supplier.")
-                return redirect("accountsstock-reg")
+            if not product_name:
+                errors["product_name"] = ["Product name is required."]
+            if not specification:
+                errors["specification"] = ["Specification is required."]
 
-# If the supplier is active, we proceed to create the Stock record with the provided details.
+            supplier = None
+            if not supplier_id:
+                errors["supplier"] = ["Supplier is required."]
+            else:
+                if not supplier_id.isdigit():
+                    errors.setdefault("supplier", []).append("Invalid supplier selected.")
+                else:
+                    try:
+                        supplier = Supplier.objects.get(id=supplier_id)
+                        if not supplier.is_active:
+                            errors.setdefault("supplier", []).append("This supplier is deactivated. Choose another supplier.")
+                    except Supplier.DoesNotExist:
+                        errors.setdefault("supplier", []).append("Supplier not found.")
+
+            if not payment_mode:
+                errors["payment_mode"] = ["Mode of payment is required."]
+            elif payment_mode not in ["Cash", "Credit"]:
+                errors["payment_mode"] = ["Mode of payment must be Cash or Credit."]
+
+            if payment_mode == "Credit" and not credit_terms:
+                errors["credit_terms"] = ["Credit terms are required when payment mode is Credit."]
+
+            if unit_cost_str == "":
+                errors["unit_cost"] = ["Unit cost is required."]
+            else:
+                try:
+                    unit_cost = Decimal(unit_cost_str)
+                    if unit_cost < 0:
+                        errors["unit_cost"] = ["Unit cost cannot be negative."]
+                except (InvalidOperation, ValueError, TypeError):
+                    errors["unit_cost"] = ["Unit cost must be a number."]
+
+            if unit_price_str == "":
+                errors["unit_price"] = ["Unit price is required."]
+            else:
+                try:
+                    unit_price = Decimal(unit_price_str)
+                    if unit_price < 0:
+                        errors["unit_price"] = ["Unit price cannot be negative."]
+                except (InvalidOperation, ValueError, TypeError):
+                    errors["unit_price"] = ["Unit price must be a number."]
+
+            if quantity_str == "":
+                errors["quantity"] = ["Quantity is required."]
+            else:
+                try:
+                    quantity = int(quantity_str)
+                    if quantity <= 0:
+                        errors["quantity"] = ["Quantity must be greater than zero."]
+                except (ValueError, TypeError):
+                    errors["quantity"] = ["Quantity must be a number."]
+
+            if not unit:
+                errors["unit"] = ["Unit is required."]
+            if not date_received:
+                errors["date"] = ["Date received is required."]
+
+            if errors:
+                raise ValidationError(errors)
+
             stock = Stock.objects.create(
-                product_name=payload.get("product_name"),
-                specification=payload.get("specification"),
-                supplier=supplier,  # use the Supplier object
-                payment_mode=payload.get("payment_mode"),
-                credit_terms=payload.get("credit_terms") if payload.get("payment_mode") == "Credit" else None,
-                unit_cost=Decimal(payload.get("unit_cost")),
-                unit_price=Decimal(payload.get("unit_price")),
-                quantity=int(payload.get("quantity")),
-                unit=payload.get("unit"),
-                date_received=payload.get("date"),
+                product_name=product_name,
+                specification=specification,
+                supplier=supplier,
+                payment_mode=payment_mode,
+                credit_terms=credit_terms if payment_mode == "Credit" else None,
+                unit_cost=unit_cost,
+                unit_price=unit_price,
+                quantity=quantity,
+                unit=unit,
+                date_received=date_received,
             )
 # After successfully creating the stock record, we log this activity. If the creation fails due to validation errors, 
 # the activity log will not be created, and the error will be handled in the except block.
@@ -779,20 +949,18 @@ def stock_reg(request):
 
             return redirect("accountsstock")
 
-# We catch ValidationError separately to handle field-specific errors, and a general Exception catch for any other unforeseen issues.
-        except ValidationError as e: # This will catch any validation errors raised by the Stock model's clean() method or field validators.
-            # Field-specific errors
+        except ValidationError as e:
             suppliers = Supplier.objects.filter(is_active=True)
             return render(request, "stock-reg.html", {
-                "errors": e.message_dict, # This will contain a dictionary of field names to error messages, which can be displayed next to the relevant form fields in the template.
-                "data": request.POST, # This allows us to pre-fill the form with the data the user had entered, so they don't have to retype everything after a validation error.
+                "errors": e.message_dict,
+                "data": request.POST,
                 "suppliers": suppliers
             })
 
         except Exception as e:
             suppliers = Supplier.objects.filter(is_active=True)
             return render(request, "stock-reg.html", {
-                "general_error": str(e), # This will contain a string representation of the error, which can be displayed at the top of the form as a general error message.
+                "general_error": str(e),
                 "data": request.POST,
                 "suppliers": suppliers
             })
@@ -844,28 +1012,66 @@ def participant_delete(request, pk):
 @user_passes_test(lambda u: u.is_superuser)
 def customer_reg(request):
     if request.method == "POST":
-        # We use a try-except block to handle potential validation errors when creating the Participant and Deposit records,
-        # and to catch any other unforeseen issues that might arise during the process.
         try:
-            # First, we create the Participant record with the provided details from the form.
+            errors = {}
+            data = request.POST
+            name = data.get("name", "").strip()
+            nin = data.get("nin", "").strip()
+            phone = data.get("phone", "").strip()
+            product = data.get("product", "").strip()
+            amount_paid_str = data.get("amount_paid", "").strip()
+            payment_method = data.get("payment_method", "").strip()
+            date_registered = data.get("date", "").strip()
+
+            if not name:
+                errors["name"] = ["Full name is required."]
+            if not nin:
+                errors["nin"] = ["NIN is required."]
+            if not phone:
+                errors["phone"] = ["Phone number is required."]
+            elif not phone.isdigit():
+                errors["phone"] = ["Phone number must contain only digits."]
+
+            if not product:
+                errors["product"] = ["Product is required."]
+            elif product not in ["cement", "ironSheets", "bars"]:
+                errors["product"] = ["Choose a valid product."]
+
+            if amount_paid_str == "":
+                errors["amount_paid"] = ["Amount paid is required."]
+            else:
+                try:
+                    amount_paid = Decimal(amount_paid_str)
+                    if amount_paid <= 0:
+                        errors["amount_paid"] = ["Amount paid must be greater than zero."]
+                except (InvalidOperation, ValueError, TypeError):
+                    errors["amount_paid"] = ["Amount paid must be a number."]
+
+            if not payment_method:
+                errors["payment_method"] = ["Payment method is required."]
+            elif payment_method not in ["cash", "mobile"]:
+                errors["payment_method"] = ["Choose a valid payment method."]
+
+            if not date_registered:
+                errors["date"] = ["Date registered is required."]
+
+            if errors:
+                raise ValidationError(errors)
+
             participant = Participant.objects.create(
-                name=request.POST.get("name"),
-                nin=request.POST.get("nin"),
-                phone=request.POST.get("phone"),
-                
+                name=name,
+                nin=nin,
+                phone=phone,
             )
 
-            # We then create a related Deposit record for this participant,
-            #  using the participant object we just created to link the deposit to the correct participant.
             deposit = Deposit.objects.create(
                 participant=participant,
-                product=request.POST.get("product"),
-                amount_paid=request.POST.get("amount_paid"),
-                payment_method=request.POST.get("payment_method"),
-                
+                product=product,
+                amount_paid=amount_paid,
+                payment_method=payment_method,
+                date=date_registered,
             )
-# After successfully creating the participant and their initial deposit, 
-# a message is displayed to confirm the successful enrollment, and we log this activity.
+
             messages.success(
                 request,
                 f"{participant.name} enrolled successfully with first deposit."
@@ -873,9 +1079,6 @@ def customer_reg(request):
 
             return redirect("deposit_receipt", pk=deposit.pk)
 
-# If there are any validation errors (like missing required fields or invalid formats), 
-# we catch the ValidationError and pass the specific field errors back to the template, 
-# along with the original form data to pre-fill the form.
         except ValidationError as e:
             return render(request, "customer-reg.html", {
                 "errors": e.message_dict,
@@ -901,29 +1104,16 @@ def customer_profile(request, pk):
     total_balance = deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
     collections = participant.collections.order_by("-date_collected")
 
-    # thresholds (unit prices)
-    # We define a dictionary of products and their corresponding price thresholds.
-    thresholds = {
-        "CEM II N (bag)": 50000,
-        "CEM III N (bag)": 70000,
-        "Iron Bar 10mm (piece)": 20000,
-        "Iron Bar 12mm (piece)": 25000,
-        "Iron Bar 16mm (piece)": 30000,
-        "Iron Sheet Gauge 28 Red": 60000,
-        "Iron Sheet Gauge 28 Blue": 60000,
-        "Iron Sheet Gauge 30 Galvanized": 70000,
-    }
 
     # eligibility calculation
     # We calculate how many units of each product the participant is eligible for based on 
     # their total deposit balance and the price thresholds defined above.
+     # eligibility calculation using Stock objects
     eligibility = {}
-    # We loop through each product and its price in the thresholds dictionary.
-    for product, price in thresholds.items():
-        # We calculate the eligibility by dividing the total balance by the price of the product,
-        # but only if the total balance is greater than or equal to the price. 
-        # If the total balance is less than the price, the eligibility is set to 0.
-        eligibility[product] = total_balance // price if total_balance >= price else 0
+    for stock in Stock.objects.all():
+        # eligible quantity = balance // unit_price
+        eligible_qty = total_balance // stock.unit_price if total_balance >= stock.unit_price else 0
+        eligibility[stock] = eligible_qty   # store Stock object as key
 
 # Finally, we pass all the relevant data to the template context and render the customer profile page.
     context = {
@@ -942,25 +1132,58 @@ def customer_profile(request, pk):
 
 def deposit_add_payment(request, participant_id):
     participant = get_object_or_404(Participant, pk=participant_id)
-# If the request method is POST, it means the form has been submitted with the new deposit details.
-#  We then create a new Deposit record linked to the participant using the provided form data.
     if request.method == "POST":
+        data = request.POST
+        errors = {}
+        product = data.get("product", "").strip()
+        amount_paid_str = data.get("amount_paid", "").strip()
+        payment_method = data.get("payment_method", "").strip()
+        date_registered = data.get("date_registered", "").strip()
+
+        if not product:
+            errors["product"] = ["Product is required."]
+        elif product not in ["cement", "ironSheets", "bars"]:
+            errors["product"] = ["Select a valid product."]
+
+        if amount_paid_str == "":
+            errors["amount_paid"] = ["Amount paid is required."]
+        else:
+            try:
+                amount_paid = Decimal(amount_paid_str)
+                if amount_paid <= 0:
+                    errors["amount_paid"] = ["Amount paid must be greater than zero."]
+            except (ValueError, TypeError, InvalidOperation):
+                errors["amount_paid"] = ["Amount paid must be a number."]
+
+        if not payment_method:
+            errors["payment_method"] = ["Payment method is required."]
+        elif payment_method not in ["cash", "mobile"]:
+            errors["payment_method"] = ["Select a valid payment method."]
+
+        if not date_registered:
+            errors["date_registered"] = ["Date registered is required."]
+
+        if errors:
+            return render(request, "deposit_add_payment.html", {
+                "participant": participant,
+                "errors": errors,
+                "data": data,
+            })
+
         deposit = Deposit.objects.create(
             participant=participant,
-            product=request.POST.get("product"),
-            amount_paid=request.POST.get("amount_paid"),
-            payment_method=request.POST.get("payment_method"),
-            date_registered=request.POST.get("date_registered"),
+            product=product,
+            amount_paid=amount_paid,
+            payment_method=payment_method,
+            date_registered=date_registered,
         )
         Activity.objects.create(
-    title=f"Deposit added for {participant.name}",
-    color="green"
-)
-        # Redirect to receipt page after saving
+            title=f"Deposit added for {participant.name}",
+            color="green"
+        )
         return redirect("deposit_receipt", pk=deposit.pk)
 
-    #Render the form template
-    return render(request, "deposit_add_payment.html", {"participant": participant})
+    return render(request, "deposit_add_payment.html", {"participant": participant, "data": {}})
 
 def goods_receipt(request, pk):
     collection = get_object_or_404(GoodsCollection, pk=pk)
@@ -970,25 +1193,86 @@ def goods_receipt(request, pk):
         "receipt": receipt,
     })
 
-def pick_goods(request, participant_id, product=None, quantity=None):
+@login_required
+def pick_goods(request, participant_id, stock_id=None, quantity=None):
     participant = get_object_or_404(Participant, pk=participant_id)
+    stock = get_object_or_404(Stock, pk=stock_id)
+
+    # Calculate current balance
+    current_balance = participant.deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
 
     if request.method == "POST":
-        collection =GoodsCollection.objects.create(
-            participant=participant,
-            product=request.POST.get("product"),
-            quantity=int(request.POST.get("quantity")),
-        )
-        # Redirect straight to final receipt
-        return redirect("goods_receipt", pk=collection.pk)
-        
+        try:
+            qty = int(request.POST.get("quantity"))
+            if qty <= 0:
+                messages.error(request, "Quantity must be greater than zero.")
+                return render(
+                    request,
+                    "goodsCollection_form.html",
+                    {"participant": participant, "stock": stock, "quantity": quantity, "current_balance": current_balance},
+                )
+        except (ValueError, TypeError):
+            messages.error(request, "Invalid quantity entered.")
+            return render(
+                request,
+                "goodsCollection_form.html",
+                {"participant": participant, "stock": stock, "quantity": quantity, "current_balance": current_balance},
+            )
 
-    # Pass product and quantity to template for prefill
+        total_price = stock.unit_price * qty
+
+        # Check if participant has sufficient balance
+        if current_balance < total_price:
+            remaining_needed = total_price - current_balance
+            messages.error(
+                request,
+                f"Insufficient balance. Current balance: UGX {current_balance}. "
+                f"Amount needed for {qty} units: UGX {total_price}. "
+                f"Additional deposit required: UGX {remaining_needed}."
+            )
+            return render(
+                request,
+                "goodsCollection_form.html",
+                {"participant": participant, "stock": stock, "quantity": quantity, "current_balance": current_balance},
+            )
+
+        # Record goods collection
+        collection = GoodsCollection.objects.create(
+            participant=participant,
+            stock=stock,
+            quantity=qty,
+        )
+
+        # Deduct from balance by creating a negative deposit
+        deduction = Deposit.objects.create(
+            participant=participant,
+            product=stock.product_name,
+            amount_paid=-total_price,
+            payment_method="deduction"
+        )
+
+        # Log activity
+        Activity.objects.create(
+            title=f"Goods collection: {qty} units of {stock.product_name} for {participant.name} (Balance reduced by UGX {total_price})",
+            color="blue"
+        )
+
+        # Calculate new balance after deduction
+        new_balance = participant.deposits.aggregate(Sum("amount_paid"))["amount_paid__sum"] or 0
+        messages.success(
+            request,
+            f"Goods picked successfully! Previous balance: UGX {current_balance}. "
+            f"Deducted: UGX {total_price}. New balance: UGX {new_balance}."
+        )
+
+        return redirect("goods_receipt", pk=collection.pk)
+
     return render(
         request,
         "goodsCollection_form.html",
-        {"participant": participant, "product": product, "quantity": quantity},
+        {"participant": participant, "stock": stock, "quantity": quantity, "current_balance": current_balance},
     )
+
 
 
 def deposit_update(request, pk):

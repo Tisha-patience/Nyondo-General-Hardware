@@ -60,7 +60,7 @@ urlpatterns = [
     path('accounts/customer-profile/<int:pk>/', views.customer_profile, name='customer_profile'),
     path('accounts/customer-deposit/add-payment/<int:participant_id>/', views.deposit_add_payment, name='deposit_add_payment'),
     path(
-    "customers/<int:participant_id>/pick-goods/<str:product>/<int:quantity>/",
+   "customers/<int:participant_id>/pick-goods/<int:stock_id>/<int:quantity>/",
     views.pick_goods,
     name="pick_goods"
 ),

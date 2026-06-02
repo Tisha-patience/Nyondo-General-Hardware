@@ -78,14 +78,14 @@
     <div class="card-body">
       <h5>Goods Eligibility</h5>
       <ul class="list-group">
-        {% for product, qty in eligibility.items %}
+        {% for stock, qty in eligibility.items %}
         <li
           class="list-group-item d-flex justify-content-between align-items-center"
         >
-          {{ product }} {% if qty > 0 %}
+          {{ stock.product_name }} {% if qty > 0 %}
           <span class="badge bg-success">Eligible: {{ qty }}</span>
           <a
-            href="{% url 'pick_goods' participant.pk product qty %}"
+            href="{% url 'pick_goods' participant.pk stock.id qty %}"
             class="btn btn-sm btn-primary ms-2"
           >
             Pick Goods

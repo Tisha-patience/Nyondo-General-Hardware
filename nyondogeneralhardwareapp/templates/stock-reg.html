@@ -23,76 +23,89 @@
           <!-- Product Name -->
           <div class="col-md-6 mb-3">
             <label for="name" class="form-label">Product Name</label>
-            <select class="form-select" id="name" name="product_name" required>
-              <option value="Cement">Cement</option>
-              <option value="Iron Bars">Iron Bars</option>
-              <option value="Nails">Nails</option>
-              <option value="Wheelbarrows">Wheelbarrows</option>
-              <option value="Wire Mesh">Wire Mesh</option>
-              <option value="Barbed Wire">Barbed Wire</option>
-              <option value="Iron Sheets">Iron Sheets</option>
+            <select class="form-select {% if errors.product_name %}is-invalid{% endif %}" id="name" name="product_name">
+              <option value="Cement" {% if data.product_name == "Cement" %}selected{% endif %}>Cement</option>
+              <option value="Iron Bars" {% if data.product_name == "Iron Bars" %}selected{% endif %}>Iron Bars</option>
+              <option value="Nails" {% if data.product_name == "Nails" %}selected{% endif %}>Nails</option>
+              <option value="Wheelbarrows" {% if data.product_name == "Wheelbarrows" %}selected{% endif %}>Wheelbarrows</option>
+              <option value="Wire Mesh" {% if data.product_name == "Wire Mesh" %}selected{% endif %}>Wire Mesh</option>
+              <option value="Barbed Wire" {% if data.product_name == "Barbed Wire" %}selected{% endif %}>Barbed Wire</option>
+              <option value="Iron Sheets" {% if data.product_name == "Iron Sheets" %}selected{% endif %}>Iron Sheets</option>
             </select>
+            {% if errors.product_name %}
+              <div class="invalid-feedback">
+                {% for error in errors.product_name %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
 
           <!-- Specification -->
           <div class="col-md-6 mb-3">
             <label for="specification" class="form-label">Specification</label>
             <select
-              class="form-select"
+              class="form-select {% if errors.specification %}is-invalid{% endif %}"
               id="specification"
               name="specification"
-              required
             >
               <!-- Cement -->
               <optgroup label="Cement">
-                <option value="CEM II N">CEM II N</option>
-                <option value="CEM III N">CEM III N</option>
+                <option value="CEM II N" {% if data.specification == "CEM II N" %}selected{% endif %}>CEM II N</option>
+                <option value="CEM III N" {% if data.specification == "CEM III N" %}selected{% endif %}>CEM III N</option>
               </optgroup>
 
               <!-- Iron Bars -->
               <optgroup label="Iron Bars">
-                <option value="10mm">10mm</option>
-                <option value="12mm">12mm</option>
-                <option value="16mm">16mm</option>
+                <option value="10mm" {% if data.specification == "10mm" %}selected{% endif %}>10mm</option>
+                <option value="12mm" {% if data.specification == "12mm" %}selected{% endif %}>12mm</option>
+                <option value="16mm" {% if data.specification == "16mm" %}selected{% endif %}>16mm</option>
               </optgroup>
 
               <!-- Nails -->
               <optgroup label="Nails">
-                <option value="Inch 1">Inch 1</option>
-                <option value="Inch 3">Inch 3</option>
-                <option value="Inch 4">Inch 4</option>
-                <option value="Inch 5">Inch 5</option>
-                <option value="Roofing nails 5kg">
+                <option value="Inch 1" {% if data.specification == "Inch 1" %}selected{% endif %}>Inch 1</option>
+                <option value="Inch 3" {% if data.specification == "Inch 3" %}selected{% endif %}>Inch 3</option>
+                <option value="Inch 4" {% if data.specification == "Inch 4" %}selected{% endif %}>Inch 4</option>
+                <option value="Inch 5" {% if data.specification == "Inch 5" %}selected{% endif %}>Inch 5</option>
+                <option value="Roofing nails 5kg" {% if data.specification == "Roofing nails 5kg" %}selected{% endif %}>
                   Roofing nails (5kg pack)
                 </option>
               </optgroup>
 
               <!-- Wheelbarrows -->
               <optgroup label="Wheelbarrows">
-                <option value="Standard">Standard</option>
-                <option value="Heavy-duty">Heavy-duty</option>
+                <option value="Standard" {% if data.specification == "Standard" %}selected{% endif %}>Standard</option>
+                <option value="Heavy-duty" {% if data.specification == "Heavy-duty" %}selected{% endif %}>Heavy-duty</option>
               </optgroup>
 
               <!-- Wire Mesh -->
               <optgroup label="Wire Mesh">
-                <option value="2m x 50m roll">2m × 50m roll</option>
+                <option value="2m x 50m roll" {% if data.specification == "2m x 50m roll" %}selected{% endif %}>2m × 50m roll</option>
               </optgroup>
 
               <!-- Barbed Wire -->
               <optgroup label="Barbed Wire">
-                <option value="High tensile">High tensile</option>
-                <option value="Low tensile">Low tensile</option>
+                <option value="High tensile" {% if data.specification == "High tensile" %}selected{% endif %}>High tensile</option>
+                <option value="Low tensile" {% if data.specification == "Low tensile" %}selected{% endif %}>Low tensile</option>
               </optgroup>
 
               <!-- Iron Sheets -->
               <optgroup label="Iron Sheets">
-                <option value="Gauge 28 Red">Gauge 28 — Red</option>
-                <option value="Gauge 28 Blue">Gauge 28 — Blue</option>
-                <option value="Gauge 30 Galvanized">
+                <option value="Gauge 28 Red" {% if data.specification == "Gauge 28 Red" %}selected{% endif %}>Gauge 28 — Red</option>
+                <option value="Gauge 28 Blue" {% if data.specification == "Gauge 28 Blue" %}selected{% endif %}>Gauge 28 — Blue</option>
+                <option value="Gauge 30 Galvanized" {% if data.specification == "Gauge 30 Galvanized" %}selected{% endif %}>
                   Gauge 30 — Galvanized
                 </option>
               </optgroup>
             </select>
+            {% if errors.specification %}
+              <div class="invalid-feedback">
+                {% for error in errors.specification %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
         </div>
 
@@ -126,19 +139,32 @@
           <div class="col-md-6 mb-3">
             <label for="payment_mode" class="form-label">Mode of Payment</label>
             <select
-              class="form-select"
+              class="form-select {% if errors.payment_mode %}is-invalid{% endif %}"
               id="payment_mode"
               name="payment_mode"
-              required
             >
-              <option value="Cash">Cash</option>
-              <option value="Credit">Credit</option>
+              <option value="Cash" {% if data.payment_mode == "Cash" %}selected{% endif %}>Cash</option>
+              <option value="Credit" {% if data.payment_mode == "Credit" %}selected{% endif %}>Credit</option>
             </select>
+            {% if errors.payment_mode %}
+              <div class="invalid-feedback">
+                {% for error in errors.payment_mode %}
+                  {{ error }}
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
 
-           <div  >
+           <div>
     <label class="form-label">Credit Terms:</label>
-    <input type="text" name="credit_terms" class="form-control"  placeholder="e.g. 30 days">
+    <input type="text" name="credit_terms" class="form-control {% if errors.credit_terms %}is-invalid{% endif %}" placeholder="e.g. 30 days" value="{{ data.credit_terms|default:'' }}">
+    {% if errors.credit_terms %}
+      <div class="invalid-feedback">
+        {% for error in errors.credit_terms %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
         </div>
 
@@ -153,7 +179,6 @@
     id="unit_cost"
     name="unit_cost"
     value="{{ data.unit_cost|default:'' }}"
-    required
   />
   {% if errors.unit_cost %}
     <div class="invalid-feedback">
@@ -174,7 +199,6 @@
       id="unit_price"
       name="unit_price"
       value="{{ data.unit_price|default:'' }}"
-      required
     />
     {% if errors.unit_price %}
       <div class="invalid-feedback">
@@ -189,14 +213,13 @@
 <!-- Row 2: Quantity + Unit -->
 <div class="row">
   <div class="col-md-6 mb-3">
-    <label for="quantity" class="form-label {% if errors.quantity %}is-invalid{% endif %}">Quantity</label>
+    <label for="quantity" class="form-label">Quantity</label>
     <input
       type="number"
       class="form-control {% if errors.quantity %}is-invalid{% endif %}"
       id="quantity"
       name="quantity"
       value="{{ data.quantity|default:'' }}"
-      required
     />
     {% if errors.quantity %}
     <div class="invalid-feedback">
@@ -212,9 +235,17 @@
     <input
       type="text"
       name="unit"
-      class="form-control"
+      class="form-control {% if errors.unit %}is-invalid{% endif %}"
       placeholder="e.g. bags"
+      value="{{ data.unit|default:'' }}"
     />
+    {% if errors.unit %}
+      <div class="invalid-feedback">
+        {% for error in errors.unit %}
+          {{ error }}
+        {% endfor %}
+      </div>
+    {% endif %}
   </div>
 </div>
 
@@ -225,10 +256,17 @@
           <input
             type="date"
             name="date"
-            class="form-control"
+            class="form-control {% if errors.date %}is-invalid{% endif %}"
             id="dateEntry"
-            required
+            value="{{ data.date|default:'' }}"
           />
+          {% if errors.date %}
+            <div class="invalid-feedback">
+              {% for error in errors.date %}
+                {{ error }}
+              {% endfor %}
+            </div>
+          {% endif %}
         </div>
 
         <div class="row">
