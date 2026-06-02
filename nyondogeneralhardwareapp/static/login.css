@@ -48,6 +48,7 @@ body{
   z-index: 0;
 }
 
+
 .glow-1{
 
   width: 350px;
@@ -441,4 +442,9 @@ body{
     font-size: 1.8rem;
   }
 
+}
+
+.input-group-custom.is-invalid {
+  border-color: #dc3545 !important; /* red border */
+  box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25) !important; /* optional glow */
 }

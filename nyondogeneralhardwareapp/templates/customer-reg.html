@@ -40,7 +40,7 @@ Nyondo Deposit Form
           <input
             type="text"
             name="name"
-            class="form-control"
+            class="form-control {% if errors.name %}is-invalid{% endif %}"
             value="{{ data.name|default:'' }}"
             required
           >
@@ -62,7 +62,7 @@ Nyondo Deposit Form
           <input
             type="text"
             name="nin"
-            class="form-control"
+            class="form-control {% if errors.nin %}is-invalid{% endif %}"
             value="{{ data.nin|default:'' }}"
             required
           >
@@ -83,7 +83,7 @@ Nyondo Deposit Form
             <input
               type="text"
               name="phone"
-              class="form-control"
+              class="form-control {% if errors.phone %}is-invalid{% endif %}"
               value="{{ data.phone|default:'' }}"
               required
             >

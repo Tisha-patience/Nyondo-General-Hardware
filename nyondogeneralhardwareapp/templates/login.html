@@ -34,7 +34,7 @@
 
     {% load static %}
 
-    <link rel="stylesheet" href="{% static 'login.css' %}" />
+    <link rel="stylesheet" href="{% static 'login.css' %}?v=2" />
   </head>
 
   <body>
@@ -114,12 +114,12 @@
             <div class="form-group">
               <label> Username </label>
 
-              <div class="input-group-custom">
+              <div class="input-group-custom {% if username_error %}is-invalid{% endif %}">
                 <i class="bi bi-person"></i>
 
                 <input
                   type="text"
-                  class="form-control {% if username_error %}is-invalid{% endif %}"
+                  class="form-control"
                   name="username"
                   placeholder="Enter username"
                   required
@@ -137,12 +137,12 @@
             <div class="form-group">
               <label> Password </label>
 
-              <div class="input-group-custom">
+              <div class="input-group-custom {% if password_error %}is-invalid{% endif %}">
                 <i class="bi bi-lock"></i>
 
                 <input
                   type="password"
-                  class="form-control {% if password_error %}is-invalid{% endif %}"
+                  class="form-control"
                   name="password"
                   placeholder="Enter password"
                   required

@@ -440,6 +440,7 @@ hr{
   font-weight: 600;
 }
 
+
 .badge-light-warning{
 
   background: #fef3c7;
@@ -500,3 +501,15 @@ footer{
   }
 
 }
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  border: 1px solid #dc3545 !important;   /* force red border */
+  background: #fff !important;            /* clean background */
+  box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25) !important; /* optional red glow */
+}
+
+.form-label.is-invalid {
+  color: #dc3545 !important; /* make label text red too */
+}
+

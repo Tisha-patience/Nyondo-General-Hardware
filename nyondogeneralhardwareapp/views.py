@@ -22,7 +22,7 @@ def index(request):
 
 # The login_view handles user authentication. It checks if the request method is POST (indicating a form submission),
 def login_view(request):
-    context = {}
+    context = {"username_error": False, "password_error": False}
     if request.method == "POST":
         username = request.POST.get("username")
         password = request.POST.get("password")
