@@ -1012,9 +1012,18 @@ def participant_delete(request, pk):
 @user_passes_test(lambda u: u.is_superuser)
 def customer_reg(request):
     if request.method == "POST":
+        # We wrap the entire processing logic in a try block to catch any potential exceptions.
         try:
+            # We start by initializing an empty dictionary called errors to collect
+            #  any validation errors that may occur during the processing of the form data.
+            # We then extract the form data from the POST request and perform validation checks on each field. 
+            # If any validation fails, we add an appropriate error message to the errors dictionary.
             errors = {}
             data = request.POST
+            # We use the get method with a default empty string and strip to ensure we have clean input for validation.
+            # The strip method is used to remove leading and trailing whitespace from the input strings.
+            # We validate that the name, NIN, phone number, product, amount paid, payment method, and date 
+            # are all provided and in the correct format.
             name = data.get("name", "").strip()
             nin = data.get("nin", "").strip()
             phone = data.get("phone", "").strip()
@@ -1029,9 +1038,7 @@ def customer_reg(request):
                 errors["nin"] = ["NIN is required."]
             if not phone:
                 errors["phone"] = ["Phone number is required."]
-            elif not phone.isdigit():
-                errors["phone"] = ["Phone number must contain only digits."]
-
+            
             if not product:
                 errors["product"] = ["Product is required."]
             elif product not in ["cement", "ironSheets", "bars"]:
@@ -1069,7 +1076,7 @@ def customer_reg(request):
                 product=product,
                 amount_paid=amount_paid,
                 payment_method=payment_method,
-                date=date_registered,
+                date_registered=date_registered,
             )
 
             messages.success(

@@ -179,7 +179,7 @@ Nyondo Reports Dashboard
       <tr>
         <td>{{ stock.product_name }}</td>
         <td>{{ stock.quantity }}</td>
-        <td>UGX {{ stock.price |floatformat:"0"| intcomma }}</td>
+        <td>UGX {{ stock.unit_price |floatformat:"0"| intcomma }}</td>
       </tr>
       {% endfor %}
     </tbody>
