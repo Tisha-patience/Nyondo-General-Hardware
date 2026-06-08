@@ -1,0 +1,1544 @@
+[
+{
+  "model": "nyondogeneralhardwareapp.supplier",
+  "pk": 1,
+  "fields": {
+    "supplier_name": "Factory Depot",
+    "slug": "factory-depot",
+    "contact_number": "+256760752349",
+    "address": "Kampala",
+    "email": "factorydepot@gmail.com",
+    "date_added": "2026-05-03T07:45:41.024Z",
+    "is_active": true
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplier",
+  "pk": 2,
+  "fields": {
+    "supplier_name": "Factory Depot",
+    "slug": "factory-depot-1",
+    "contact_number": "+256760752349",
+    "address": "Kampala",
+    "email": "factorydepot@gmail.com",
+    "date_added": "2026-05-03T07:49:47.802Z",
+    "is_active": true
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplier",
+  "pk": 3,
+  "fields": {
+    "supplier_name": "Factory Depot",
+    "slug": "factory-depot-2",
+    "contact_number": "+256760752349",
+    "address": "Kampala",
+    "email": "factorydepot@gmail.com",
+    "date_added": "2026-05-03T07:55:02.368Z",
+    "is_active": true
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplier",
+  "pk": 4,
+  "fields": {
+    "supplier_name": "Kampala Cement Suppliers Ltd.",
+    "slug": "kampala-cement-suppliers-ltd",
+    "contact_number": "+256772090194",
+    "address": "Kampala",
+    "email": "kampalacement@gmail.com",
+    "date_added": "2026-05-03T08:02:40.686Z",
+    "is_active": true
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplier",
+  "pk": 5,
+  "fields": {
+    "supplier_name": "Jinja Electrical & Tools Ltd.",
+    "slug": "jinja-electrical-tools-ltd",
+    "contact_number": "+256708901234",
+    "address": "Main Street, Jinja",
+    "email": "tools@jinjaelectrical.co.ug",
+    "date_added": "2026-05-03T08:13:51.797Z",
+    "is_active": true
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplier",
+  "pk": 6,
+  "fields": {
+    "supplier_name": "Uganda Steel & Iron Works",
+    "slug": "uganda-steel-iron-works",
+    "contact_number": "+256702345678\t",
+    "address": "Namanve Industrial Park, Mukono",
+    "email": "sales@ugandasteel.co.ug",
+    "date_added": "2026-05-03T09:09:22.909Z",
+    "is_active": true
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.stock",
+  "pk": 1,
+  "fields": {
+    "product_name": "Cement",
+    "specification": "CEM II N",
+    "quantity": 155,
+    "unit": "bags",
+    "unit_cost": "25000.00",
+    "unit_price": "30000.00",
+    "supplier": 1,
+    "payment_mode": "Cash",
+    "credit_terms": null,
+    "total_cost": "3875000.00",
+    "date_received": "2026-05-02"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.stock",
+  "pk": 2,
+  "fields": {
+    "product_name": "Cement",
+    "specification": "CEM III N",
+    "quantity": 340,
+    "unit": "bags",
+    "unit_cost": "40000.00",
+    "unit_price": "50000.00",
+    "supplier": 4,
+    "payment_mode": "Credit",
+    "credit_terms": "30 days",
+    "total_cost": "13600000.00",
+    "date_received": "2026-05-15"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.stock",
+  "pk": 3,
+  "fields": {
+    "product_name": "Iron Bars",
+    "specification": "10mm",
+    "quantity": 3,
+    "unit": "pcs",
+    "unit_cost": "45000.00",
+    "unit_price": "52000.00",
+    "supplier": 6,
+    "payment_mode": "Cash",
+    "credit_terms": null,
+    "total_cost": "135000.00",
+    "date_received": "2026-05-18"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.stock",
+  "pk": 10,
+  "fields": {
+    "product_name": "Nails",
+    "specification": "Inch 3",
+    "quantity": 170,
+    "unit": "boxes",
+    "unit_cost": "20000.00",
+    "unit_price": "25000.00",
+    "supplier": 6,
+    "payment_mode": "Cash",
+    "credit_terms": "None",
+    "total_cost": "3400000.00",
+    "date_received": "2026-06-03"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.suppliercredit",
+  "pk": 1,
+  "fields": {
+    "supplier": 4,
+    "stock": 2,
+    "total_amount": "20000000.00",
+    "amount_paid": "1050000.00",
+    "balance": "18950000.00",
+    "due_date": null,
+    "status": "Partial",
+    "created_at": "2026-05-15T09:51:01.671Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplierpayment",
+  "pk": 1,
+  "fields": {
+    "credit": 1,
+    "amount": "1000000.00",
+    "payment_date": "2026-05-15",
+    "notes": "Paid half for Kampala Cement Suppliers"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.supplierpayment",
+  "pk": 2,
+  "fields": {
+    "credit": 1,
+    "amount": "50000.00",
+    "payment_date": "2026-06-02",
+    "notes": "Paid 50000"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 2,
+  "fields": {
+    "customer_name": "Peruth Nekesa",
+    "customer_phone": "+256750740289",
+    "distance_km": 5,
+    "transport_cost": "30000.00",
+    "grand_total": "60000.00",
+    "date": "2026-05-06T09:53:19.421Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 3,
+  "fields": {
+    "customer_name": "George Kalanzi",
+    "customer_phone": "+256750768499",
+    "distance_km": 8,
+    "transport_cost": "30000.00",
+    "grand_total": "330000.00",
+    "date": "2026-05-06T13:33:25.823Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 4,
+  "fields": {
+    "customer_name": "Matthew Ajera",
+    "customer_phone": "+256750778409",
+    "distance_km": 6,
+    "transport_cost": "0.00",
+    "grand_total": "1500000.00",
+    "date": "2026-05-06T13:34:34.424Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 5,
+  "fields": {
+    "customer_name": "Akina",
+    "customer_phone": "+256750248089",
+    "distance_km": 10,
+    "transport_cost": "30000.00",
+    "grand_total": "180000.00",
+    "date": "2026-05-07T08:21:12.163Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 6,
+  "fields": {
+    "customer_name": "Ritah",
+    "customer_phone": "+256750465499",
+    "distance_km": 20,
+    "transport_cost": "30000.00",
+    "grand_total": "90000.00",
+    "date": "2026-05-08T06:31:37.015Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 7,
+  "fields": {
+    "customer_name": "Barbra",
+    "customer_phone": "+256750365499",
+    "distance_km": 9,
+    "transport_cost": "0.00",
+    "grand_total": "824000.00",
+    "date": "2026-05-18T16:07:57.324Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 10,
+  "fields": {
+    "customer_name": "Nina",
+    "customer_phone": "+256760986754",
+    "distance_km": 20,
+    "transport_cost": "30000.00",
+    "grand_total": "540000.00",
+    "date": "2026-05-21T05:03:35.535Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 11,
+  "fields": {
+    "customer_name": "Belinda",
+    "customer_phone": "+256757798499",
+    "distance_km": 10,
+    "transport_cost": "0.00",
+    "grand_total": "600000.00",
+    "date": "2026-05-25T04:22:54.362Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 14,
+  "fields": {
+    "customer_name": "Siza",
+    "customer_phone": "+256758749289",
+    "distance_km": 5,
+    "transport_cost": "30000.00",
+    "grand_total": "180000.00",
+    "date": "2026-06-02T16:36:52.469Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 15,
+  "fields": {
+    "customer_name": "Ella",
+    "customer_phone": "+256743740289",
+    "distance_km": 6,
+    "transport_cost": "30000.00",
+    "grand_total": "370000.00",
+    "date": "2026-06-03T04:16:39.476Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 16,
+  "fields": {
+    "customer_name": "Sally",
+    "customer_phone": "+256758749289",
+    "distance_km": 12,
+    "transport_cost": "30000.00",
+    "grand_total": "180000.00",
+    "date": "2026-06-04T07:44:47.361Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 17,
+  "fields": {
+    "customer_name": "Dave",
+    "customer_phone": "+256758740289",
+    "distance_km": 10,
+    "transport_cost": "30000.00",
+    "grand_total": "180000.00",
+    "date": "2026-06-08T05:12:44.406Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 18,
+  "fields": {
+    "customer_name": "Hosea",
+    "customer_phone": "+256759740289",
+    "distance_km": 2,
+    "transport_cost": "30000.00",
+    "grand_total": "230000.00",
+    "date": "2026-06-08T05:26:45.856Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 19,
+  "fields": {
+    "customer_name": "Ariel",
+    "customer_phone": "+256759740289",
+    "distance_km": 6,
+    "transport_cost": "30000.00",
+    "grand_total": "130000.00",
+    "date": "2026-06-08T05:35:51.602Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 20,
+  "fields": {
+    "customer_name": "Lillian",
+    "customer_phone": "+256750540289",
+    "distance_km": 6,
+    "transport_cost": "30000.00",
+    "grand_total": "180000.00",
+    "date": "2026-06-08T05:40:39.759Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.sale",
+  "pk": 21,
+  "fields": {
+    "customer_name": "Darriell",
+    "customer_phone": "+256780740289",
+    "distance_km": 20,
+    "transport_cost": "30000.00",
+    "grand_total": "430000.00",
+    "date": "2026-06-08T05:45:56.264Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 2,
+  "fields": {
+    "sale": 2,
+    "stock": 1,
+    "quantity": 1,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "30000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 3,
+  "fields": {
+    "sale": 3,
+    "stock": 1,
+    "quantity": 10,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "300000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 4,
+  "fields": {
+    "sale": 4,
+    "stock": 1,
+    "quantity": 50,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "1500000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 5,
+  "fields": {
+    "sale": 5,
+    "stock": 1,
+    "quantity": 5,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "150000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 6,
+  "fields": {
+    "sale": 6,
+    "stock": 1,
+    "quantity": 2,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "60000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 7,
+  "fields": {
+    "sale": 7,
+    "stock": 2,
+    "quantity": 4,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "200000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 8,
+  "fields": {
+    "sale": 7,
+    "stock": 3,
+    "quantity": 12,
+    "unit": "pcs",
+    "unit_price": "52000.00",
+    "total_price": "624000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 13,
+  "fields": {
+    "sale": 10,
+    "stock": 2,
+    "quantity": 5,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "250000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 14,
+  "fields": {
+    "sale": 10,
+    "stock": 3,
+    "quantity": 5,
+    "unit": "pcs",
+    "unit_price": "52000.00",
+    "total_price": "260000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 15,
+  "fields": {
+    "sale": 11,
+    "stock": 2,
+    "quantity": 12,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "600000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 16,
+  "fields": {
+    "sale": 14,
+    "stock": 2,
+    "quantity": 3,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "150000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 17,
+  "fields": {
+    "sale": 15,
+    "stock": 2,
+    "quantity": 5,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "250000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 18,
+  "fields": {
+    "sale": 15,
+    "stock": 1,
+    "quantity": 3,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "90000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 19,
+  "fields": {
+    "sale": 16,
+    "stock": 2,
+    "quantity": 3,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "150000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 20,
+  "fields": {
+    "sale": 17,
+    "stock": 2,
+    "quantity": 3,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "150000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 21,
+  "fields": {
+    "sale": 18,
+    "stock": 2,
+    "quantity": 4,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "200000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 22,
+  "fields": {
+    "sale": 19,
+    "stock": 2,
+    "quantity": 2,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "100000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 23,
+  "fields": {
+    "sale": 20,
+    "stock": 1,
+    "quantity": 5,
+    "unit": "bags",
+    "unit_price": "30000.00",
+    "total_price": "150000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.saleitem",
+  "pk": 24,
+  "fields": {
+    "sale": 21,
+    "stock": 2,
+    "quantity": 8,
+    "unit": "bags",
+    "unit_price": "50000.00",
+    "total_price": "400000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 2,
+  "fields": {
+    "sale": 2,
+    "receipt_number": "RCPT-2026-0002",
+    "issued_at": "2026-05-08T05:34:31.100Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 3,
+  "fields": {
+    "sale": 3,
+    "receipt_number": "RCPT-2026-0003",
+    "issued_at": "2026-05-08T05:34:31.114Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 4,
+  "fields": {
+    "sale": 4,
+    "receipt_number": "RCPT-2026-0004",
+    "issued_at": "2026-05-08T05:34:31.127Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 5,
+  "fields": {
+    "sale": 5,
+    "receipt_number": "RCPT-2026-0005",
+    "issued_at": "2026-05-08T05:34:31.140Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 6,
+  "fields": {
+    "sale": 6,
+    "receipt_number": "RCPT-2026-0006",
+    "issued_at": "2026-05-08T06:31:37.024Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 7,
+  "fields": {
+    "sale": 7,
+    "receipt_number": "RCPT-2026-0007",
+    "issued_at": "2026-05-18T16:07:57.362Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 10,
+  "fields": {
+    "sale": 10,
+    "receipt_number": "RCPT-2026-0008",
+    "issued_at": "2026-05-21T05:03:35.539Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 11,
+  "fields": {
+    "sale": 11,
+    "receipt_number": "RCPT-2026-0009",
+    "issued_at": "2026-05-25T04:22:54.365Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 14,
+  "fields": {
+    "sale": 14,
+    "receipt_number": "RCPT-2026-0010",
+    "issued_at": "2026-06-02T16:36:52.486Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 15,
+  "fields": {
+    "sale": 15,
+    "receipt_number": "RCPT-2026-0011",
+    "issued_at": "2026-06-03T04:16:39.479Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 16,
+  "fields": {
+    "sale": 16,
+    "receipt_number": "RCPT-2026-0012",
+    "issued_at": "2026-06-04T07:44:47.371Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 17,
+  "fields": {
+    "sale": 17,
+    "receipt_number": "RCPT-2026-0013",
+    "issued_at": "2026-06-08T05:12:44.412Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 18,
+  "fields": {
+    "sale": 18,
+    "receipt_number": "RCPT-2026-0014",
+    "issued_at": "2026-06-08T05:26:45.862Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 19,
+  "fields": {
+    "sale": 19,
+    "receipt_number": "RCPT-2026-0015",
+    "issued_at": "2026-06-08T05:35:51.637Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 20,
+  "fields": {
+    "sale": 20,
+    "receipt_number": "RCPT-2026-0016",
+    "issued_at": "2026-06-08T05:40:39.780Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.salereceipt",
+  "pk": 21,
+  "fields": {
+    "sale": 21,
+    "receipt_number": "RCPT-2026-0017",
+    "issued_at": "2026-06-08T05:45:56.292Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.participant",
+  "pk": 1,
+  "fields": {
+    "name": "Robert Mwasi",
+    "nin": "CM8300910LU69A",
+    "phone": "+256760752349",
+    "registered_on": "2026-05-09T00:00:00Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.participant",
+  "pk": 21,
+  "fields": {
+    "name": "Helena Kikiyu",
+    "nin": "CF0592510JCJME",
+    "phone": "+256787127906",
+    "registered_on": "2026-06-02T07:38:12.259Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.participant",
+  "pk": 22,
+  "fields": {
+    "name": "Nelly Sita",
+    "nin": "CF0508670JCJME",
+    "phone": "+256780750349",
+    "registered_on": "2026-06-02T07:38:12.285Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.participant",
+  "pk": 24,
+  "fields": {
+    "name": "Ben Kiwanuka",
+    "nin": "CM0509687JCJME",
+    "phone": "+256768792349",
+    "registered_on": "2026-06-03T04:27:25.250Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 1,
+  "fields": {
+    "participant": 1,
+    "product": "Iron Sheets",
+    "amount_paid": "100000.00",
+    "payment_method": "cash",
+    "date_registered": "2026-05-09T00:00:00Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 2,
+  "fields": {
+    "participant": 1,
+    "product": "ironSheets",
+    "amount_paid": "10000.00",
+    "payment_method": "cash",
+    "date_registered": "2026-05-11T00:00:00Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 3,
+  "fields": {
+    "participant": 1,
+    "product": "ironSheets",
+    "amount_paid": "9999.00",
+    "payment_method": "cash",
+    "date_registered": "2026-05-11T00:00:00Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 20,
+  "fields": {
+    "participant": 21,
+    "product": "cement",
+    "amount_paid": "50000.00",
+    "payment_method": "mobile",
+    "date_registered": "2026-06-02T06:59:53.253Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 21,
+  "fields": {
+    "participant": 21,
+    "product": "cement",
+    "amount_paid": "10000.00",
+    "payment_method": "mobile",
+    "date_registered": "2026-06-02T06:59:53.275Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 22,
+  "fields": {
+    "participant": 22,
+    "product": "bars",
+    "amount_paid": "30000.00",
+    "payment_method": "cash",
+    "date_registered": "2026-06-02T06:59:53.290Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 23,
+  "fields": {
+    "participant": 1,
+    "product": "ironSheets",
+    "amount_paid": "10000.00",
+    "payment_method": "cash",
+    "date_registered": "2026-06-02T08:06:05.840Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 24,
+  "fields": {
+    "participant": 1,
+    "product": "Cement",
+    "amount_paid": "-60000.00",
+    "payment_method": "deduction",
+    "date_registered": "2026-06-02T18:37:29.501Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 25,
+  "fields": {
+    "participant": 1,
+    "product": "Cement",
+    "amount_paid": "-60000.00",
+    "payment_method": "deduction",
+    "date_registered": "2026-06-02T18:37:29.565Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 26,
+  "fields": {
+    "participant": 22,
+    "product": "bars",
+    "amount_paid": "100000.00",
+    "payment_method": "mobile",
+    "date_registered": "2026-06-02T18:40:21.294Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 27,
+  "fields": {
+    "participant": 22,
+    "product": "Iron Bars",
+    "amount_paid": "-52000.00",
+    "payment_method": "deduction",
+    "date_registered": "2026-06-02T18:40:54.943Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 28,
+  "fields": {
+    "participant": 22,
+    "product": "bars",
+    "amount_paid": "20000.00",
+    "payment_method": "cash",
+    "date_registered": "2026-06-02T18:42:19.774Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.deposit",
+  "pk": 29,
+  "fields": {
+    "participant": 24,
+    "product": "cement",
+    "amount_paid": "100000.00",
+    "payment_method": "mobile",
+    "date_registered": "2026-06-03T04:27:25.270Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 1,
+  "fields": {
+    "deposit": 1,
+    "receipt_number": "DEP-2026-0001",
+    "issued_at": "2026-05-09T08:57:47.944Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 2,
+  "fields": {
+    "deposit": 2,
+    "receipt_number": "DEP-2026-0002",
+    "issued_at": "2026-05-11T11:45:54.079Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 3,
+  "fields": {
+    "deposit": 3,
+    "receipt_number": "DEP-2026-0003",
+    "issued_at": "2026-05-11T12:47:33.185Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 20,
+  "fields": {
+    "deposit": 20,
+    "receipt_number": "DEP-2026-0004",
+    "issued_at": "2026-05-25T04:08:45.844Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 21,
+  "fields": {
+    "deposit": 21,
+    "receipt_number": "DEP-2026-0005",
+    "issued_at": "2026-06-02T06:30:57.086Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 22,
+  "fields": {
+    "deposit": 22,
+    "receipt_number": "DEP-2026-0006",
+    "issued_at": "2026-06-02T06:36:43.669Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 23,
+  "fields": {
+    "deposit": 23,
+    "receipt_number": "DEP-2026-0007",
+    "issued_at": "2026-06-02T08:06:05.865Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 24,
+  "fields": {
+    "deposit": 24,
+    "receipt_number": "DEP-2026-0008",
+    "issued_at": "2026-06-02T18:37:29.523Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 25,
+  "fields": {
+    "deposit": 25,
+    "receipt_number": "DEP-2026-0009",
+    "issued_at": "2026-06-02T18:37:29.582Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 26,
+  "fields": {
+    "deposit": 26,
+    "receipt_number": "DEP-2026-0010",
+    "issued_at": "2026-06-02T18:40:21.321Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 27,
+  "fields": {
+    "deposit": 27,
+    "receipt_number": "DEP-2026-0011",
+    "issued_at": "2026-06-02T18:40:54.989Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 28,
+  "fields": {
+    "deposit": 28,
+    "receipt_number": "DEP-2026-0012",
+    "issued_at": "2026-06-02T18:42:19.789Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.depositreceipt",
+  "pk": 29,
+  "fields": {
+    "deposit": 29,
+    "receipt_number": "DEP-2026-0013",
+    "issued_at": "2026-06-03T04:27:25.289Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodscollection",
+  "pk": 1,
+  "fields": {
+    "participant": 1,
+    "stock": 1,
+    "quantity": 2,
+    "date_collected": "2026-05-13T05:49:09.623Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodscollection",
+  "pk": 2,
+  "fields": {
+    "participant": 1,
+    "stock": 1,
+    "quantity": 2,
+    "date_collected": "2026-05-13T06:49:12.319Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodscollection",
+  "pk": 3,
+  "fields": {
+    "participant": 1,
+    "stock": 1,
+    "quantity": 1,
+    "date_collected": "2026-06-02T17:49:08.636Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodscollection",
+  "pk": 4,
+  "fields": {
+    "participant": 1,
+    "stock": 1,
+    "quantity": 1,
+    "date_collected": "2026-06-02T17:50:01.493Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodscollection",
+  "pk": 5,
+  "fields": {
+    "participant": 1,
+    "stock": 1,
+    "quantity": 4,
+    "date_collected": "2026-06-02T17:53:30.979Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodscollection",
+  "pk": 6,
+  "fields": {
+    "participant": 22,
+    "stock": 3,
+    "quantity": 1,
+    "date_collected": "2026-06-02T18:40:54.842Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodsreceipt",
+  "pk": 1,
+  "fields": {
+    "collection": 1,
+    "receipt_number": "NYONDO-0001",
+    "date_issued": "2026-05-13T05:49:09.637Z",
+    "total_amount": "60000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodsreceipt",
+  "pk": 2,
+  "fields": {
+    "collection": 2,
+    "receipt_number": "NYONDO-0002",
+    "date_issued": "2026-05-13T06:49:12.333Z",
+    "total_amount": "60000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodsreceipt",
+  "pk": 3,
+  "fields": {
+    "collection": 3,
+    "receipt_number": "NYONDO-0003",
+    "date_issued": "2026-06-02T17:49:08.708Z",
+    "total_amount": "30000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodsreceipt",
+  "pk": 4,
+  "fields": {
+    "collection": 4,
+    "receipt_number": "NYONDO-0004",
+    "date_issued": "2026-06-02T17:50:01.557Z",
+    "total_amount": "30000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodsreceipt",
+  "pk": 5,
+  "fields": {
+    "collection": 5,
+    "receipt_number": "NYONDO-0005",
+    "date_issued": "2026-06-02T17:53:31.004Z",
+    "total_amount": "120000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.goodsreceipt",
+  "pk": 6,
+  "fields": {
+    "collection": 6,
+    "receipt_number": "NYONDO-0006",
+    "date_issued": "2026-06-02T18:40:54.890Z",
+    "total_amount": "52000.00"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 1,
+  "fields": {
+    "title": "Stock Cement added",
+    "color": "orange",
+    "timestamp": "2026-05-15T09:51:01.684Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 2,
+  "fields": {
+    "title": "Stock Iron Bars added",
+    "color": "orange",
+    "timestamp": "2026-05-18T12:14:15.221Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 3,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-05-18T16:07:57.368Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 4,
+  "fields": {
+    "title": "Stock Cement added",
+    "color": "orange",
+    "timestamp": "2026-05-19T08:54:11.129Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 5,
+  "fields": {
+    "title": "Stock Cement added",
+    "color": "orange",
+    "timestamp": "2026-05-19T08:57:56.508Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 6,
+  "fields": {
+    "title": "Stock Iron Bars added",
+    "color": "orange",
+    "timestamp": "2026-05-19T08:59:21.164Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 7,
+  "fields": {
+    "title": "Stock Cement added",
+    "color": "orange",
+    "timestamp": "2026-05-19T09:02:40.932Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 8,
+  "fields": {
+    "title": "Stock Cement added",
+    "color": "orange",
+    "timestamp": "2026-05-19T09:04:24.150Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 9,
+  "fields": {
+    "title": "Stock Cement deleted",
+    "color": "red",
+    "timestamp": "2026-05-19T09:30:17.106Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 10,
+  "fields": {
+    "title": "Stock Cement deleted",
+    "color": "red",
+    "timestamp": "2026-05-19T09:30:30.204Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 11,
+  "fields": {
+    "title": "Stock Barbed Wire added",
+    "color": "orange",
+    "timestamp": "2026-05-19T09:31:38.342Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 12,
+  "fields": {
+    "title": "Stock Barbed Wire deleted",
+    "color": "red",
+    "timestamp": "2026-05-19T11:20:59.879Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 13,
+  "fields": {
+    "title": "Stock Iron Bars deleted",
+    "color": "red",
+    "timestamp": "2026-05-19T11:21:06.813Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 14,
+  "fields": {
+    "title": "Stock Cement deleted",
+    "color": "red",
+    "timestamp": "2026-05-19T12:17:15.997Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 15,
+  "fields": {
+    "title": "Stock Cement deleted",
+    "color": "red",
+    "timestamp": "2026-05-19T12:17:20.966Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 16,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-05-21T04:30:42.246Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 17,
+  "fields": {
+    "title": "Sale deleted for Nina",
+    "color": "red",
+    "timestamp": "2026-05-21T04:42:33.858Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 18,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-05-21T04:50:06.648Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 19,
+  "fields": {
+    "title": "Sale deleted for Nina",
+    "color": "red",
+    "timestamp": "2026-05-21T05:00:21.340Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 20,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-05-21T05:03:35.541Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 21,
+  "fields": {
+    "title": "Supplier Hima added",
+    "color": "orange",
+    "timestamp": "2026-05-21T10:57:11.839Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 22,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-05-25T04:22:54.368Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 23,
+  "fields": {
+    "title": "Deposit added for Helena Kikiyu",
+    "color": "green",
+    "timestamp": "2026-06-02T06:30:57.104Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 24,
+  "fields": {
+    "title": "Deposit added for Robert Mwasi",
+    "color": "green",
+    "timestamp": "2026-06-02T08:06:05.883Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 25,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-02T15:33:18.754Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 26,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-02T15:33:54.716Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 27,
+  "fields": {
+    "title": "Sale deleted for Nina",
+    "color": "red",
+    "timestamp": "2026-06-02T15:35:31.735Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 28,
+  "fields": {
+    "title": "Sale deleted for Nina",
+    "color": "red",
+    "timestamp": "2026-06-02T15:36:02.135Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 29,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-02T16:36:52.494Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 30,
+  "fields": {
+    "title": "[RETROACTIVE] Goods collection: 2 units of Cement for Robert Mwasi (Balance reduced by UGX 60000.00)",
+    "color": "orange",
+    "timestamp": "2026-06-02T18:37:29.541Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 31,
+  "fields": {
+    "title": "[RETROACTIVE] Goods collection: 2 units of Cement for Robert Mwasi (Balance reduced by UGX 60000.00)",
+    "color": "orange",
+    "timestamp": "2026-06-02T18:37:29.604Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 32,
+  "fields": {
+    "title": "Deposit added for Nelly Sita",
+    "color": "green",
+    "timestamp": "2026-06-02T18:40:21.342Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 33,
+  "fields": {
+    "title": "Goods collection: 1 units of Iron Bars for Nelly Sita (Balance reduced by UGX 52000.00)",
+    "color": "blue",
+    "timestamp": "2026-06-02T18:40:55.041Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 34,
+  "fields": {
+    "title": "Deposit added for Nelly Sita",
+    "color": "green",
+    "timestamp": "2026-06-02T18:42:19.801Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 35,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-03T04:16:39.483Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 36,
+  "fields": {
+    "title": "Stock Nails added",
+    "color": "orange",
+    "timestamp": "2026-06-03T04:18:44.339Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 37,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-04T07:44:47.374Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 38,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-08T05:12:44.418Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 39,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-08T05:26:45.868Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 40,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-08T05:35:51.645Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 41,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-08T05:40:39.788Z"
+  }
+},
+{
+  "model": "nyondogeneralhardwareapp.activity",
+  "pk": 42,
+  "fields": {
+    "title": "New sale recorded (UGX 30000)",
+    "color": "blue",
+    "timestamp": "2026-06-08T05:45:56.297Z"
+  }
+}
+]

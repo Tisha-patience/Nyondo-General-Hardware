@@ -689,8 +689,6 @@ def supplier_reg(request):
                 errors["supplier_name"] = ["Supplier name is required."]
             if not contact_number:
                 errors["contact_number"] = ["Contact number is required."]
-            elif not contact_number.isdigit():
-                errors["contact_number"] = ["Contact number must contain only digits."]
             if not email:
                 errors["email"] = ["Email is required."]
             elif "@" not in email or "." not in email:

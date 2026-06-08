@@ -1,0 +1,117 @@
+[
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Y1AdsOryBUZnGPn0rPfpct$QPOWWGWbLtcFz4dc/WMDBcl6JEZM7khVQSmJb5nm6uI=",
+    "last_login": "2026-06-08T04:53:50.003Z",
+    "is_superuser": true,
+    "username": "Tisha",
+    "first_name": "",
+    "last_name": "",
+    "email": "tishapatiencemalongo@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-05-13T13:22:37.226Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 2,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$Ts5dHqBxHDJN0UWP8Mm5Tn$alF8TY1K8aewXD38AJ7/f3o1vaAurmDQLyIaloUZmwE=",
+    "last_login": "2026-06-02T11:24:07.038Z",
+    "is_superuser": false,
+    "username": "Hanilla",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-13T13:28:08Z",
+    "groups": [
+      1
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 3,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$WWX6kMqLn4DUq11qqqchKB$ORhSTSGFNPP+Iz8yVgyXS60q6/iZ9cCwdDzPzOGXhwM=",
+    "last_login": "2026-06-04T07:47:06.390Z",
+    "is_superuser": false,
+    "username": "Metrina",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-13T13:42:02Z",
+    "groups": [
+      2
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 4,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$MVrLjugemfGhsAMTQPeNKV$6dY2wjgjhrn9o+gEjusz05tNsakztg7mrgG8DEPeCL8=",
+    "last_login": "2026-05-25T05:38:14.272Z",
+    "is_superuser": false,
+    "username": "Azar",
+    "first_name": "",
+    "last_name": "",
+    "email": "azar@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2026-05-22T07:13:01.627Z",
+    "groups": [
+      1
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 1,
+  "fields": {
+    "name": "Sales Attendant",
+    "permissions": [
+      49,
+      52,
+      57,
+      61,
+      53,
+      33,
+      34,
+      36,
+      41,
+      42,
+      44,
+      45,
+      46,
+      48,
+      28
+    ]
+  }
+},
+{
+  "model": "auth.group",
+  "pk": 2,
+  "fields": {
+    "name": "Store Manager",
+    "permissions": [
+      25,
+      26,
+      28,
+      32
+    ]
+  }
+}
+]
