@@ -408,11 +408,6 @@ def sales_reg(request):
                         unit_price=price,
                         total_price=total,
                     )
-                    stock_item.quantity -= qty # Update the stock quantity, subtracting the quantity sold, to reflect the change in stock.
-                    stock_item.save()
-
-                # Update transport + grand total
-                sale.save()
 
                 return redirect("sale_receipt", pk=sale.pk)
 # If the creation of the Sale record fails due to validation errors, we catch the ValidationError and pass it back to the template.

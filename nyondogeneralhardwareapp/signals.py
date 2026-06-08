@@ -8,20 +8,12 @@ def create_sale_receipt(sender, instance, created, **kwargs):
     if created:
         SaleReceipt.objects.create(sale=instance)
 
-# Auto-update stock and totals when a SaleItem is added
+# Auto-update sale totals when a SaleItem is added
 @receiver(post_save, sender=SaleItem)
-def update_sale_and_stock(sender, instance, created, **kwargs):
+def update_sale_totals(sender, instance, created, **kwargs):
     if created:
-        # Safety check: prevent overselling
-        if instance.stock.quantity < instance.quantity:
-            raise ValueError(f"Not enough stock for {instance.stock.product_name}")
-
-        # Reduce stock
-        stock = instance.stock
-        stock.quantity -= instance.quantity
-        stock.save()
-
-        # Update sale totals
+        # ✅ Stock reduction is already handled in SaleItem.save()
+        # Only update sale totals here
         sale = instance.sale
         sale.transport_cost = sale.calculate_transport()
         sale.grand_total = sale.total_amount() + sale.transport_cost

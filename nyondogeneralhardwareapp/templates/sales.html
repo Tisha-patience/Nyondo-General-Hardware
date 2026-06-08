@@ -58,17 +58,48 @@
             <td>{{ sale.date|date:"d M Y, H:i" }}</td>
             <td>{{ sale.customer_name }}</td>
             <td>{{ sale.customer_phone }}</td>
-            <td>
-              <ul class="list-unstyled mb-0">
-                {% for item in sale.items.all %}
-                  <li>
-                    {{ item.stock.product_name }} ({{ item.stock.specification }}) —
-                    {{ item.quantity }} {{ item.unit }} × UGX {{ item.unit_price |floatformat:"0"| intcomma }} =
-                    <strong>UGX {{ item.total_price |floatformat:"0"| intcomma }}</strong>
-                  </li>
-                {% endfor %}
-              </ul>
-            </td>
+           <td style="min-width:280px;">
+
+  {% for item in sale.items.all %}
+
+  <div class="sale-item-card mb-2">
+
+    <div class="d-flex justify-content-between">
+
+      <strong>
+        {{ item.stock.product_name }}
+      </strong>
+
+      <span class="badge bg-light text-dark">
+        {{ item.quantity }} {{ item.unit }}
+      </span>
+
+    </div>
+
+    <small class="text-muted">
+      {{ item.stock.specification }}
+    </small>
+
+    <div class="mt-1">
+
+      <small>
+        UGX {{ item.unit_price|floatformat:"0"|intcomma }}
+        each
+      </small>
+
+      <br>
+
+      <strong class="text-success">
+        UGX {{ item.total_price|floatformat:"0"|intcomma }}
+      </strong>
+
+    </div>
+
+  </div>
+
+  {% endfor %}
+
+</td>
             <td>
               {% if sale.transport_cost == 0 %}
                 <span class="badge bg-success">Free</span>
