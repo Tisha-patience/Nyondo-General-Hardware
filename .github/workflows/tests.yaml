@@ -1,4 +1,4 @@
-name: Python Test Suite
+name: Python CI
 
 on:
   push:
@@ -21,7 +21,31 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Placeholder test
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install linting tools
+        run: pip install ruff
+
+      - name: Check formatting and linting
+        run: ruff check .
+
+      - name: Check for committed Python cache files
         run: |
-          echo "Test suite placeholder"
+          CACHE_FILES=$(find . \( -type d -name "__pycache__" -o -name "*.pyc" \))
+
+          if [ -n "$CACHE_FILES" ]; then
+            echo "❌ Python cache files were found in the repository:"
+            echo "$CACHE_FILES"
+            echo ""
+            echo "Please remove all __pycache__ directories and *.pyc files before committing."
+            exit 1
+          fi
+
+          echo "✅ No Python cache files found."
+
+      - name: Placeholder test suite
+        run: |
+          echo "Running placeholder tests..."
           python -c "assert True"
+          echo "✅ All tests passed."
